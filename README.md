@@ -78,6 +78,11 @@ docs/               프로젝트 문서
 
 ## 디자인
 
-- 디자인 토큰은 `src/index.css` 의 `@theme` 블록에 CSS 변수로 정의하고 Tailwind 유틸리티(`text-ink`, `font-display` 등)로 사용합니다.
-- 현재는 자리표시자(잉크·헤어라인·Rausch)만 있으며, Figma Foundations 확정 후 전체 팔레트·라운드·간격을 채웁니다.
-- 색상은 semantic 토큰(bg/text/brand/grade/signal/chart/heat)만 사용하고 hex 를 컴포넌트에 직접 쓰지 않습니다.
+- 디자인 토큰은 Figma 01 Foundations 의 Tokens 컬렉션(Light)과 1:1 로 `src/index.css` 의 `@theme` 블록에 있습니다.
+  - 색: 원시 팔레트(`bg-rausch-500`, `bg-gray-800`)와 의미 토큰(`bg-brand-primary`, `text-text-primary`, `border-border-default`, `text-grade-s-fg`, `bg-heat-500`)
+  - 라운드: `rounded-lg`(8) · `rounded-xl`(14) · `rounded-2xl`(20) · `rounded-full`
+  - 그림자: `shadow-float` 하나만
+  - 타이포: `text-heading-xl`, `text-body-sm`, `text-number-rating` 처럼 Figma 텍스트 스타일 이름 그대로. Black Han Sans 는 `font-display` 를 함께 지정
+  - 간격: Tailwind 기본 4px 단위가 Figma space/1~16 과 동일
+- 서체는 `index.html` 에서 Google Fonts 로 로드합니다(Noto Sans KR 400/500/700, Black Han Sans, Gaegu 400/700).
+- 컴포넌트에서 hex 임의값(`text-[#222]`)을 쓰지 않습니다. 값 변경은 Figma → `디자인/디자인-원칙.md` → `src/index.css` 순서로 반영합니다.
