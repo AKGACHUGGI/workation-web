@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+/* 디자인 토큰은 docs/디자인-원칙.md 기준으로 @theme 에 정의합니다.
+   아래는 자리표시자이며 Figma Foundations 확정 후 교체합니다. */
+@theme {
+  --font-sans: 'Noto Sans KR', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Black Han Sans', var(--font-sans);
+  --font-hand: 'Gaegu', var(--font-sans);
+
+  --color-ink: #222222;
+  --color-hairline: #dddddd;
+  --color-rausch: #ff385c;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
