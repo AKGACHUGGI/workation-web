@@ -17,6 +17,7 @@ LG U+ 유동/서비스인구 데이터를 기반으로 워케이션 지역·시�
 | 스타일 | Tailwind CSS v4 (`@tailwindcss/vite`, CSS-first `@theme`) |
 | 라우팅 | react-router-dom v7 |
 | 린트 / 포맷 | oxlint / Prettier (+ tailwind 플러그인) |
+| 패키지 매니저 | pnpm 10 이상 (`packageManager` 필드로 고정, npm/yarn 사용 차단) |
 | Node | 22 이상 (`.nvmrc` = 26) |
 
 인증·DB는 백엔드(workation-backend)가 담당합니다. 프론트는 `VITE_API_BASE_URL` 로 백엔드 API만 호출합니다.
@@ -25,16 +26,16 @@ LG U+ 유동/서비스인구 데이터를 기반으로 워케이션 지역·시�
 
 ```bash
 cp .env.example .env   # API 주소 설정
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 | 스크립트 | 설명 |
 | --- | --- |
-| `npm run dev` | 개발 서버 |
-| `npm run build` | 타입 체크 + 프로덕션 빌드 |
-| `npm run lint` | oxlint |
-| `npm run format` | Prettier 전체 포맷 |
+| `pnpm dev` | 개발 서버 |
+| `pnpm build` | 타입 체크 + 프로덕션 빌드 |
+| `pnpm lint` | oxlint |
+| `pnpm format` | Prettier 전체 포맷 |
 
 ## 폴더 구조
 
