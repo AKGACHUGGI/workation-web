@@ -1,5 +1,7 @@
 # workation-web
 
+[![CI](https://github.com/TEAM-SKPJC/workation-web/actions/workflows/ci.yml/badge.svg)](https://github.com/TEAM-SKPJC/workation-web/actions/workflows/ci.yml)
+
 워케이션(가제) 웹 클라이언트. LG U+ 유동/서비스인구 데이터를 기반으로 워케이션 지역·시기·동네를 추천하는 서비스입니다.
 
 - 백엔드: [workation-backend](https://github.com/TEAM-SKPJC/workation-backend)
