@@ -1,16 +1,207 @@
 @import 'tailwindcss';
 
-/* 디자인 토큰은 docs/디자인-원칙.md 기준으로 @theme 에 정의합니다.
-   아래는 자리표시자이며 Figma Foundations 확정 후 교체합니다. */
+/*
+  디자인 토큰 — Figma 기업연계캡스톤 > 01 Foundations > Tokens 컬렉션(Light) 과 1:1.
+  기준 문서: workation-docs/디자인/디자인-원칙.md
+  Figma 이름 → CSS 변수 → Tailwind 클래스
+    primitive/rausch/500 → --color-rausch-500     → bg-rausch-500
+    text/primary         → --color-text-primary   → text-text-primary
+    brand/primary        → --color-brand-primary  → bg-brand-primary
+    grade/S/fg           → --color-grade-s-fg     → text-grade-s-fg
+    radius/xl            → --radius-xl            → rounded-xl
+    shadow/card-float    → --shadow-float         → shadow-float
+    heading/xl           → --text-heading-xl      → text-heading-xl
+  컴포넌트에서 hex 직접 사용 금지. 값 변경은 Figma → 이 파일 순서로.
+*/
 @theme {
-  --font-sans: 'Noto Sans KR', ui-sans-serif, system-ui, sans-serif;
+  /* ---------- 서체 ---------- */
+  --font-sans: 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: 'Black Han Sans', var(--font-sans);
   --font-hand: 'Gaegu', var(--font-sans);
 
-  --color-ink: #222222;
-  --color-hairline: #dddddd;
-  --color-rausch: #ff385c;
+  /* ---------- 원시 색상 (primitive/*) ---------- */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-rausch-50: #fff1f3;
+  --color-rausch-100: #ffd1da;
+  --color-rausch-200: #ffa6b6;
+  --color-rausch-300: #ff7a92;
+  --color-rausch-400: #ff5675;
+  --color-rausch-500: #ff385c;
+  --color-rausch-600: #e00b41;
+  --color-rausch-700: #c0083a;
+  --color-rausch-800: #9a0630;
+  --color-rausch-900: #70051f;
+
+  /* Tailwind 기본 gray 를 Airbnb 팔레트로 교체 */
+  --color-gray-*: initial;
+  --color-gray-50: #f7f7f7;
+  --color-gray-100: #f2f2f2;
+  --color-gray-200: #ebebeb;
+  --color-gray-300: #dddddd;
+  --color-gray-400: #c1c1c1;
+  --color-gray-500: #929292;
+  --color-gray-600: #6a6a6a;
+  --color-gray-700: #3f3f3f;
+  --color-gray-800: #222222;
+  --color-gray-900: #111111;
+
+  --color-babu-50: #e0f5f3;
+  --color-babu-400: #4fc3b8;
+  --color-babu-600: #00a699;
+
+  --color-green-*: initial;
+  --color-green-50: #e6f4e6;
+  --color-green-600: #008a05;
+
+  --color-arches-50: #ffece4;
+  --color-arches-500: #fc642d;
+  --color-arches-600: #e0511f;
+
+  --color-error-50: #fbe9e7;
+  --color-error-500: #c13515;
+
+  --color-legal-link: #428bff;
+
+  /* ---------- 의미 토큰 ---------- */
+  /* bg/* */
+  --color-bg-page: var(--color-white);
+  --color-bg-surface: var(--color-white);
+  --color-bg-subtle: var(--color-gray-50);
+  --color-bg-surface-strong: var(--color-gray-100);
+  --color-bg-inverse: var(--color-gray-800);
+
+  /* text/* */
+  --color-text-primary: var(--color-gray-800);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-tertiary: var(--color-gray-500);
+  --color-text-inverse: var(--color-white);
+  --color-text-brand: var(--color-rausch-500);
+
+  /* border/* */
+  --color-border-default: var(--color-gray-300);
+  --color-border-strong: var(--color-gray-400);
+
+  /* brand/* — 검색 오브, 화면당 CTA 1개, 저장 상태에만 */
+  --color-brand-primary: var(--color-rausch-500);
+  --color-brand-hover: var(--color-rausch-600);
+  --color-brand-soft: var(--color-rausch-50);
+  --color-brand-soft-border: var(--color-rausch-100);
+
+  /* selected/* — 칩·세그먼트·탭 선택 상태는 잉크 */
+  --color-selected-bg: var(--color-gray-800);
+  --color-selected-fg: var(--color-white);
+
+  /* accent/* */
+  --color-accent-save: var(--color-rausch-500);
+
+  /* grade/* — 등급 배지 S·A·B·C */
+  --color-grade-s-fg: var(--color-babu-600);
+  --color-grade-s-bg: var(--color-babu-50);
+  --color-grade-a-fg: var(--color-green-600);
+  --color-grade-a-bg: var(--color-green-50);
+  --color-grade-b-fg: var(--color-arches-600);
+  --color-grade-b-bg: var(--color-arches-50);
+  --color-grade-c-fg: var(--color-gray-600);
+  --color-grade-c-bg: var(--color-gray-100);
+
+  /* signal/* */
+  --color-signal-good: var(--color-green-600);
+  --color-signal-good-bg: var(--color-green-50);
+  --color-signal-avoid: var(--color-error-500);
+  --color-signal-avoid-bg: var(--color-error-50);
+
+  /* chart/* */
+  --color-chart-bar: var(--color-gray-800);
+  --color-chart-bar-muted: var(--color-gray-300);
+  --color-chart-weekday: var(--color-gray-800);
+  --color-chart-weekend: var(--color-rausch-500);
+  --color-chart-grid: var(--color-gray-200);
+
+  /* heat/* — 히트맵 7단계 */
+  --color-heat-100: var(--color-rausch-100);
+  --color-heat-200: var(--color-rausch-200);
+  --color-heat-300: var(--color-rausch-300);
+  --color-heat-400: var(--color-rausch-400);
+  --color-heat-500: var(--color-rausch-500);
+  --color-heat-600: var(--color-rausch-600);
+  --color-heat-700: var(--color-rausch-700);
+
+  /* scrim — 사용 시 bg-scrim/50 */
+  --color-scrim: var(--color-black);
+
+  /* ---------- 라운드 (radius/*) ---------- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px; /* 버튼 */
+  --radius-xl: 14px; /* 카드·사진 */
+  --radius-2xl: 20px; /* 큰 컨테이너 */
+
+  /* ---------- 그림자 (shadow/card-float) — 유일한 그림자 ---------- */
+  --shadow-float:
+    0 0 0 1px rgb(0 0 0 / 0.02), 0 2px 6px rgb(0 0 0 / 0.04), 0 4px 8px rgb(0 0 0 / 0.1);
+
+  /* ---------- 타이포 (텍스트 스타일) — text-<이름> 하나로 size/line-height/weight 적용 ---------- */
+  /* display — Black Han Sans 는 font-display 를 함께 지정 */
+  --text-display-hero: 40px;
+  --text-display-hero--line-height: 44px;
+  --text-display-logo: 22px;
+  --text-display-logo--line-height: 28px;
+  --text-display-3xl: 30px;
+  --text-display-3xl--line-height: 36px;
+  --text-display-3xl--font-weight: 700;
+
+  /* heading */
+  --text-heading-2xl: 24px;
+  --text-heading-2xl--line-height: 32px;
+  --text-heading-2xl--font-weight: 700;
+  --text-heading-xl: 20px;
+  --text-heading-xl--line-height: 28px;
+  --text-heading-xl--font-weight: 700;
+  --text-heading-lg: 18px;
+  --text-heading-lg--line-height: 28px;
+  --text-heading-lg--font-weight: 700;
+
+  /* title */
+  --text-title-md: 16px;
+  --text-title-md--line-height: 20px;
+  --text-title-md--font-weight: 500;
+
+  /* body — medium/bold 변형은 font-medium / font-bold 를 조합 */
+  --text-body-base: 16px;
+  --text-body-base--line-height: 24px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+
+  /* caption */
+  --text-caption-xs: 12px;
+  --text-caption-xs--line-height: 16px;
+  --text-caption-segment: 12px;
+  --text-caption-segment--line-height: 16px;
+  --text-caption-segment--font-weight: 500;
+  --text-caption-badge: 11px;
+  --text-caption-badge--line-height: 13px;
+  --text-caption-badge--font-weight: 700;
+
+  /* number — 숫자는 잉크색, 종합 점수만 64px */
+  --text-number-rating: 64px;
+  --text-number-rating--line-height: 70px;
+  --text-number-rating--font-weight: 700;
+  --text-number-4xl: 36px;
+  --text-number-4xl--line-height: 40px;
+  --text-number-4xl--font-weight: 700;
+  --text-number-2xl: 24px;
+  --text-number-2xl--line-height: 28px;
+  --text-number-2xl--font-weight: 700;
+
+  /* ---------- 반응형 구간 (디자인 원칙 §5) ---------- */
+  --breakpoint-tablet: 744px;
+  --breakpoint-desktop: 1128px;
+  --container-page: 1440px;
 }
+
+/* 간격은 Tailwind 기본 --spacing(0.25rem = 4px) 이 Figma space/1~16 과 동일하므로 그대로 사용 */
 
 html,
 body,
@@ -21,7 +212,13 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  color: var(--color-ink);
-  background: #ffffff;
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
   -webkit-font-smoothing: antialiased;
+}
+
+/* 포커스는 글로우 대신 2px 잉크 외곽선 */
+:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
 }
