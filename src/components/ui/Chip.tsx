@@ -8,6 +8,8 @@ type Props = {
   /** 툴팁 문구 (disabled 사유 등) */
   title?: string
   className?: string
+  /** Tooltip 이 주입한다 */
+  'aria-describedby'?: string
 }
 
 /** Figma Chip 7:139. 선택 상태는 잉크(selected-*), 토글은 aria-pressed */
@@ -18,6 +20,7 @@ export default function Chip({
   children,
   title,
   className = '',
+  'aria-describedby': describedBy,
 }: Props) {
   const tone = selected
     ? 'bg-selected-bg text-selected-fg border-selected-bg'
@@ -28,6 +31,7 @@ export default function Chip({
       type="button"
       aria-pressed={selected}
       aria-disabled={disabled || undefined}
+      aria-describedby={describedBy}
       title={title}
       onClick={disabled ? undefined : onClick}
       className={`text-caption-segment inline-flex h-8 shrink-0 items-center gap-1 rounded-full border px-4 whitespace-nowrap ${tone} ${dim} ${className}`}
