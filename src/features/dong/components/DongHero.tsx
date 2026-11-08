@@ -1,4 +1,4 @@
-import { Heart, Share2 } from 'lucide-react'
+import { Bookmark, ChevronRight, Share } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Tag from '@/components/ui/Tag'
 import { useToast } from '@/components/ui/toast/useToast'
@@ -7,6 +7,7 @@ import type { DongDetailResponse } from '@/features/dong/types'
 import { useFavorites } from '@/features/me/useFavorites'
 import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
+import BrandTag from '@/features/region/components/BrandTag'
 import PhotoGallery from '@/features/region/components/PhotoGallery'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import { useCarryLink } from '@/hooks/useCarryLink'
@@ -20,6 +21,10 @@ type Props = {
   dominantLabel: string
 }
 
+const action =
+  'text-body-sm text-text-primary hover:bg-bg-subtle inline-flex items-center gap-1.5 rounded-lg px-3 py-2 font-medium'
+
+/** 브레드크럼 · 제목 · 메타+태그 · 공유/저장 · 사진 (Figma 251:3684·251:3692·251:3710) */
 export default function DongHero({ detail, month, summary, dominantLabel }: Props) {
   const toast = useToast()
   const { isFavorite, toggle } = useFavorites()
@@ -33,57 +38,56 @@ export default function DongHero({ detail, month, summary, dominantLabel }: Prop
   }
 
   return (
-    <header className="flex flex-col gap-4">
-      <nav
-        aria-label="브레드크럼"
-        className="text-body-sm text-text-secondary flex items-center gap-2"
-      >
-        <Link to={homeLink} className="hover:text-text-primary">
+    <header className="flex flex-col gap-5">
+      <nav aria-label="브레드크럼" className="text-body-sm flex items-center gap-1.5">
+        <Link to={homeLink} className="text-text-secondary hover:text-text-primary">
           탐색
         </Link>
-        <span aria-hidden>›</span>
-        <Link to={sggLink} className="hover:text-text-primary">
+        <ChevronRight size={14} aria-hidden className="text-text-tertiary" />
+        <Link to={sggLink} className="text-text-secondary hover:text-text-primary">
           {detail.sigungu.name}
         </Link>
-        <span aria-hidden>›</span>
+        <ChevronRight size={14} aria-hidden className="text-text-tertiary" />
         <span className="text-text-primary">{detail.name}</span>
       </nav>
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-display-3xl text-text-primary">
+      <div className="flex items-end justify-between gap-6">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h1 className="text-heading-2xl text-text-primary">
             {detail.name}, {detail.sigungu.name}
           </h1>
-          <p className="text-body-sm text-text-secondary">
-            {detail.province} · {monthLabel(month)} · {summary}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Tag>{DONG_KIND_LABEL[detail.kind]}</Tag>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-body-sm text-text-secondary">
+              {detail.province} · {monthLabel(month)} · {summary}
+            </p>
+            {/* Figma: 생활권 = brand 태그, 지형 태그 = 회색, 주된 활동 유형 = 회색 */}
+            {detail.kind === 'living' ? (
+              <BrandTag>{DONG_KIND_LABEL[detail.kind]}</BrandTag>
+            ) : (
+              <Tag>{DONG_KIND_LABEL[detail.kind]}</Tag>
+            )}
             {detail.tags.map((t) => (
               <Tag key={t}>{t}</Tag>
             ))}
-            <Tag tone="selected">{dominantLabel}</Tag>
+            <Tag>{dominantLabel}</Tag>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={share}
-            className="border-border-default text-body-sm text-text-primary hover:border-border-strong inline-flex items-center gap-1 rounded-lg border px-4 py-2"
-          >
-            <Share2 size={16} aria-hidden /> 공유
+        <div className="flex shrink-0 gap-2">
+          <button type="button" onClick={share} className={action}>
+            <Share size={16} aria-hidden />
+            <span className="underline">공유</span>
           </button>
           <button
             type="button"
             onClick={() => toggle('dongs', detail.id)}
             aria-pressed={saved}
-            className="border-border-default text-body-sm text-text-primary hover:border-border-strong inline-flex items-center gap-1 rounded-lg border px-4 py-2"
+            className={action}
           >
-            <Heart
+            <Bookmark
               size={16}
               aria-hidden
               className={saved ? 'fill-accent-save text-accent-save' : undefined}
-            />{' '}
-            {saved ? '저장됨' : '저장'}
+            />
+            <span className="underline">{saved ? '저장됨' : '저장'}</span>
           </button>
         </div>
       </div>

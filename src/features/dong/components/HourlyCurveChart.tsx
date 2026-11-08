@@ -17,8 +17,10 @@ type Props = {
 
 const TICKS = [0, 3, 6, 9, 12, 15, 18, 21, 23]
 
-function strokeOf(selected: boolean) {
-  return selected ? 'var(--color-chart-line-strong)' : 'var(--color-chart-line-muted)'
+/** Figma 251:3740 범례: 주중 = chart/weekday(잉크), 주말 = chart/weekend(브랜드). 선택 안 된 선은 옅게 */
+const STROKE: Record<DayGroup, string> = {
+  weekday: 'var(--color-chart-weekday)',
+  weekend: 'var(--color-chart-weekend)',
 }
 
 /** 24시간 보행 곡선. 주중·주말 선 2개, 선택한 날은 진하게 */
@@ -47,6 +49,7 @@ export default function HourlyCurveChart({
       <XAxis
         dataKey="h"
         ticks={TICKS}
+        interval={0}
         tickFormatter={(v: number) => `${v}시`}
         tickLine={false}
         axisLine={false}
@@ -71,7 +74,8 @@ export default function HourlyCurveChart({
             type="monotone"
             dataKey={key}
             name={key}
-            stroke={strokeOf(key === day)}
+            stroke={STROKE[key]}
+            strokeOpacity={key === day ? 1 : 0.45}
             strokeWidth={key === day ? 3 : 1.5}
             dot={false}
             activeDot={{ r: 4 }}

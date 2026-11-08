@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { Heart, Columns2 } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import GradeBadge from '@/components/ui/GradeBadge'
-import { GRADE_FG } from '@/components/ui/gradeClass'
-import { formatHour } from '@/features/dong/summary'
+import { formatHour, localLifeLabel } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
 import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL } from '@/features/metric/constants'
@@ -25,6 +23,13 @@ type Props = {
 
 const STAY = ['1주', '2주', '한 달'] as const
 
+/** Selector 칸 (W-03 PlanCard 와 같은 값): 위 12/16 Medium 라벨 + 아래 14/20 값 */
+const cell = 'flex flex-col gap-0.5 px-3 py-2.5'
+const cellLabel = 'text-caption-segment text-text-primary'
+const cellSelect =
+  'text-body-sm text-text-secondary w-full cursor-pointer appearance-none bg-transparent outline-none'
+
+/** 사이드바 sticky 계획 카드 (Figma 251:3837, PlanCard 54:208 의 동네판) */
 export default function DongPlanCard({
   detail,
   month,
@@ -38,104 +43,110 @@ export default function DongPlanCard({
   const saved = isFavorite('dongs', detail.id)
   const compareLink = useCarryLink(`/compare?dongs=${detail.id}`)
   const sggLink = useCarryLink(`/regions/${detail.sigungu.id}`)
-  const select =
-    'border-border-default bg-bg-surface text-body-sm text-text-primary h-10 rounded-lg border px-3'
 
   return (
-    <aside className="border-border-default bg-bg-surface w-sidebar shadow-float sticky top-20 flex shrink-0 flex-col gap-4 self-start rounded-2xl border p-6">
-      <div className="flex items-end gap-2">
-        {quiet ? (
-          <>
-            <span className={`text-number-4xl ${GRADE_FG[quiet.grade]}`}>
-              {Math.round(quiet.score)}
-            </span>
-            <span className="text-body-sm text-text-secondary pb-1">점 · {METRIC_LABEL.quiet}</span>
-          </>
-        ) : (
-          <span className="text-number-4xl text-text-tertiary">—</span>
+    <aside className="border-border-default bg-bg-surface w-sidebar shadow-float sticky top-24 mt-6 flex shrink-0 flex-col gap-4 self-start rounded-xl border p-6">
+      <div className="flex items-end justify-between gap-2">
+        <div className="flex items-end gap-1">
+          <span className="text-heading-2xl text-text-primary">
+            {quiet ? Math.round(quiet.score) : '—'}
+          </span>
+          <span className="text-body-sm text-text-secondary">점 · {METRIC_LABEL.quiet}</span>
+        </div>
+        {quiet && (
+          <p className="text-body-sm text-text-primary font-medium">
+            행정동 {quiet.total}곳 중 백분위 {Math.round(quiet.score)} · {quiet.grade}
+          </p>
         )}
       </div>
-      {quiet && (
-        <p className="text-body-sm text-text-secondary flex items-center gap-2">
-          행정동 {quiet.total}곳 중 백분위 {Math.round(quiet.score)} ·{' '}
-          <GradeBadge grade={quiet.grade} size="sm" />
-        </p>
-      )}
 
-      <label className="flex flex-col gap-1">
-        <span className="text-caption-xs text-text-tertiary">방문 월</span>
-        <select
-          className={select}
-          value={month}
-          onChange={(e) => onMonthChange(e.target.value as MonthParam)}
-        >
-          {MONTHS.map((m) => (
-            <option key={m} value={m}>
-              {monthLabel(m)}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-caption-xs text-text-tertiary">체류 기간</span>
-        <select
-          className={select}
-          value={stay}
-          onChange={(e) => setStay(e.target.value as (typeof STAY)[number])}
-        >
-          {STAY.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <Link
-        to={sggLink}
-        className="bg-bg-subtle hover:bg-bg-surface-strong flex flex-col gap-1 rounded-xl p-3"
-      >
-        <span className="text-caption-xs text-text-tertiary">소속 시군구</span>
-        <span className="text-body-sm text-text-primary font-medium">
-          {detail.sigungu.name}
-          {sgg && ` · 종합 ${Math.round(sgg.score)} · ${presetLabel} ${sgg.rank}위`}
-        </span>
-      </Link>
+      <div className="border-border-strong divide-border-strong flex flex-col divide-y overflow-hidden rounded-lg border">
+        <div className="divide-border-strong grid grid-cols-2 divide-x">
+          <label className={cell}>
+            <span className={cellLabel}>방문 월</span>
+            <select
+              className={cellSelect}
+              value={month}
+              onChange={(e) => onMonthChange(e.target.value as MonthParam)}
+            >
+              {MONTHS.map((m) => (
+                <option key={m} value={m}>
+                  {monthLabel(m)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={cell}>
+            <span className={cellLabel}>체류 기간</span>
+            <select
+              className={cellSelect}
+              value={stay}
+              onChange={(e) => setStay(e.target.value as (typeof STAY)[number])}
+            >
+              {STAY.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <Link to={sggLink} className={`${cell} hover:bg-bg-subtle relative pr-9`}>
+          <span className={cellLabel}>소속 시군구</span>
+          <span className="text-body-sm text-text-secondary">
+            {detail.sigungu.name}
+            {sgg && ` · 종합 ${Math.round(sgg.score)} · ${presetLabel} ${sgg.rank}위`}
+          </span>
+          <ChevronDown
+            size={16}
+            aria-hidden
+            className="text-text-primary absolute top-1/2 right-3 -translate-y-1/2"
+          />
+        </Link>
+      </div>
 
       <button
         type="button"
         onClick={() => toggle('dongs', detail.id)}
         aria-pressed={saved}
-        className="bg-brand-primary text-body-sm text-text-inverse hover:bg-brand-hover inline-flex h-11 items-center justify-center gap-2 rounded-lg font-medium"
+        className="bg-brand-primary text-body-base text-text-inverse hover:bg-brand-hover h-12 rounded-lg px-6 font-medium"
       >
-        <Heart size={16} aria-hidden className={saved ? 'fill-current' : undefined} />{' '}
         {saved ? '즐겨찾기에 있음' : '이 동네 즐겨찾기'}
       </button>
       <Link
         to={compareLink}
-        className="border-border-default text-body-sm text-text-primary hover:border-border-strong inline-flex h-11 items-center justify-center gap-2 rounded-lg border font-medium"
+        className="border-text-primary text-body-base text-text-primary hover:bg-bg-subtle inline-flex h-12 items-center justify-center rounded-lg border px-6 font-medium"
       >
-        <Columns2 size={16} aria-hidden /> 다른 동네와 비교
+        다른 동네와 비교
       </Link>
+      <p className="text-caption-xs text-text-tertiary text-center">
+        즐겨찾기는 로그인 시 기기 간 동기화돼요
+      </p>
 
-      <dl className="border-border-default text-body-sm flex flex-col gap-2 border-t pt-4">
+      <dl className="border-border-default text-body-sm flex flex-col gap-2.5 border-t pt-4">
         <div className="flex justify-between">
           <dt className="text-text-secondary">주중 피크</dt>
-          <dd className="text-text-primary">{formatHour(detail.peaks.weekday.peakHour)}</dd>
+          <dd className="text-text-primary font-medium">
+            {formatHour(detail.peaks.weekday.peakHour)} · 100
+          </dd>
         </div>
         <div className="flex justify-between">
           <dt className="text-text-secondary">가장 한산</dt>
-          <dd className="text-text-primary">{formatHour(detail.peaks.weekday.lowHour)}</dd>
+          <dd className="text-text-primary font-medium">
+            {formatHour(detail.peaks.weekday.lowHour)} · {detail.peaks.weekday.lowValue}
+          </dd>
         </div>
         <div className="flex justify-between">
           <dt className="text-text-secondary">생활권 지수</dt>
-          <dd className="text-text-primary">{detail.stats.localLife}</dd>
+          <dd className="text-text-primary font-medium">
+            {detail.stats.localLife} · {localLifeLabel(detail.stats.localLife)}
+          </dd>
         </div>
         <div className="flex justify-between">
           <dt className="text-text-secondary">소속 지역</dt>
           <dd>
-            <Link to={sggLink} className="text-text-primary underline">
-              상세 보기 →
+            <Link to={sggLink} className="text-text-primary font-medium hover:underline">
+              {detail.sigungu.name} 상세 보기 →
             </Link>
           </dd>
         </div>

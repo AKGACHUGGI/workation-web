@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import GradeBadge from '@/components/ui/GradeBadge'
 import Tag from '@/components/ui/Tag'
+import BrandTag from '@/features/region/components/BrandTag'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import type { DongKind } from '@/features/region/types'
 import type { Grade } from '@/features/metric/types'
@@ -20,28 +21,37 @@ type Props = {
   leading?: ReactNode
 }
 
-/** 행정동 한 줄. W-03·W-08 재사용 */
+/**
+ * 행정동 한 줄 (Figma DongRow 7:256). 이름 16/24 Medium, 아래 줄에 생활권(brand)/관광지(회색) 태그 + 설명.
+ * W-03·W-08 재사용
+ */
 export default function DongRow({ name, kind, subtitle, gradeLabel, grade, href, leading }: Props) {
+  const kindTag =
+    kind === 'living' ? (
+      <BrandTag>{DONG_KIND_LABEL[kind]}</BrandTag>
+    ) : (
+      <Tag>{DONG_KIND_LABEL[kind]}</Tag>
+    )
   return (
-    <li className="border-border-default flex items-center gap-3 border-b py-3 last:border-b-0">
+    <li className="border-border-default flex items-center gap-3 border-b px-4 py-3">
       {leading}
-      <Link to={href} className="flex flex-1 items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <span className="text-body-base text-text-primary font-medium">{name}</span>
-            <Tag>{DONG_KIND_LABEL[kind]}</Tag>
+      <Link to={href} className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="text-body-base text-text-primary font-medium">{name}</span>
+          <div className="flex items-center gap-1.5">
+            {kindTag}
+            <span className="text-caption-xs text-text-tertiary truncate">{subtitle}</span>
           </div>
-          <span className="text-caption-xs text-text-secondary">{subtitle}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5">
           <span className="text-caption-xs text-text-tertiary">{gradeLabel}</span>
           {grade ? (
             <GradeBadge grade={grade} size="sm" />
           ) : (
             <span className="text-caption-xs text-text-tertiary">—</span>
           )}
-          <ChevronRight size={16} className="text-text-tertiary" />
         </div>
+        <ChevronRight size={20} aria-hidden className="text-text-secondary shrink-0" />
       </Link>
     </li>
   )

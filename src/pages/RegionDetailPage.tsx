@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
-import GradeBadge from '@/components/ui/GradeBadge'
 import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL, METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { METRIC_KEYS } from '@/features/metric/types'
@@ -122,7 +121,7 @@ export default function RegionDetailPage() {
   const supportLink = d.links.find((l) => l.kind === 'support')
 
   return (
-    <PageContainer className="flex flex-col gap-8 py-10">
+    <PageContainer className="flex flex-col gap-5 pt-5 pb-16">
       <RegionHero
         breadcrumb={[
           { label: '탐색', href: carryQuery('/', current) },
@@ -143,37 +142,37 @@ export default function RegionDetailPage() {
       />
       <PhotoGallery photos={d.photos} alt={d.name} />
 
-      <div className="flex items-start gap-8">
-        <div className="flex min-w-0 flex-1 flex-col gap-10">
-          <ScoreCard
-            score={score}
-            headline={`${presetLabel} 프리셋 · ${total}곳 중 ${rank.rank}위 · ${rank.grade}`}
-            detail={
-              <>
-                <span>{mLabel} 기준</span>
-                {METRIC_KEYS.map((k) => (
-                  <span key={k} className={`flex items-center gap-1 ${dim(k)}`}>
-                    · {METRIC_SHORT_LABEL[k]}{' '}
-                    <GradeBadge grade={metricGrade(scores[k])} size="sm" />
-                  </span>
-                ))}
-              </>
-            }
-            summary={[
-              {
-                label: METRIC_LABEL.crowd,
-                value: crowdGrade,
-                caption: `${mLabel} 혼잡 ${d.stats.crowdIndex}`,
-              },
-              {
-                label: '낮 유입 지수',
-                value: d.stats.dayInflow.toFixed(2),
-                caption: `${total}곳 중 ${d.stats.quietRank}위`,
-              },
-              { label: '숙박 계수', value: d.stats.overnightCoef.toFixed(2) },
-              { label: '주말 ÷ 주중 낮', value: `${d.stats.weekendRatio.toFixed(2)}배` },
-            ]}
-          />
+      <div className="mt-2 flex items-start gap-12">
+        <div className="divide-border-default border-border-default flex min-w-0 flex-1 flex-col divide-y border-b">
+          <div className="pt-6 pb-8">
+            <ScoreCard
+              score={score}
+              headline={`${presetLabel} 프리셋 · ${total}곳 중 ${rank.rank}위 · ${rank.grade}`}
+              detail={
+                <>
+                  <span>{mLabel} 기준</span>
+                  {METRIC_KEYS.map((k) => (
+                    <span key={k} className={dim(k)}>
+                      · {METRIC_SHORT_LABEL[k]} {metricGrade(scores[k])}
+                    </span>
+                  ))}
+                </>
+              }
+              summary={[
+                {
+                  label: METRIC_LABEL.crowd,
+                  value: crowdGrade,
+                  caption: `${mLabel} 혼잡 ${d.stats.crowdIndex}`,
+                },
+                {
+                  label: `낮 유입 지수 ${d.stats.dayInflow.toFixed(2)}`,
+                  value: `${d.stats.quietRank}위`,
+                },
+                { label: '숙박 계수', value: d.stats.overnightCoef.toFixed(2) },
+                { label: '주말 ÷ 주중 낮', value: `${d.stats.weekendRatio.toFixed(2)}배` },
+              ]}
+            />
+          </div>
           <MetricGrid
             caption={`${mLabel} · 시군구 ${total}곳 백분위`}
             cards={[
@@ -236,6 +235,7 @@ export default function RegionDetailPage() {
             status={status(poll)}
             onRetry={() => poll.refetch()}
             participationLabel="지표 검증에 반영돼요"
+            photoCaption={`${mLabel} · 사용자 제공 · 검수 후 게시`}
           />
           <LinkList links={d.links} />
         </div>

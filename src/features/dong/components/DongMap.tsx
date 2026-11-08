@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom'
 import { bboxToBounds, centroid } from '@/components/map/geo'
 import type { GeoFeatureCollection, PolygonStyle } from '@/components/map/geo'
 import GoogleMapProvider from '@/components/map/GoogleMapProvider'
-import { mapsMapId } from '@/components/map/mapsKey'
 import MapPlaceholder from '@/components/map/MapPlaceholder'
+import { hasMapsKey, mapsMapId } from '@/components/map/mapsKey'
 import PolygonLayer from '@/components/map/PolygonLayer'
 import { DONG_COPY } from '@/features/dong/copy'
 import type { DongDetailResponse } from '@/features/dong/types'
 import { METRIC_LABEL } from '@/features/metric/constants'
 import type { Grade } from '@/features/metric/types'
+import DetailSection from '@/features/region/components/DetailSection'
 import { carryQuery } from '@/hooks/carryQuery'
 
 type Props = {
@@ -41,6 +42,7 @@ export default function DongMap({ detail, geo, quietGrade }: Props) {
   const navigate = useNavigate()
   const [hoverCurrent, setHoverCurrent] = useState(false)
   const landmarks = detail.landmarks.join(' · ')
+  const keyed = hasMapsKey()
   const feature = geo?.features.find((f) => f.properties.id === detail.id)
   const center = feature
     ? centroid(feature.geometry)
@@ -59,14 +61,9 @@ export default function DongMap({ detail, geo, quietGrade }: Props) {
   const onHover = useCallback((id: string | null) => setHoverCurrent(id === detail.id), [detail.id])
 
   return (
-    <section aria-labelledby="map-title" className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 id="map-title" className="text-heading-lg text-text-primary">
-          {DONG_COPY.mapTitle}
-        </h2>
-        <span className="text-caption-xs text-text-tertiary">{detail.accessNote}</span>
-      </div>
-      <div className="relative h-80 w-full overflow-hidden rounded-xl">
+    <DetailSection title={DONG_COPY.mapTitle} titleId="map-title" caption={detail.accessNote}>
+      {/* 키가 없으면 Figma MiniMap(251:3808)처럼 낮은 회색 박스, 키가 있으면 지도 320px */}
+      <div className={`relative w-full overflow-hidden rounded-xl ${keyed ? 'h-80' : ''}`}>
         <GoogleMapProvider
           fallback={<MapPlaceholder title={DONG_COPY.mapNoKey}>{landmarks}</MapPlaceholder>}
         >
@@ -105,7 +102,7 @@ export default function DongMap({ detail, geo, quietGrade }: Props) {
           )}
         </GoogleMapProvider>
       </div>
-      <p className="text-body-sm text-text-secondary">{landmarks}</p>
-    </section>
+      {keyed && <p className="text-body-sm text-text-secondary">{landmarks}</p>}
+    </DetailSection>
   )
 }
