@@ -24,3 +24,22 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   if (res.status === 204) return undefined as T
   return res.json() as Promise<T>
 }
+
+/**
+ * 파일(blob) 응답용. PDF 다운로드처럼 JSON 이 아닌 응답에만 쓴다.
+ * 컴포넌트에서 fetch 를 직접 쓰지 않기 위한 유일한 예외 경로. 쿠키·CSRF·에러 규칙은 api<T>() 와 같다.
+ */
+export async function apiBlob(path: string, init?: RequestInit): Promise<Blob> {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers: {
+      'X-Requested-With': 'workation-web',
+      ...init?.headers,
+    },
+  })
+  if (res.status === 401) throw new UnauthorizedError(path)
+  if (res.status === 404) throw new NotFoundError(path)
+  if (!res.ok) throw new Error(`API ${res.status} ${res.statusText}: ${path}`)
+  return res.blob()
+}

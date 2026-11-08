@@ -3,3 +3,4 @@ dist
 test-results
 playwright-report
 src/mocks/tier/generated
+public/mock-pdf
