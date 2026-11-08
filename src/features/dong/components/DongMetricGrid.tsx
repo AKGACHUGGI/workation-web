@@ -1,6 +1,4 @@
 import MetricCard from '@/components/ui/MetricCard'
-import GradeBadge from '@/components/ui/GradeBadge'
-import { GRADE_FG } from '@/components/ui/gradeClass'
 import { DONG_COPY } from '@/features/dong/copy'
 import { localLifeGrade, localLifeLabel } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
@@ -8,6 +6,7 @@ import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
 import { metricGrade } from '@/features/metric/score'
 import type { MetricScores } from '@/features/metric/types'
+import DetailSection from '@/features/region/components/DetailSection'
 
 type Props = {
   detail: DongDetailResponse
@@ -18,20 +17,16 @@ type Props = {
   excluded: number
 }
 
+/** Figma 251:3794 '동네 지표 4종' */
 export default function DongMetricGrid({ detail, month, scores, total, excluded }: Props) {
   const s = detail.stats
-  const lifeGrade = localLifeGrade(s.localLife)
   return (
-    <section aria-labelledby="metric-title" className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 id="metric-title" className="text-heading-lg text-text-primary">
-          {DONG_COPY.metricTitle}
-        </h2>
-        <span className="text-caption-xs text-text-tertiary">
-          {DONG_COPY.metricCaption(monthLabel(month), total, excluded)}
-        </span>
-      </div>
-      <div className="grid grid-cols-4 gap-4">
+    <DetailSection
+      title={`${DONG_COPY.metricTitle} 4종`}
+      titleId="metric-title"
+      caption={DONG_COPY.metricCaption(monthLabel(month), total, excluded)}
+    >
+      <div className="grid grid-cols-4 items-start gap-4">
         {scores ? (
           <>
             <MetricCard
@@ -63,18 +58,15 @@ export default function DongMetricGrid({ detail, month, scores, total, excluded 
             </div>
           ))
         )}
-        {/* 생활권 지수는 티어 지표가 아니라 상세 응답 값 + 고정 경계 */}
-        <div className="border-border-default bg-bg-surface flex flex-col gap-2 rounded-xl border p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-body-sm text-text-secondary font-medium">생활권 지수</span>
-            <GradeBadge grade={lifeGrade} size="sm" />
-          </div>
-          <span className={`text-number-2xl ${GRADE_FG[lifeGrade]}`}>{s.localLife}</span>
-          <span className="text-caption-xs text-text-tertiary">
-            (거주+근무) ÷ 전체 {s.localLife}% · {localLifeLabel(s.localLife)}
-          </span>
-        </div>
+        {/* 생활권 지수는 티어 지표가 아니라 상세 응답 값 + 고정 경계. 모양은 MetricCard(label 덮어쓰기) */}
+        <MetricCard
+          metric="quiet"
+          label="생활권 지수"
+          score={s.localLife}
+          grade={localLifeGrade(s.localLife)}
+          subtitle={`(거주+근무) ÷ 전체 ${s.localLife}% · ${localLifeLabel(s.localLife)}`}
+        />
       </div>
-    </section>
+    </DetailSection>
   )
 }

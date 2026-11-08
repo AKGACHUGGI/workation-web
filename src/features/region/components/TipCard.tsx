@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 import { Flag, MessageCircle, ThumbsUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import Tag from '@/components/ui/Tag'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
 import { monthLabel } from '@/features/metric/month'
+import BrandTag from '@/features/region/components/BrandTag'
 import { relativeTime } from '@/features/region/relativeTime'
 import type { Note } from '@/features/region/types'
 
@@ -16,28 +16,30 @@ type Props = {
   trailing?: ReactNode
 }
 
-/** 워케이션 노트 카드. 도움돼요·답글·신고는 로그인 필요 */
+/**
+ * 워케이션 노트 카드 (Figma TipCard 27:132). 아바타는 brand/soft 원 + 첫 글자.
+ * 도움돼요·답글·신고는 로그인 필요
+ */
 export default function TipCard({ note, targetHref, targetLabel, trailing }: Props) {
   const requireLogin = useRequireLogin()
   const meta = [relativeTime(note.createdAt), note.dongName, note.stayLabel]
     .filter(Boolean)
     .join(' · ')
   return (
-    <article className="border-border-default flex flex-col gap-3 rounded-2xl border p-4">
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="bg-bg-inverse text-text-inverse text-caption-badge flex h-8 w-8 items-center justify-center rounded-full">
-            {note.author.initial}
-          </span>
-          <div className="flex flex-col">
-            <span className="text-body-sm text-text-primary font-medium">
-              {note.author.nickname}
-            </span>
-            <span className="text-caption-xs text-text-tertiary">{meta}</span>
-          </div>
+    <article className="border-border-default bg-bg-surface flex flex-col gap-2.5 rounded-xl border p-4">
+      <header className="flex items-center gap-2.5">
+        <span
+          aria-hidden
+          className="bg-brand-soft border-brand-soft-border text-text-brand text-body-sm flex size-8 shrink-0 items-center justify-center rounded-full border font-bold"
+        >
+          {note.author.initial}
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <span className="text-body-sm text-text-primary font-bold">{note.author.nickname}</span>
+          <span className="text-caption-xs text-text-tertiary">{meta}</span>
         </div>
-        <div className="flex items-center gap-2">
-          {note.visitMonth && <Tag>{monthLabel(note.visitMonth)} 방문</Tag>}
+        <div className="flex shrink-0 items-center gap-2">
+          {note.visitMonth && <BrandTag>{monthLabel(note.visitMonth)} 방문</BrandTag>}
           {targetHref && targetLabel && (
             <Link to={targetHref} className="text-caption-xs text-text-secondary underline">
               {targetLabel}
@@ -47,27 +49,27 @@ export default function TipCard({ note, targetHref, targetLabel, trailing }: Pro
         </div>
       </header>
       <p className="text-body-sm text-text-primary">{note.body}</p>
-      <footer className="text-caption-xs text-text-secondary flex items-center gap-4">
+      <footer className="flex items-center gap-4">
         <button
           type="button"
           onClick={() => requireLogin(() => {})}
-          className="flex items-center gap-1"
+          className="text-caption-segment text-text-secondary flex items-center gap-1"
         >
-          <ThumbsUp size={14} /> 도움돼요 {note.helpful}
+          <ThumbsUp size={16} aria-hidden /> 도움돼요 {note.helpful}
         </button>
         <button
           type="button"
           onClick={() => requireLogin(() => {})}
-          className="flex items-center gap-1"
+          className="text-caption-segment text-text-secondary flex items-center gap-1"
         >
-          <MessageCircle size={14} /> 답글 {note.replies}
+          <MessageCircle size={16} aria-hidden /> 답글 {note.replies}
         </button>
         <button
           type="button"
           onClick={() => requireLogin(() => {})}
-          className="ml-auto flex items-center gap-1"
+          className="text-caption-xs text-text-tertiary ml-auto flex items-center gap-1"
         >
-          <Flag size={14} /> 신고
+          <Flag size={14} aria-hidden /> 신고
         </button>
       </footer>
     </article>

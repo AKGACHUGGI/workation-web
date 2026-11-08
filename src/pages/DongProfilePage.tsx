@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
 import { ACTIVITY_LABEL, dominantActivity } from '@/features/dong/activity'
@@ -21,6 +21,7 @@ import { useGeoQuery } from '@/features/dong/useGeoQuery'
 import { metricGrade } from '@/features/metric/score'
 import type { Grade } from '@/features/metric/types'
 import NoteSection from '@/features/region/components/NoteSection'
+import DetailSection from '@/features/region/components/DetailSection'
 import PollSection from '@/features/region/components/PollSection'
 import { usePresetMode } from '@/features/region/presetMode'
 import { rankIn } from '@/features/region/rank'
@@ -101,22 +102,24 @@ export default function DongProfilePage() {
   const sgg = sggRank ? { score: sggRank.score, rank: sggRank.rank } : null
 
   return (
-    <PageContainer className="flex flex-col gap-8 py-8">
+    <PageContainer className="flex flex-col gap-5 pt-5 pb-16">
       <DongHero
         detail={detail}
         month={month}
         summary={summary}
         dominantLabel={ACTIVITY_LABEL[dominant]}
       />
-      <div className="flex gap-8">
-        <div className="flex min-w-0 flex-1 flex-col gap-10">
-          <DongScoreCard
-            detail={detail}
-            month={month}
-            quiet={quiet}
-            vibeGrade={vibeGrade}
-            peerGrade={peerGrade}
-          />
+      <div className="mt-2 flex items-start gap-12">
+        <div className="divide-border-default flex min-w-0 flex-1 flex-col divide-y">
+          <div className="pt-6 pb-8">
+            <DongScoreCard
+              detail={detail}
+              month={month}
+              quiet={quiet}
+              vibeGrade={vibeGrade}
+              peerGrade={peerGrade}
+            />
+          </div>
           <HourlyCurveSection
             id={detail.id}
             hourly={detail.hourly}
@@ -124,16 +127,15 @@ export default function DongProfilePage() {
             month={month}
             onMonthChange={setMonth}
           />
-          <section aria-labelledby="activity-title" className="flex flex-col gap-4">
-            <div>
-              <h2 id="activity-title" className="text-heading-lg text-text-primary">
-                {DONG_COPY.activityTitle}
-              </h2>
-              <p className="text-caption-xs text-text-tertiary">{DONG_COPY.activityCaption}</p>
-            </div>
+          {/* 동네 성격은 Figma v2 에 아직 없는 섹션(스펙 §3-4). 다른 섹션과 같은 머리·간격 */}
+          <DetailSection
+            title={DONG_COPY.activityTitle}
+            titleId="activity-title"
+            caption={DONG_COPY.activityCaption}
+          >
             <ActivityMixBar mix={detail.activityMix} />
             <p className="text-body-sm text-text-secondary">{summary}</p>
-          </section>
+          </DetailSection>
           <DongMetricGrid
             detail={detail}
             month={month}
@@ -160,16 +162,17 @@ export default function DongProfilePage() {
             status={poll.status}
             onRetry={() => poll.refetch()}
             participationLabel={DONG_COPY.pollParticipation}
+            title="체감 투표"
+            sectionCaption="투표 결과는 지표 검증·가중치 조정에 반영"
           />
-          <Link
-            to={compareLink}
-            className="border-border-default hover:border-border-strong flex items-center justify-between rounded-xl border p-5"
-          >
-            <span className="flex flex-col gap-1">
-              <span className="text-title-md text-text-primary">{DONG_COPY.compareLink}</span>
-              <span className="text-caption-xs text-text-tertiary">{DONG_COPY.compareLinkSub}</span>
+          <Link to={compareLink} className="group flex items-center justify-between pt-6 pb-2">
+            <span className="flex flex-col gap-0.5">
+              <span className="text-body-base text-text-primary font-medium group-hover:underline">
+                {DONG_COPY.compareLink}
+              </span>
+              <span className="text-body-sm text-text-secondary">{DONG_COPY.compareLinkSub}</span>
             </span>
-            <ArrowRight size={20} aria-hidden />
+            <ChevronRight size={20} aria-hidden className="text-text-primary" />
           </Link>
         </div>
         <DongPlanCard
