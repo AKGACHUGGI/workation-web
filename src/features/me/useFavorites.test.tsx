@@ -20,12 +20,14 @@ const putFavorite = vi.fn()
 const deleteFavorite = vi.fn()
 // 서버 상태. PUT/DELETE 가 바꾸고 onSettled 재조회가 읽는다 (고정값이면 재조회가 낙관적 갱신을 되돌린다)
 let server: { regions: string[]; dongs: string[] } = { regions: [], dongs: [] }
+// ids 응답을 붙잡아 두는 관문 (로딩 전 상태 재현용)
+let idsGate: Promise<void> = Promise.resolve()
 vi.mock('@/features/me/api', async () => {
   const actual = await vi.importActual<typeof import('@/features/me/api')>('@/features/me/api')
   return {
     ...actual,
     getFavoriteIds: () =>
-      Promise.resolve({ regions: [...server.regions], dongs: [...server.dongs] }),
+      idsGate.then(() => ({ regions: [...server.regions], dongs: [...server.dongs] })),
     putFavorite: (...a: unknown[]) => putFavorite(...a),
     deleteFavorite: (...a: unknown[]) => deleteFavorite(...a),
   }
@@ -35,7 +37,7 @@ import { FavoriteLimitError } from '@/features/me/api'
 import { useFavorites } from '@/features/me/useFavorites'
 
 function Probe() {
-  const { isFavorite, toggle } = useFavorites()
+  const { isFavorite, toggle, setFavorite } = useFavorites()
   const firstToggle = useRef(toggle) // 첫 렌더의 toggle 고정 — 되돌리기 토스트 onClick 클로저 재현
   return (
     <div>
@@ -44,6 +46,7 @@ function Probe() {
       <button onClick={() => toggle('regions', '51820')}>toggle goseong</button>
       <button onClick={() => toggle('regions', '51830')}>toggle yangyang</button>
       <button onClick={() => firstToggle.current('regions', '51820')}>stale toggle goseong</button>
+      <button onClick={() => setFavorite('regions', '51820', false)}>remove goseong</button>
     </div>
   )
 }
@@ -54,6 +57,7 @@ describe('useFavorites', () => {
     openLogin.mockReset()
     show.mockReset()
     server = { regions: ['51820'], dongs: [] }
+    idsGate = Promise.resolve()
     putFavorite.mockReset().mockImplementation(async (kind: 'regions' | 'dongs', id: string) => {
       server = { ...server, [kind]: [...server[kind], id] }
     })
@@ -92,6 +96,14 @@ describe('useFavorites', () => {
     await waitFor(() => expect(screen.getByTestId('goseong')).toHaveTextContent('true'))
     expect(putFavorite).toHaveBeenCalledWith('regions', '51820')
     expect(deleteFavorite).toHaveBeenCalledTimes(1)
+  })
+
+  it('setFavorite 는 캐시와 무관 — ids 로딩 전 해제도 DELETE', async () => {
+    idsGate = new Promise(() => {}) // ids 가 영영 안 온다
+    renderWithRouter(<Probe />)
+    await userEvent.click(screen.getByText('remove goseong'))
+    await waitFor(() => expect(deleteFavorite).toHaveBeenCalledWith('regions', '51820'))
+    expect(putFavorite).not.toHaveBeenCalled()
   })
 
   it('실패하면 롤백', async () => {

@@ -13,6 +13,7 @@ import {
   type MyPhotosResponse,
   type MyTipsResponse,
 } from '@/features/me/types'
+import { favoriteDongsMock, favoriteRegionsMock } from '@/mocks/me/favorites'
 import { meSummaryMock } from '@/mocks/me/summary'
 import { meStore } from '@/mocks/me/store'
 
@@ -59,7 +60,14 @@ export async function putFavorite(kind: FavoriteKind, id: string): Promise<void>
     if (list.some((x) => x.id === id)) return mockDelay(undefined, 50)
     if (list.length >= FAVORITE_LIMIT) throw new FavoriteLimitError()
     const addedAt = new Date().toISOString()
-    if (kind === 'regions') {
+    // 픽스처에 있는 id(해제 후 되돌리기)는 원래 항목으로 복원한다
+    const knownRegion = favoriteRegionsMock.find((r) => r.id === id)
+    const knownDong = favoriteDongsMock.find((d) => d.id === id)
+    if (kind === 'regions' && knownRegion) {
+      meStore.regions.push({ ...knownRegion, addedAt })
+    } else if (kind === 'dongs' && knownDong) {
+      meStore.dongs.push({ ...knownDong, addedAt })
+    } else if (kind === 'regions') {
       meStore.regions.push({
         id,
         name: id,

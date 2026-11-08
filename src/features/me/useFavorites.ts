@@ -13,6 +13,8 @@ export type { FavoriteKind } from '@/features/me/types'
 export type UseFavorites = {
   isFavorite: (kind: FavoriteKind, id: string) => boolean
   toggle: (kind: FavoriteKind, id: string) => void
+  /** 지정한 상태로 맞춘다(true → PUT, false → DELETE). 캐시를 읽지 않으므로 ids 로딩 전에도 의도대로 동작 */
+  setFavorite: (kind: FavoriteKind, id: string, next: boolean) => void
   isPending: boolean
 }
 
@@ -43,7 +45,8 @@ export function useFavorites(): UseFavorites {
     onMutate: async ({ kind, id, next }) => {
       await queryClient.cancelQueries({ queryKey: meKeys.favoriteIds })
       const prev = queryClient.getQueryData<FavoriteIds>(meKeys.favoriteIds) ?? EMPTY
-      const list = next ? [...prev[kind], id] : prev[kind].filter((x) => x !== id)
+      const rest = prev[kind].filter((x) => x !== id)
+      const list = next ? [...rest, id] : rest
       queryClient.setQueryData<FavoriteIds>(meKeys.favoriteIds, { ...prev, [kind]: list })
       return { prev }
     },
@@ -72,5 +75,12 @@ export function useFavorites(): UseFavorites {
     [requireLogin, mutation, queryClient],
   )
 
-  return { isFavorite, toggle, isPending: mutation.isPending }
+  const setFavorite = useCallback(
+    (kind: FavoriteKind, id: string, next: boolean) => {
+      requireLogin(() => mutation.mutate({ kind, id, next }))
+    },
+    [requireLogin, mutation],
+  )
+
+  return { isFavorite, toggle, setFavorite, isPending: mutation.isPending }
 }

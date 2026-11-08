@@ -27,6 +27,9 @@ describe('me api (mock)', () => {
     await putFavorite('regions', '51820')
     await putFavorite('regions', '51820')
     expect((await getFavoriteIds()).regions.filter((id) => id === '51820')).toHaveLength(1)
+    // 되돌리기로 다시 넣으면 픽스처 항목(이름·사진)으로 복원
+    const restored = (await getMyFavorites('2025-10')).regions.find((r) => r.id === '51820')
+    expect(restored).toMatchObject({ name: '고성군', photoUrl: '/mock-photos/51820.jpg' })
   })
 
   it('모르는 id 를 PUT 하면 tier 정보 없이 최소 항목으로 추가된다', async () => {
