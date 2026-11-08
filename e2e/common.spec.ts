@@ -5,20 +5,20 @@ test.describe('공통 기반', () => {
     await page.goto('/')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('어떤 워케이션을 찾고 있나요?')
 
-    await page.getByRole('link', { name: '티어리스트' }).click()
+    await page.getByRole('link', { name: '시기 보기' }).click()
     await expect(page).toHaveURL(/\/tier$/)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('티어리스트')
 
-    await page.getByRole('link', { name: '동네 비교' }).click()
+    await page.getByRole('link', { name: '동네 고르기' }).click()
     await expect(page).toHaveURL(/\/compare$/)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('동네 비교')
   })
 
   test('month 쿼리는 페이지를 옮겨도 유지된다', async ({ page }) => {
     await page.goto('/?month=2025-10')
-    await page.getByRole('link', { name: '티어리스트' }).click()
+    await page.getByRole('link', { name: '시기 보기' }).click()
     await expect(page).toHaveURL(/\/tier\?month=2025-10$/)
-    await page.getByRole('link', { name: '동네 비교' }).click()
+    await page.getByRole('link', { name: '동네 고르기' }).click()
     await expect(page).toHaveURL(/\/compare\?month=2025-10$/)
   })
 

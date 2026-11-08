@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Globe, Menu } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import Avatar from '@/components/ui/Avatar'
 import { useToast } from '@/components/ui/toast/useToast'
@@ -8,7 +9,11 @@ import { useAuthContext } from '@/features/auth/authContext'
 import { authKeys } from '@/features/auth/queryKeys'
 import { useAuth } from '@/features/auth/useAuth'
 
-/** Navbar 우측. 비로그인: 로그인 버튼 → 모달. 로그인: 아바타 → 마이페이지 · 로그아웃 */
+/** Figma NavbarV2 AccountPill: 햄버거 16 + 원형 32(비로그인 GuestIcon / 로그인 아바타) */
+const PILL =
+  'border-border-default bg-bg-surface hover:shadow-float flex items-center gap-2.5 rounded-full border py-1.5 pr-1.5 pl-3 text-text-primary'
+
+/** Navbar 우측 계정 필. 비로그인: 누르면 로그인 모달. 로그인: 누르면 마이페이지 · 로그아웃 메뉴 */
 export default function AuthMenu() {
   const { me, isPending } = useAuth()
   const { openLogin } = useAuthContext()
@@ -47,16 +52,16 @@ export default function AuthMenu() {
     },
   })
 
-  if (isPending) return <div aria-hidden="true" className="h-10 w-20" />
+  if (isPending) return <div aria-hidden="true" className="h-11 w-20" />
 
   if (!me) {
     return (
-      <button
-        type="button"
-        onClick={() => openLogin()}
-        className="border-border-default text-body-sm text-text-primary hover:border-border-strong rounded-lg border px-4 py-2"
-      >
-        로그인
+      <button type="button" aria-label="로그인" onClick={() => openLogin()} className={PILL}>
+        <Menu size={16} aria-hidden />
+        {/* Figma GuestIcon: bg/surface-strong 원 32 안에 icon/globe 16 */}
+        <span className="bg-bg-surface-strong flex size-8 items-center justify-center rounded-full">
+          <Globe size={16} aria-hidden />
+        </span>
       </button>
     )
   }
@@ -69,9 +74,10 @@ export default function AuthMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="rounded-full"
+        className={PILL}
       >
-        <Avatar initial={me.initial} />
+        <Menu size={16} aria-hidden />
+        <Avatar initial={me.initial} size="sm" />
       </button>
       {open && (
         <div
