@@ -5,3 +5,11 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError'
   }
 }
+
+/** 401. 세션 없음·만료. useAuth 는 null 로, 뮤테이션은 AuthProvider 가 로그인 모달로 바꾼다 */
+export class UnauthorizedError extends Error {
+  constructor(path: string) {
+    super(`API 401: ${path}`)
+    this.name = 'UnauthorizedError'
+  }
+}
