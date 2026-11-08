@@ -15,6 +15,17 @@
 - `labelLat` · `labelLng`: 구역 안쪽 대표 점(PostGIS `ST_PointOnSurface`, 섬이 여럿이면 가장 큰 조각). 이름 · 점수 · 등급 라벨을 여기에 놓으면 오목한 구역이나 섬에서도 라벨이 구역 밖으로 나가지 않습니다. 송천3동은 DB 에 없어 경계 점 평균입니다.
 - 다시 만들 때: workation-backend `db/` 의 경계 SQL 기준으로 `ST_AsGeoJSON(ST_SimplifyPreserveTopology(geom, 0.0002), 5)`.
 
+## 화면용 파일 (sigungu.json · {시군구코드}.json)
+
+웹 화면(`useSigunguGeoQuery` · `useGeoQuery`)이 읽는 파일입니다. 위 두 파일에서 만들었고 모양은 같습니다.
+
+| 파일 | 내용 | properties |
+| --- | --- | --- |
+| `sigungu.json` | 시군구 12곳 (W-01 히트맵) | `id`, `name`, `labelLat`, `labelLng` |
+| `{시군구코드}.json` (12개) | 그 시군구의 행정동 (W-01 행정동 히트맵, W-04 위치 지도) | `id`, `name`, `labelLat`, `labelLng` |
+
+데이터 없는 송천3동은 `52110.json` 에 넣지 않았습니다 (지도는 빈칸, 점수 API 에도 없음).
+
 ## 라벨 (구역 안에 이름 · 점수 · 등급)
 
 - `google.maps.OverlayView` 로 `labelLat/labelLng` 위치에 div 를 띄우고 `floatPane` 에 넣으면 색칠한 구역 위에 선명하게 보입니다.
