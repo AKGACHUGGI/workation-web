@@ -17,7 +17,7 @@ describe('HourlyCurveSection', () => {
       />,
     )
     expect(screen.getByText('주중 피크').nextSibling).toHaveTextContent('11시 · 100')
-    expect(screen.getByText('가장 한산').nextSibling).toHaveTextContent('3시 · 48')
+    expect(screen.getByText('가장 한산').nextSibling).toHaveTextContent('03시 · 48')
     expect(screen.getByText('주말 피크').nextSibling).toHaveTextContent('13시 · 100')
   })
   it('주말 토글 시 가장 한산 칸이 주말 값으로 바뀐다', async () => {
@@ -32,7 +32,7 @@ describe('HourlyCurveSection', () => {
       />,
     )
     await userEvent.click(screen.getByRole('tab', { name: '주말' }))
-    expect(screen.getByText('가장 한산').nextSibling).toHaveTextContent('3시 · 47')
+    expect(screen.getByText('가장 한산').nextSibling).toHaveTextContent('03시 · 47')
   })
   it('월 칩은 ±1개월, 클릭하면 onMonthChange', async () => {
     const onMonthChange = vi.fn()

@@ -45,7 +45,7 @@ export default function ProfileHeader({ me, summary, onRetrySummary }: Props) {
             ) : (
               <h1 className="text-heading-2xl text-text-primary">{me.nickname}</h1>
             )}
-            <Tag>{PROVIDER_LABEL[me.provider]} 연결됨</Tag>
+            <Tag tone="brand">{PROVIDER_LABEL[me.provider]} 연결됨</Tag>
           </div>
           {summary ? (
             <p className="text-body-sm text-text-secondary">{buildActivitySummary(summary)}</p>

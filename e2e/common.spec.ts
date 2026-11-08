@@ -4,8 +4,10 @@ test.describe('공통 기반', () => {
   test('네비게이션으로 각 페이지에 들어가면 페이지 제목이 보인다', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('어떤 워케이션을 찾고 있나요?')
+    const tabs = page.getByRole('navigation', { name: '주 메뉴' }).getByRole('link')
+    await expect(tabs).toHaveText(['지역 찾기', '랭킹', '동네 고르기'])
 
-    await page.getByRole('link', { name: '시기 보기' }).click()
+    await page.getByRole('link', { name: '랭킹' }).click()
     await expect(page).toHaveURL(/\/tier$/)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('티어리스트')
 
@@ -16,7 +18,7 @@ test.describe('공통 기반', () => {
 
   test('month 쿼리는 페이지를 옮겨도 유지된다', async ({ page }) => {
     await page.goto('/?month=2025-10')
-    await page.getByRole('link', { name: '시기 보기' }).click()
+    await page.getByRole('link', { name: '랭킹' }).click()
     await expect(page).toHaveURL(/\/tier\?month=2025-10$/)
     await page.getByRole('link', { name: '동네 고르기' }).click()
     await expect(page).toHaveURL(/\/compare\?month=2025-10$/)

@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import type { KeyboardEvent } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 export type DropdownOption<T extends string> = { value: T; label: string }
@@ -9,7 +9,19 @@ type Props<T extends string> = {
   value: T
   onChange: (value: T) => void
   ariaLabel: string
+  /** 루트 폭 등 (예: W-06 'w-50'). 트리거는 루트 폭을 채우고 라벨 왼쪽 · 셰브런 오른쪽 */
   className?: string
+  /** 트리거 앞쪽 아이콘 (예: W-01 프리셋 sliders) */
+  icon?: ReactNode
+  /** 트리거에 보일 라벨 가공 (예: '조용한 곳' → '조용한 곳 프리셋'). 접근 이름·목록은 원래 라벨 */
+  formatLabel?: (label: string) => string
+  /** default: 헤어라인 h-36 · strong: border/strong h-40 14 Medium (Figma W-01 프리셋 버튼 · W-06 시군구 선택) */
+  variant?: 'default' | 'strong'
+}
+
+const TRIGGER: Record<'default' | 'strong', string> = {
+  default: 'border-border-default h-9 px-3',
+  strong: 'border-border-strong h-10 px-3 font-medium',
 }
 
 /** 단일 선택 드롭다운. 버튼(aria-haspopup=listbox) + listbox/option. */
@@ -19,6 +31,9 @@ export default function Dropdown<T extends string>({
   onChange,
   ariaLabel,
   className = '',
+  icon,
+  formatLabel,
+  variant = 'default',
 }: Props<T>) {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(() =>
@@ -84,10 +99,13 @@ export default function Dropdown<T extends string>({
         aria-controls={open ? listId : undefined}
         aria-label={`${ariaLabel}: ${current.label}`}
         onClick={() => setOpen((v) => !v)}
-        className="border-border-default bg-bg-surface text-body-sm text-text-primary hover:border-border-strong inline-flex h-9 items-center gap-2 rounded-lg border px-3"
+        className={`bg-bg-surface text-body-sm text-text-primary hover:border-border-strong inline-flex w-full items-center gap-2 rounded-lg border ${TRIGGER[variant]} ${icon ? 'pl-4' : ''}`}
       >
-        {current.label}
-        <ChevronDown size={16} aria-hidden />
+        {icon}
+        <span className="min-w-0 flex-1 truncate text-left">
+          {formatLabel ? formatLabel(current.label) : current.label}
+        </span>
+        <ChevronDown size={16} aria-hidden className="shrink-0" />
       </button>
       {open && (
         <ul

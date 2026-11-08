@@ -15,12 +15,41 @@ type Props = {
   animate?: boolean
 }
 
+/** Figma: W-04 전체 폭 곡선은 3시간 간격(251:3755), W-05 열(compact)은 0·6·12·18·23(251:4133) */
 const TICKS = [0, 3, 6, 9, 12, 15, 18, 21, 23]
+const COMPACT_TICKS = [0, 6, 12, 18, 23]
 
 /** Figma 251:3740 범례: 주중 = chart/weekday(잉크), 주말 = chart/weekend(브랜드). 선택 안 된 선은 옅게 */
 const STROKE: Record<DayGroup, string> = {
   weekday: 'var(--color-chart-weekday)',
   weekend: 'var(--color-chart-weekend)',
+}
+
+/** 양 끝 눈금(0시·23시)이 차트 밖으로 잘리지 않게 안쪽으로 정렬 */
+function HourTick({
+  x = 0,
+  y = 0,
+  payload,
+}: {
+  x?: number
+  y?: number
+  payload?: { value: number }
+}) {
+  const v = payload?.value ?? 0
+  const anchor = v === 0 ? 'start' : v === 23 ? 'end' : 'middle'
+  return (
+    <text
+      className="recharts-cartesian-axis-tick-value"
+      x={x}
+      y={y}
+      dy={12}
+      textAnchor={anchor}
+      fontSize={12}
+      fill="var(--color-text-tertiary)"
+    >
+      {`${v}시`}
+    </text>
+  )
 }
 
 /** 24시간 보행 곡선. 주중·주말 선 2개, 선택한 날은 진하게 */
@@ -48,12 +77,11 @@ export default function HourlyCurveChart({
       <CartesianGrid vertical={false} stroke="var(--color-chart-grid)" />
       <XAxis
         dataKey="h"
-        ticks={TICKS}
+        ticks={compact ? COMPACT_TICKS : TICKS}
         interval={0}
-        tickFormatter={(v: number) => `${v}시`}
         tickLine={false}
         axisLine={false}
-        tick={{ fontSize: compact ? 10 : 12, fill: 'var(--color-text-tertiary)' }}
+        tick={<HourTick />}
       />
       <YAxis hide domain={[0, 100]} />
       <Tooltip

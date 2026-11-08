@@ -18,7 +18,7 @@ test.describe('W-04 동네 프로필', () => {
     const curve = page.locator('section[aria-labelledby="curve-title"]')
     await curve.getByRole('tab', { name: '주말' }).click()
     await expect(curve.getByText('주말 피크').locator('..')).toContainText('13시 · 100')
-    await expect(curve.getByText('가장 한산').locator('..')).toContainText('3시 · 47')
+    await expect(curve.getByText('가장 한산').locator('..')).toContainText('03시 · 47')
     await curve.getByRole('button', { name: '9월' }).click()
     await expect(page).toHaveURL(/month=2025-09/)
   })

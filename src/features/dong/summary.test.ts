@@ -90,6 +90,7 @@ describe('pollQuestion', () => {
 describe('formatHour', () => {
   it('11 → 11시', () => {
     expect(formatHour(11)).toBe('11시')
-    expect(formatHour(0)).toBe('0시')
+    expect(formatHour(0)).toBe('00시')
+    expect(formatHour(3)).toBe('03시')
   })
 })

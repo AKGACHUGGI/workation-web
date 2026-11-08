@@ -8,11 +8,13 @@ type Props = {
   /** 툴팁 문구 (disabled 사유 등) */
   title?: string
   className?: string
+  /** sm = 32 (지도 패널·필터 칩), md = 42 · py-2.5 (Figma 화면의 예시·프리셋·월·비교 칩) */
+  size?: 'sm' | 'md'
   /** Tooltip 이 주입한다 */
   'aria-describedby'?: string
 }
 
-/** Figma Chip 7:139. h 32 · px 16 · 14/20 Medium · rounded-full. 선택 상태는 잉크(selected-*), 토글은 aria-pressed */
+/** Figma Chip 7:139. h 32(sm) / 42(md) · px 16 · 14/20 Medium · rounded-full. 선택 상태는 잉크(selected-*), 토글은 aria-pressed */
 export default function Chip({
   selected = false,
   disabled = false,
@@ -20,6 +22,7 @@ export default function Chip({
   children,
   title,
   className = '',
+  size = 'sm',
   'aria-describedby': describedBy,
 }: Props) {
   const tone = selected
@@ -34,7 +37,7 @@ export default function Chip({
       aria-describedby={describedBy}
       title={title}
       onClick={disabled ? undefined : onClick}
-      className={`text-body-sm inline-flex h-8 shrink-0 items-center gap-1 rounded-full border px-4 font-medium whitespace-nowrap ${tone} ${dim} ${className}`}
+      className={`text-body-sm inline-flex ${size === 'md' ? 'h-10.5' : 'h-8'} shrink-0 items-center gap-1 rounded-full border px-4 font-medium whitespace-nowrap ${tone} ${dim} ${className}`}
     >
       {children}
     </button>

@@ -22,7 +22,7 @@ export default function CustomMetricToggles({ selected, onChange }: Props) {
         const toggle = () =>
           onChange(on ? selected.filter((k) => k !== key) : normalizeMetrics([...selected, key]))
         const chip = (
-          <Chip selected={on} disabled={locked} onClick={toggle}>
+          <Chip size="md" selected={on} disabled={locked} onClick={toggle}>
             {METRIC_LABEL[key]}
           </Chip>
         )

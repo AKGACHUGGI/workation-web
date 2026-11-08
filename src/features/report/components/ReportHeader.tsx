@@ -22,12 +22,19 @@ export default function ReportHeader({ currentId, onExportPdf, isExporting }: Pr
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
           <h1 className="text-display-3xl text-text-primary tracking-tight">지자체 진단 리포트</h1>
-          <Tag>2차 기능</Tag>
+          <Tag tone="brand">2차 기능</Tag>
         </div>
         <p className="text-body-base text-text-secondary">{REPORT_DESCRIPTION}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <Dropdown options={SIGUNGU_OPTIONS} value={currentId} onChange={goTo} ariaLabel="시군구" />
+        <Dropdown
+          options={SIGUNGU_OPTIONS}
+          value={currentId}
+          onChange={goTo}
+          ariaLabel="시군구"
+          variant="strong"
+          className="w-50"
+        />
         <button
           type="button"
           onClick={onExportPdf}

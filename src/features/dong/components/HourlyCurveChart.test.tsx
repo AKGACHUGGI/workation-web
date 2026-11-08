@@ -32,4 +32,24 @@ describe('HourlyCurveChart', () => {
     )
     expect(line(container, 'weekend')).toHaveAttribute('stroke-width', '3')
   })
+  it('x축 눈금: 전체 폭 3시간 간격 9개, compact 는 0·6·12·18·23', () => {
+    const ticks = (c: HTMLElement) =>
+      Array.from(c.querySelectorAll('text.recharts-cartesian-axis-tick-value')).map(
+        (t) => t.textContent,
+      )
+    const { container, rerender } = render(
+      <HourlyCurveChart hourly={GEOJIN_2025_10.hourly} day="weekday" width={600} animate={false} />,
+    )
+    expect(ticks(container)).toHaveLength(9)
+    rerender(
+      <HourlyCurveChart
+        hourly={GEOJIN_2025_10.hourly}
+        day="weekday"
+        width={300}
+        compact
+        animate={false}
+      />,
+    )
+    expect(ticks(container)).toEqual(['0시', '6시', '12시', '18시', '23시'])
+  })
 })

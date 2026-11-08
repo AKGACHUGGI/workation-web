@@ -33,16 +33,16 @@ const CHART_HEIGHT = 170
 /** 측정 전 폭 (최소 1128px 본문 기준 열 안쪽 폭 근사) */
 const CHART_FALLBACK_WIDTH = 300
 
-/** 주중·주말 범례. 색은 HourlyCurveChart 의 선(주중 강조 굵게, 주말 보조)과 같다 */
+/** 주중·주말 범례 (Figma 251:4118). 색은 HourlyCurveChart 의 선과 같다: 주중 chart/weekday(잉크) · 주말 chart/weekend(브랜드) */
 function CurveLegend() {
   return (
     <div className="text-caption-xs text-text-secondary flex items-center gap-4">
       <span className="flex items-center gap-1.5">
-        <span aria-hidden className="bg-chart-line-strong h-1 w-4 rounded-full" />
+        <span aria-hidden className="bg-chart-weekday h-0.75 w-4 rounded-xs" />
         주중
       </span>
       <span className="flex items-center gap-1.5">
-        <span aria-hidden className="bg-chart-line-muted h-0.5 w-4 rounded-full" />
+        <span aria-hidden className="bg-chart-weekend h-0.75 w-4 rounded-xs" />
         주말
       </span>
     </div>

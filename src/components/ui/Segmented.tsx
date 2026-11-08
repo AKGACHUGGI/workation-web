@@ -13,6 +13,11 @@ type Props<T extends string> = {
   onChange: (value: T) => void
   ariaLabel?: string
   size?: 'sm' | 'md'
+  /**
+   * ink: 선택 칸 잉크 바탕 + 흰 글자 (W-01 지도 패널 범위 토글)
+   * surface: 선택 칸 흰 바탕 + 잉크 글자 + 옅은 그림자 (Figma DayToggle 7:486, W-02 범위·탭 토글)
+   */
+  variant?: 'ink' | 'surface'
   className?: string
 }
 
@@ -23,6 +28,7 @@ export default function Segmented<T extends string>({
   onChange,
   ariaLabel,
   size = 'md',
+  variant = 'ink',
   className = '',
 }: Props<T>) {
   // Figma: sm = W-01 지도 패널 범위 토글(px 10 · py 4 · 12/16 Medium), md = DayToggle(px 16 · py 6 · 14/20 Medium)
@@ -36,9 +42,11 @@ export default function Segmented<T extends string>({
     >
       {options.map((opt) => {
         const selected = opt.value === value
-        const tone = selected
-          ? 'bg-selected-bg text-selected-fg'
-          : 'text-text-secondary hover:text-text-primary'
+        const tone = !selected
+          ? 'text-text-secondary hover:text-text-primary'
+          : variant === 'surface'
+            ? 'bg-bg-surface text-text-primary shadow-xs'
+            : 'bg-selected-bg text-selected-fg'
         const dim = opt.disabled ? 'cursor-not-allowed opacity-dim' : 'cursor-pointer'
         return (
           <button

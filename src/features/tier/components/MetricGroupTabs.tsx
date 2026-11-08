@@ -28,6 +28,7 @@ export default function MetricGroupTabs({ metric, scope, onChange }: Props) {
       <div className="flex items-center gap-2">
         <span className="text-body-sm text-text-secondary">{METRIC_GROUP_LABEL.character}</span>
         <Segmented
+          variant="surface"
           ariaLabel={METRIC_GROUP_LABEL.character}
           options={options(CHARACTER)}
           value={METRIC_GROUP[metric] === 'character' ? metric : null}
@@ -37,6 +38,7 @@ export default function MetricGroupTabs({ metric, scope, onChange }: Props) {
       <div className="flex items-center gap-2">
         <span className="text-body-sm text-text-secondary">{METRIC_GROUP_LABEL.timing}</span>
         <Segmented
+          variant="surface"
           ariaLabel={METRIC_GROUP_LABEL.timing}
           options={options(TIMING)}
           value={METRIC_GROUP[metric] === 'timing' ? metric : null}

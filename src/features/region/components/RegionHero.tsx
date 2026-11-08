@@ -1,7 +1,6 @@
 import { Bookmark, ChevronRight, Share } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Tag from '@/components/ui/Tag'
-import BrandTag from '@/features/region/components/BrandTag'
 
 type Props = {
   breadcrumb: { label: string; href?: string }[]
@@ -58,7 +57,9 @@ export default function RegionHero({
             <p className="text-body-sm text-text-secondary">{metaLine}</p>
             {tags.map((t) =>
               t.tone === 'selected' ? (
-                <BrandTag key={t.label}>{t.label}</BrandTag>
+                <Tag tone="brand" key={t.label}>
+                  {t.label}
+                </Tag>
               ) : (
                 <Tag key={t.label}>{t.label}</Tag>
               ),

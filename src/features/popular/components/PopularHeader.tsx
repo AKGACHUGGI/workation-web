@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
 import Dropdown from '@/components/ui/Dropdown'
 import { PRESET_LABEL } from '@/features/metric/constants'
 import { PRESET_KEYS } from '@/features/metric/types'
@@ -42,6 +43,9 @@ export default function PopularHeader({
         <div className="flex items-center gap-2">
           <Dropdown
             ariaLabel="프리셋"
+            variant="strong"
+            icon={<SlidersHorizontal size={16} aria-hidden className="shrink-0" />}
+            formatLabel={(l) => `${l} 프리셋`}
             options={PRESET_KEYS.map((p) => ({ value: p, label: PRESET_LABEL[p] }))}
             value={preset}
             onChange={onPresetChange}
