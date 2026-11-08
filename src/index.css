@@ -222,7 +222,7 @@
   /* ---------- 레이아웃 치수 ---------- */
   --container-desktop: 1128px; /* min-w-desktop: 최소 폭, 이보다 좁으면 가로 스크롤 */
   --height-navbar: 80px; /* Figma Web/NavbarV2 */ /* h-navbar (h-* 는 --height·--spacing 네임스페이스만 읽는다) */
-  --container-sidebar: 360px; /* w-sidebar: W-03·W-04 사이드바 */
+  --container-sidebar: 372px; /* w-sidebar: W-03·W-04 사이드바 (Figma Rail 251:3836) */
   --container-map-rail: 420px; /* w-map-rail: W-01 히트맵 패널 */
   --container-modal-sm: 440px; /* w-modal-sm: 로그인 모달 */
   --container-modal-md: 640px; /* w-modal-md: 동 추가 모달 */

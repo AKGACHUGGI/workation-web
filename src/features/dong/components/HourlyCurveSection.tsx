@@ -30,8 +30,8 @@ const LEGEND = [
   { label: '주말', swatch: 'bg-chart-weekend' },
 ]
 
-/** 본문 열 폭(1360 - 레일 360 - 간격 48)에 맞춘 고정 폭. Figma 곡선 180 + 시각 라벨 */
-const CHART_WIDTH = 952
+/** 본문 열 폭(1376 - 레일 372 - 간격 48 = 956, Figma 251:3747)에 맞춘 고정 폭. Figma 곡선 180 + 시각 라벨 */
+const CHART_WIDTH = 956
 const CHART_HEIGHT = 212
 
 export default function HourlyCurveSection({
