@@ -5,7 +5,6 @@ import Tag from '@/components/ui/Tag'
 import ColumnSkeleton from '@/features/compare/components/ColumnSkeleton'
 import { COMPARE_COPY, shortMetricCopy } from '@/features/compare/copy'
 import { dominantActivity } from '@/features/dong/activity'
-import ActivityMixBar from '@/features/dong/components/ActivityMixBar'
 import HourlyCurveChart from '@/features/dong/components/HourlyCurveChart'
 import { buildDongSummary, localLifeGrade } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
@@ -13,6 +12,7 @@ import { metricGrade } from '@/features/metric/score'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import type { TierItem } from '@/features/tier/types'
 import { useCarryLink } from '@/hooks/useCarryLink'
+import { useElementWidth } from '@/hooks/useElementWidth'
 
 type Props = {
   id: string
@@ -28,11 +28,28 @@ type Props = {
   onRemove: () => void
 }
 
-const CHART_HEIGHT = 160
-/** 열 폭(최소 1128px 본문 ÷ 3 − gap·패딩 ≈ 330) 안에 들어가는 고정 차트 폭 */
-const CHART_WIDTH = 300
+/** Figma W-05 v2 곡선 높이 150 + 축 라벨 */
+const CHART_HEIGHT = 170
+/** 측정 전 폭 (최소 1128px 본문 기준 열 안쪽 폭 근사) */
+const CHART_FALLBACK_WIDTH = 300
 
-/** 비교 열 1개: 헤더 · 곡선(compact) · 동네 성격(compact) · 지표 4종(compact) · 요약 */
+/** 주중·주말 범례. 색은 HourlyCurveChart 의 선(주중 강조 굵게, 주말 보조)과 같다 */
+function CurveLegend() {
+  return (
+    <div className="text-caption-xs text-text-secondary flex items-center gap-4">
+      <span className="flex items-center gap-1.5">
+        <span aria-hidden className="bg-chart-line-strong h-1 w-4 rounded-full" />
+        주중
+      </span>
+      <span className="flex items-center gap-1.5">
+        <span aria-hidden className="bg-chart-line-muted h-0.5 w-4 rounded-full" />
+        주말
+      </span>
+    </div>
+  )
+}
+
+/** 비교 열 1개 (Figma W-05 v2 251:4107): 헤더 · 범례+곡선(열 폭) · 지표 4종(세로) · 요약 */
 export default function CompareColumn({
   id,
   detail,
@@ -45,11 +62,12 @@ export default function CompareColumn({
   onRemove,
 }: Props) {
   const dongLink = useCarryLink(`/dongs/${id}`)
+  const [chartRef, chartWidth] = useElementWidth<HTMLDivElement>(CHART_FALLBACK_WIDTH)
 
   if (isPending || tierPending) return <ColumnSkeleton />
   if (isError || !detail) {
     return (
-      <div className="border-border-default flex min-h-96 flex-col items-center justify-center gap-3 rounded-2xl border p-6">
+      <div className="border-border-default flex min-h-96 flex-col items-center justify-center gap-3 rounded-xl border p-6">
         <p className="text-body-sm text-text-secondary">{COMPARE_COPY.columnError}</p>
         <button
           type="button"
@@ -79,13 +97,13 @@ export default function CompareColumn({
 
   return (
     <article
-      className="border-border-default flex flex-col gap-4 rounded-2xl border p-4"
+      className="border-border-default bg-bg-surface flex min-w-0 flex-col gap-4 rounded-xl border p-5"
       aria-label={detail.name}
     >
       <header className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <Link to={dongLink} className="text-heading-lg text-text-primary">
+            <Link to={dongLink} className="text-heading-xl text-text-primary">
               {detail.name}
             </Link>
             <Tag>{DONG_KIND_LABEL[detail.kind]}</Tag>
@@ -98,43 +116,40 @@ export default function CompareColumn({
           type="button"
           aria-label={`${detail.name} 제거`}
           onClick={onRemove}
-          className="text-text-tertiary hover:text-text-primary rounded-md p-1"
+          className="text-text-secondary hover:text-text-primary rounded-md"
         >
           <X size={18} aria-hidden />
         </button>
       </header>
 
-      <HourlyCurveChart
-        hourly={detail.hourly}
-        day="weekday"
-        compact
-        height={CHART_HEIGHT}
-        width={CHART_WIDTH}
-      />
+      <div className="flex flex-col gap-2">
+        <CurveLegend />
+        {/* 고정 폭 차트를 열 안쪽 폭에 맞춘다 */}
+        <div ref={chartRef} className="w-full">
+          <HourlyCurveChart
+            hourly={detail.hourly}
+            day="weekday"
+            compact
+            height={CHART_HEIGHT}
+            width={chartWidth}
+          />
+        </div>
+      </div>
 
-      <ActivityMixBar mix={detail.activityMix} compact />
-
-      <div className="grid grid-cols-2 gap-2">
-        <MetricCard
-          metric="quiet"
-          score={quiet}
-          grade={gradeOf(quiet)}
-          subtitle={copy.quiet}
-          compact
-        />
-        <MetricCard metric="vibe" score={vibe} grade={vibeGrade} subtitle={copy.vibe} compact />
-        <MetricCard metric="peer" score={peer} grade={gradeOf(peer)} subtitle={copy.peer} compact />
+      <div className="flex flex-col gap-4">
+        <MetricCard metric="quiet" score={quiet} grade={gradeOf(quiet)} subtitle={copy.quiet} />
+        <MetricCard metric="vibe" score={vibe} grade={vibeGrade} subtitle={copy.vibe} />
+        <MetricCard metric="peer" score={peer} grade={gradeOf(peer)} subtitle={copy.peer} />
         <MetricCard
           metric="quiet"
           label="생활권 지수"
           score={detail.stats.localLife}
           grade={localLifeGrade(detail.stats.localLife)}
           subtitle={copy.localLife}
-          compact
         />
       </div>
 
-      <p className="text-body-sm text-text-secondary">{summary}</p>
+      <p className="bg-bg-page text-body-sm text-text-secondary rounded-lg p-3">{summary}</p>
     </article>
   )
 }
