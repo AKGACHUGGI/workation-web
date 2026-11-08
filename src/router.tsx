@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import RootLayout from '@/components/RootLayout'
 import ComparePage from '@/pages/ComparePage'
+import DongProfilePage from '@/pages/DongProfilePage'
 import HomePage from '@/pages/HomePage'
 import MyPage from '@/pages/MyPage'
 import NotFoundPage from '@/pages/NotFoundPage'
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> }, // W-01
       { path: 'tier', element: <TierPage /> }, // W-02
       { path: 'regions/:sggId', element: <RegionDetailPage />, errorElement: <NotFoundPage /> }, // W-03
-      // { path: 'dongs/:dongId' }   W-04 플랜에서 추가
+      { path: 'dongs/:dongId', element: <DongProfilePage />, errorElement: <NotFoundPage /> }, // W-04
       { path: 'compare', element: <ComparePage /> }, // W-05
       // { path: 'reports/:sggId' }  W-06 플랜에서 추가
       { path: 'me', element: <MyPage /> }, // W-08
