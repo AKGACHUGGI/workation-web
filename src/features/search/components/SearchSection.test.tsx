@@ -19,7 +19,9 @@ describe('SearchSection', () => {
     await userEvent.click(screen.getByRole('button', { name: /11월에 조용한 해안/ }))
     await waitFor(() => expect(screen.getByText('AI가 이해한 조건')).toBeInTheDocument())
     expect(screen.getByRole('button', { name: '11월 삭제' })).toBeInTheDocument()
-    expect(screen.getByTestId('location')).toHaveTextContent('month=2025-11')
+    // 태그(setIntent)와 URL(setSearchParams)은 같은 onSuccess 에서 바뀌지만, MemoryRouter 는 위치 변경을
+    // startTransition 으로 반영해 부하가 있으면 태그가 먼저 커밋된다. URL 은 따로 기다린다
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('month=2025-11'))
     expect(screen.getByTestId('location')).toHaveTextContent('preset=quiet')
     expect(screen.getByTestId('location')).toHaveTextContent('terrain=coast')
   })
