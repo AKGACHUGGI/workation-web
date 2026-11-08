@@ -1,8 +1,7 @@
-import { useEffect, useRef } from 'react'
 import Chip from '@/components/ui/Chip'
+import MonthChips from '@/components/ui/MonthChips'
 import Segmented from '@/components/ui/Segmented'
 import { PRESET_LABEL } from '@/features/metric/constants'
-import { MONTHS, monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
 import { PRESET_KEYS } from '@/features/metric/types'
 import type { PresetKey } from '@/features/metric/types'
@@ -26,13 +25,6 @@ export default function TierControls({
   month,
   onMonthChange,
 }: Props) {
-  const monthRow = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    // 처음 렌더 시 선택된 월 칩이 보이도록 (jsdom 에는 scrollIntoView 가 없다)
-    const el = monthRow.current?.querySelector<HTMLElement>('[aria-pressed="true"]')
-    el?.scrollIntoView?.({ inline: 'center', block: 'nearest' })
-  }, [])
-
   return (
     <div className="flex items-center gap-6">
       <Segmented
@@ -54,16 +46,7 @@ export default function TierControls({
           ))}
         </div>
       )}
-      <div className="flex min-w-0 flex-1 items-center gap-2">
-        <span className="text-body-sm text-text-secondary shrink-0">월</span>
-        <div ref={monthRow} role="group" aria-label="월" className="flex gap-2 overflow-x-auto">
-          {MONTHS.map((m) => (
-            <Chip key={m} selected={m === month} onClick={() => onMonthChange(m)}>
-              {monthLabel(m)}
-            </Chip>
-          ))}
-        </div>
-      </div>
+      <MonthChips value={month} onChange={onMonthChange} className="flex-1" />
     </div>
   )
 }
