@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { keepPreviousData, useQueries } from '@tanstack/react-query'
 import PageContainer from '@/components/layout/PageContainer'
-import MonthChips from '@/components/ui/MonthChips'
 import { useToast } from '@/components/ui/toast/useToast'
 import CompareChips from '@/features/compare/components/CompareChips'
 import CompareColumn from '@/features/compare/components/CompareColumn'
+import CompareMonthChips from '@/features/compare/components/CompareMonthChips'
 import DongPickerModal from '@/features/compare/components/DongPickerModal'
 import EmptyColumn from '@/features/compare/components/EmptyColumn'
 import { COMPARE_COPY } from '@/features/compare/copy'
@@ -54,13 +54,15 @@ export default function ComparePage() {
   const emptySlots = Math.max(0, MAX_COMPARE - ids.length)
 
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
-      <header className="flex items-start justify-between gap-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-heading-2xl text-text-primary">{COMPARE_COPY.title}</h1>
-          <p className="text-body-sm text-text-secondary">{COMPARE_COPY.description}</p>
+    <PageContainer className="flex flex-col gap-6 py-8">
+      <header className="flex items-end justify-between gap-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-display-3xl text-text-primary tracking-tight">
+            {COMPARE_COPY.title}
+          </h1>
+          <p className="text-body-base text-text-secondary">{COMPARE_COPY.description}</p>
         </div>
-        <MonthChips value={month} onChange={setMonth} className="max-w-1/2" />
+        <CompareMonthChips value={month} onChange={setMonth} />
       </header>
 
       <CompareChips
@@ -70,7 +72,7 @@ export default function ComparePage() {
         onAdd={() => setPickerOpen(true)}
       />
 
-      <section aria-label="비교 열" className="grid grid-cols-3 gap-4">
+      <section aria-label="비교 열" className="grid grid-cols-3 items-start gap-6">
         {ids.map((id, i) => {
           const q = details[i]
           return (

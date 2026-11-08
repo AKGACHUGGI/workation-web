@@ -9,51 +9,63 @@ type Props = {
   preset: ReportPreset
 }
 
-/** 대상 지역 대비 위치 순위표. 현재 시군구 행은 selected 배경 + brand 막대 */
+/**
+ * 대상 지역 대비 위치 순위표 (Figma W-06 v2 251:4504).
+ * 행: 순위 12 tertiary · 이름 14 Medium · 막대(bg-subtle 트랙) · 점수 12 secondary.
+ * 현재 시군구 행은 brand-soft 배경 + brand 이름·막대. 행 간격을 flex 로 주려고 table 대신 ARIA table 역할을 쓴다.
+ */
 export default function RankingTable({ items, currentId, preset }: Props) {
   const { search } = useLocation()
   const current = new URLSearchParams(search)
   return (
-    <section className="border-border-default bg-bg-surface rounded-xl border p-6">
+    <section className="border-border-default bg-bg-surface flex flex-col gap-4 rounded-xl border p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-heading-lg text-text-primary">대상 지역 대비 위치</h2>
         <span className="text-caption-xs text-text-tertiary">{rankingCaption(preset)}</span>
       </div>
-      <table className="mt-4 w-full border-collapse">
-        <tbody>
-          {items.map((item, i) => {
-            const isCurrent = item.id === currentId
-            const rowTone = isCurrent
-              ? 'bg-selected-bg text-selected-fg'
-              : 'text-text-primary hover:bg-bg-subtle'
-            const barTone = isCurrent ? 'bg-brand-primary' : 'bg-chart-bar-muted'
-            return (
-              <tr
-                key={item.id}
-                aria-current={isCurrent || undefined}
-                className={`rounded-lg ${rowTone}`}
+      <div role="table" aria-label="대상 지역 대비 위치" className="flex flex-col gap-2">
+        {items.map((item, i) => {
+          const isCurrent = item.id === currentId
+          return (
+            <div
+              key={item.id}
+              role="row"
+              aria-current={isCurrent || undefined}
+              className={`flex items-center gap-2.5 ${isCurrent ? 'bg-brand-soft rounded-md px-2 py-1' : ''}`}
+            >
+              <span
+                role="cell"
+                className={`text-caption-segment w-5 shrink-0 text-right ${isCurrent ? 'text-text-primary' : 'text-text-tertiary'}`}
               >
-                <td className="text-body-sm w-8 py-2 pl-3 font-medium">{i + 1}</td>
-                <td className="text-body-sm w-24 py-2">
-                  <Link to={carryQuery(`/reports/${item.id}`, current)} className="hover:underline">
-                    {item.name}
-                  </Link>
-                </td>
-                <td className="py-2 pr-3">
-                  <div className="bg-bg-surface-strong h-2 w-full overflow-hidden rounded-full">
-                    <div
-                      data-testid={`bar-${item.id}`}
-                      className={`h-full rounded-full ${barTone}`}
-                      style={{ width: `${item.score}%` }}
-                    />
-                  </div>
-                </td>
-                <td className="text-body-sm w-10 py-2 pr-3 text-right font-medium">{item.score}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                {i + 1}
+              </span>
+              <span role="cell" className="w-26 shrink-0">
+                <Link
+                  to={carryQuery(`/reports/${item.id}`, current)}
+                  className={`text-body-sm font-medium hover:underline ${isCurrent ? 'text-text-brand' : 'text-text-primary'}`}
+                >
+                  {item.name}
+                </Link>
+              </span>
+              <span role="cell" className="min-w-0 flex-1">
+                <span className="bg-bg-subtle block h-2.5 w-full overflow-hidden rounded-sm">
+                  <span
+                    data-testid={`bar-${item.id}`}
+                    className={`block h-full rounded-sm ${isCurrent ? 'bg-brand-primary' : 'bg-chart-bar-muted'}`}
+                    style={{ width: `${item.score}%` }}
+                  />
+                </span>
+              </span>
+              <span
+                role="cell"
+                className={`text-caption-segment w-7 shrink-0 text-right ${isCurrent ? 'text-text-primary' : 'text-text-secondary'}`}
+              >
+                {item.score}
+              </span>
+            </div>
+          )
+        })}
+      </div>
     </section>
   )
 }

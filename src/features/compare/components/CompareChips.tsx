@@ -14,14 +14,14 @@ type Props = {
 /** "비교 중" 줄: 선택된 동 칩(×) + 행정동 추가 칩 + 최대 3개 캡션 */
 export default function CompareChips({ entries, canAdd, onRemove, onAdd }: Props) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center gap-2">
       <span className="text-body-sm text-text-secondary font-medium">{COMPARE_COPY.comparing}</span>
       <div className="flex flex-wrap items-center gap-2">
         {entries.map((e) => (
           // Chip 은 <button> 이라 안에 × 버튼을 넣으면 button 중첩이 된다 → 같은 스타일의 span
           <span
             key={e.id}
-            className="bg-selected-bg text-selected-fg text-caption-segment inline-flex h-8 items-center gap-1 rounded-full px-4 whitespace-nowrap"
+            className="bg-selected-bg text-selected-fg text-body-sm inline-flex h-8 items-center gap-1 rounded-full px-4 font-medium whitespace-nowrap"
           >
             {e.name} · {e.sigunguName}
             <button
@@ -42,7 +42,7 @@ export default function CompareChips({ entries, canAdd, onRemove, onAdd }: Props
           {COMPARE_COPY.add}
         </Chip>
       </div>
-      <span className="text-caption-xs text-text-tertiary ml-auto">{COMPARE_COPY.max}</span>
+      <span className="text-caption-xs text-text-tertiary">{COMPARE_COPY.max}</span>
     </div>
   )
 }

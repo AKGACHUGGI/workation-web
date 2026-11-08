@@ -1,3 +1,4 @@
+import { FileText } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
 import AnnualCrowdChart from '@/features/report/components/AnnualCrowdChart'
@@ -30,7 +31,7 @@ export default function ReportPage() {
   if (query.isError && query.error instanceof NotFoundError) throw query.error
 
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       <ReportHeader
         currentId={sggId}
         onExportPdf={pdf.download}
@@ -58,15 +59,16 @@ export default function ReportPage() {
       {query.data && (
         <div className={`flex flex-col gap-6 ${query.isPlaceholderData ? 'opacity-dim' : ''}`}>
           <SummaryCards report={query.data} />
-          <div className="grid grid-cols-5 gap-6">
-            <div className="col-span-3">
+          {/* Figma W-06 v2: 막대 차트는 남은 폭, 순위표는 480 고정 */}
+          <div className="flex items-start gap-6">
+            <div className="min-w-0 flex-1">
               <AnnualCrowdChart
                 months={query.data.months}
                 topMonths={query.data.peakConcentration.topMonths}
                 narrative={query.data.seasonNarrative}
               />
             </div>
-            <div className="col-span-2">
+            <div className="w-120 shrink-0">
               <RankingTable
                 items={query.data.ranking.items}
                 currentId={query.data.id}
@@ -75,7 +77,10 @@ export default function ReportPage() {
             </div>
           </div>
           <DiagnosisSection diagnosis={query.data.diagnosis} />
-          <p className="text-caption-xs text-text-tertiary">{REPORT_SOURCE_NOTE}</p>
+          <p className="text-caption-xs text-text-tertiary flex items-center gap-2">
+            <FileText aria-hidden className="size-3.5 shrink-0" />
+            {REPORT_SOURCE_NOTE}
+          </p>
         </div>
       )}
     </PageContainer>

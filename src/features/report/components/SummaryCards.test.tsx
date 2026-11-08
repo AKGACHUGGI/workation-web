@@ -3,14 +3,18 @@ import { render, screen } from '@testing-library/react'
 import SummaryCards from '@/features/report/components/SummaryCards'
 import { getReportMock } from '@/mocks/report'
 
+/** 숫자와 단위가 다른 크기의 span 으로 나뉘므로 <p> 의 전체 텍스트로 찾는다 */
+const valueText = (text: string) => (_: string, el: Element | null) =>
+  el?.tagName === 'P' && el.textContent === text
+
 describe('SummaryCards · 고성군', () => {
   const report = getReportMock('51820', 'quiet')!
 
   it('세 카드 값', () => {
     render(<SummaryCards report={report} />)
-    expect(screen.getByText('35 %')).toBeInTheDocument()
-    expect(screen.getByText('83 점')).toBeInTheDocument()
-    expect(screen.getByText('5 위 / 12')).toBeInTheDocument()
+    expect(screen.getByText(valueText('35 %'))).toBeInTheDocument()
+    expect(screen.getByText(valueText('83 점'))).toBeInTheDocument()
+    expect(screen.getByText(valueText('5 위 / 12'))).toBeInTheDocument()
     expect(screen.getByLabelText('등급 S')).toBeInTheDocument()
   })
   it('부제', () => {
