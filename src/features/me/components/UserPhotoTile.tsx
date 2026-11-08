@@ -1,5 +1,6 @@
 import type { MyPhoto } from '@/features/me/types'
 import { monthLabel } from '@/features/metric/month'
+import FallbackImage from '@/components/ui/FallbackImage'
 
 type Props = { photo: MyPhoto }
 
@@ -7,7 +8,7 @@ export default function UserPhotoTile({ photo }: Props) {
   const pending = photo.status === 'pending'
   return (
     <figure className="relative flex flex-col gap-1">
-      <img
+      <FallbackImage
         src={photo.url}
         alt={`${photo.regionName} ${monthLabel(photo.month)} 사진`}
         className={`aspect-4/3 w-full rounded-xl object-cover ${pending ? 'opacity-dim' : ''}`}

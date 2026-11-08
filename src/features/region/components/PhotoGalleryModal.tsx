@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import type { RegionPhoto } from '@/features/region/types'
+import FallbackImage from '@/components/ui/FallbackImage'
 
 type Props = { photos: RegionPhoto[]; alt: string; open: boolean; onClose: () => void }
 
@@ -31,7 +32,7 @@ export default function PhotoGalleryModal({ photos, alt, open, onClose }: Props)
       </div>
       <div className="grid grid-cols-3 gap-3">
         {photos.map((p, i) => (
-          <img
+          <FallbackImage
             key={`${p.url}-${i}`}
             src={p.url}
             alt={`${alt} ${i + 1}`}

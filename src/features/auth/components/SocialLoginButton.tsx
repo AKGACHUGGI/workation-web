@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import type { AuthProvider } from '@/features/auth/types'
 
@@ -19,6 +20,8 @@ const STYLE: Record<AuthProvider, { label: string; icon: string; tone: string }>
 /** 제공자 버튼. 색은 각사 가이드 규정(브랜드 토큰), 심볼은 public/brand 의 공식 파일 */
 export default function SocialLoginButton({ provider, onClick, loading, disabled = false }: Props) {
   const { label, icon, tone } = STYLE[provider]
+  // 심볼 파일(public/brand)이 아직 없으면 깨진 이미지 대신 숨긴다
+  const [iconFailed, setIconFailed] = useState(false)
   return (
     <button
       type="button"
@@ -29,8 +32,15 @@ export default function SocialLoginButton({ provider, onClick, loading, disabled
     >
       {loading ? (
         <Loader2 aria-hidden="true" className="size-icon-brand animate-spin" />
-      ) : (
-        <img src={icon} alt="" width={18} height={18} className="size-icon-brand" />
+      ) : iconFailed ? null : (
+        <img
+          src={icon}
+          alt=""
+          width={18}
+          height={18}
+          onError={() => setIconFailed(true)}
+          className="size-icon-brand"
+        />
       )}
       <span>{label}</span>
     </button>

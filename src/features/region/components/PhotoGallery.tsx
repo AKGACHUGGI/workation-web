@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import PhotoGalleryModal from '@/features/region/components/PhotoGalleryModal'
 import type { RegionPhoto } from '@/features/region/types'
+import FallbackImage from '@/components/ui/FallbackImage'
 
 type Props = { photos: RegionPhoto[]; alt: string }
 
@@ -11,14 +12,14 @@ export default function PhotoGallery({ photos, alt }: Props) {
   if (!main) return null
   return (
     <section className="relative grid grid-cols-2 gap-2">
-      <img
+      <FallbackImage
         src={main.url}
         alt={`${alt} 1`}
         className="bg-bg-subtle aspect-[4/3] h-full w-full rounded-xl object-cover"
       />
       <div className="grid grid-cols-2 gap-2">
         {rest.slice(0, 4).map((p, i) => (
-          <img
+          <FallbackImage
             key={`${p.url}-${i}`}
             src={p.url}
             alt={`${alt} ${i + 2}`}
