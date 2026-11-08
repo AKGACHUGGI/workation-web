@@ -1,9 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom'
 import RootLayout from '@/components/RootLayout'
+import ComparePage from '@/pages/ComparePage'
 import HomePage from '@/pages/HomePage'
+import MyPage from '@/pages/MyPage'
 import NotFoundPage from '@/pages/NotFoundPage'
+import TierPage from '@/pages/TierPage'
 
-// 화면 ID(W-01~W-06)는 명세서 기준. 화면 추가 시 여기에 라우트를 등록합니다.
+// 화면 ID(W-01~W-08)는 공통 기반 스펙 §2 기준. 경로를 바꾸면 스펙 §2 표도 함께 고친다.
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -11,6 +14,13 @@ export const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> }, // W-01
+      { path: 'tier', element: <TierPage /> }, // W-02
+      // { path: 'regions/:sggId' }  W-03 플랜에서 추가
+      // { path: 'dongs/:dongId' }   W-04 플랜에서 추가
+      { path: 'compare', element: <ComparePage /> }, // W-05
+      // { path: 'reports/:sggId' }  W-06 플랜에서 추가
+      { path: 'me', element: <MyPage /> }, // W-08
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ])
