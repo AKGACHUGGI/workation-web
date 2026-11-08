@@ -30,6 +30,7 @@ export default function TierControls({
   return (
     <div className="flex items-center justify-between gap-6">
       <Segmented
+        variant="surface"
         ariaLabel="등급 기준"
         options={[
           { value: 'value', label: '워케이션 밸류' },

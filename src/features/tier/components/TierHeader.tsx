@@ -16,6 +16,7 @@ export default function TierHeader({ count, scope, onScopeChange }: Props) {
         </p>
       </div>
       <Segmented
+        variant="surface"
         ariaLabel="범위"
         options={[
           { value: 'sigungu', label: '시군구' },

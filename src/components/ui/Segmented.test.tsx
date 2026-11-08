@@ -44,4 +44,12 @@ describe('Segmented', () => {
     await userEvent.click(b)
     expect(onChange).not.toHaveBeenCalled()
   })
+  it('variant=surface 는 선택 칸이 흰 바탕(잉크 바탕 아님)', () => {
+    render(
+      <Segmented options={[...options]} value="sigungu" onChange={() => {}} variant="surface" />,
+    )
+    const selected = screen.getByRole('tab', { name: '시군구' })
+    expect(selected).toHaveClass('bg-bg-surface', 'shadow-xs')
+    expect(selected).not.toHaveClass('bg-selected-bg')
+  })
 })
