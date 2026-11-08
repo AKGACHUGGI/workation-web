@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
 import GradeBadge from '@/components/ui/GradeBadge'
-import { useRequireLogin } from '@/features/auth/useRequireLogin'
+import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL, METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { METRIC_KEYS } from '@/features/metric/types'
 import { DATA_YEAR, DEFAULT_MONTH, monthLabel, monthNumber } from '@/features/metric/month'
@@ -46,7 +46,8 @@ export default function RegionDetailPage() {
   const [month, setMonth] = useMonthParam()
   const [preset, setPreset] = usePresetParam()
   const { mode, presetLabel, selected } = usePresetMode()
-  const requireLogin = useRequireLogin()
+  const { isFavorite, toggle } = useFavorites()
+  const saved = isFavorite('regions', sggId)
   const share = useShareUrl()
 
   const tier = useTierQuery(month, 'sigungu')
@@ -136,7 +137,9 @@ export default function RegionDetailPage() {
           { label: `${presetLabel} ${rank.rank}위 · ${rank.grade}`, tone: 'selected' as const },
         ]}
         onShare={share}
-        onSave={() => requireLogin(() => {})}
+        onSave={() => toggle('regions', sggId)}
+        saved={saved}
+        saveLabel={saved ? '저장됨' : '저장'}
       />
       <PhotoGallery photos={d.photos} alt={d.name} />
 
@@ -244,7 +247,8 @@ export default function RegionDetailPage() {
           preset={preset}
           onPresetChange={setPreset}
           customLinkHref={carryQuery('/tier', current)}
-          onFavorite={() => requireLogin(() => {})}
+          onFavorite={() => toggle('regions', sggId)}
+          favorite={saved}
           onShare={share}
           summary={[
             { label: '가기 좋은 달', value: formatMonths(d.bestMonths) },

@@ -2,9 +2,9 @@ import { Heart, Share2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Tag from '@/components/ui/Tag'
 import { useToast } from '@/components/ui/toast/useToast'
-import { useRequireLogin } from '@/features/auth/useRequireLogin'
 import { DONG_COPY } from '@/features/dong/copy'
 import type { DongDetailResponse } from '@/features/dong/types'
+import { useFavorites } from '@/features/me/useFavorites'
 import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
 import PhotoGallery from '@/features/region/components/PhotoGallery'
@@ -22,7 +22,8 @@ type Props = {
 
 export default function DongHero({ detail, month, summary, dominantLabel }: Props) {
   const toast = useToast()
-  const requireLogin = useRequireLogin()
+  const { isFavorite, toggle } = useFavorites()
+  const saved = isFavorite('dongs', detail.id)
   const homeLink = useCarryLink('/')
   const sggLink = useCarryLink(`/regions/${detail.sigungu.id}`)
 
@@ -73,10 +74,16 @@ export default function DongHero({ detail, month, summary, dominantLabel }: Prop
           </button>
           <button
             type="button"
-            onClick={() => requireLogin(() => {})}
+            onClick={() => toggle('dongs', detail.id)}
+            aria-pressed={saved}
             className="border-border-default text-body-sm text-text-primary hover:border-border-strong inline-flex items-center gap-1 rounded-lg border px-4 py-2"
           >
-            <Heart size={16} aria-hidden /> 저장
+            <Heart
+              size={16}
+              aria-hidden
+              className={saved ? 'fill-accent-save text-accent-save' : undefined}
+            />{' '}
+            {saved ? '저장됨' : '저장'}
           </button>
         </div>
       </div>
