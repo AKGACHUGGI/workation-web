@@ -3,7 +3,6 @@ import { ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import GradeBadge from '@/components/ui/GradeBadge'
 import Tag from '@/components/ui/Tag'
-import BrandTag from '@/features/region/components/BrandTag'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import type { DongKind } from '@/features/region/types'
 import type { Grade } from '@/features/metric/types'
@@ -28,7 +27,7 @@ type Props = {
 export default function DongRow({ name, kind, subtitle, gradeLabel, grade, href, leading }: Props) {
   const kindTag =
     kind === 'living' ? (
-      <BrandTag>{DONG_KIND_LABEL[kind]}</BrandTag>
+      <Tag tone="brand">{DONG_KIND_LABEL[kind]}</Tag>
     ) : (
       <Tag>{DONG_KIND_LABEL[kind]}</Tag>
     )

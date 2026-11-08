@@ -3,10 +3,10 @@ import { Flag, MessageCircle, ThumbsUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
 import { monthLabel } from '@/features/metric/month'
-import BrandTag from '@/features/region/components/BrandTag'
 import { relativeTime } from '@/features/region/relativeTime'
 import type { Note } from '@/features/region/types'
 import Avatar from '@/components/ui/Avatar'
+import Tag from '@/components/ui/Tag'
 
 type Props = {
   note: Note
@@ -35,7 +35,7 @@ export default function TipCard({ note, targetHref, targetLabel, trailing }: Pro
           <span className="text-caption-xs text-text-tertiary">{meta}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          {note.visitMonth && <BrandTag>{monthLabel(note.visitMonth)} 방문</BrandTag>}
+          {note.visitMonth && <Tag tone="brand">{monthLabel(note.visitMonth)} 방문</Tag>}
           {targetHref && targetLabel && (
             <Link to={targetHref} className="text-caption-xs text-text-secondary underline">
               {targetLabel}

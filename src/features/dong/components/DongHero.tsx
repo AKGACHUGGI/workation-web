@@ -7,7 +7,6 @@ import type { DongDetailResponse } from '@/features/dong/types'
 import { useFavorites } from '@/features/me/useFavorites'
 import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
-import BrandTag from '@/features/region/components/BrandTag'
 import PhotoGallery from '@/features/region/components/PhotoGallery'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import { useCarryLink } from '@/hooks/useCarryLink'
@@ -61,7 +60,7 @@ export default function DongHero({ detail, month, summary, dominantLabel }: Prop
             </p>
             {/* Figma: 생활권 = brand 태그, 지형 태그 = 회색, 주된 활동 유형 = 회색 */}
             {detail.kind === 'living' ? (
-              <BrandTag>{DONG_KIND_LABEL[detail.kind]}</BrandTag>
+              <Tag tone="brand">{DONG_KIND_LABEL[detail.kind]}</Tag>
             ) : (
               <Tag>{DONG_KIND_LABEL[detail.kind]}</Tag>
             )}
