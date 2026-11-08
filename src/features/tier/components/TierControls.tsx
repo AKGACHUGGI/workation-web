@@ -42,7 +42,7 @@ export default function TierControls({
       {tab === 'value' && (
         <div role="group" aria-label="프리셋" className="flex shrink-0 items-center gap-2">
           {PRESET_KEYS.map((key) => (
-            <Chip key={key} selected={preset === key} onClick={() => onPresetChange(key)}>
+            <Chip key={key} size="md" selected={preset === key} onClick={() => onPresetChange(key)}>
               {PRESET_LABEL[key]}
             </Chip>
           ))}

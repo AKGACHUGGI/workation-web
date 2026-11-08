@@ -66,7 +66,7 @@ export default function HourlyCurveSection({
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5">
           {monthWindow(month).map((m) => (
-            <Chip key={m} selected={m === month} onClick={() => onMonthChange(m)}>
+            <Chip key={m} size="md" selected={m === month} onClick={() => onMonthChange(m)}>
               {monthLabel(m)}
             </Chip>
           ))}

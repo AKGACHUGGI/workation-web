@@ -26,4 +26,14 @@ describe('Chip', () => {
     await userEvent.click(btn)
     expect(onClick).not.toHaveBeenCalled()
   })
+  it('size: 기본 sm(32), md 는 42', () => {
+    render(
+      <>
+        <Chip>작은</Chip>
+        <Chip size="md">큰</Chip>
+      </>,
+    )
+    expect(screen.getByRole('button', { name: '작은' })).toHaveClass('h-8')
+    expect(screen.getByRole('button', { name: '큰' })).toHaveClass('h-10.5')
+  })
 })
