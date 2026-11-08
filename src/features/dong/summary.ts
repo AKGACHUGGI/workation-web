@@ -54,6 +54,7 @@ export function pollQuestion(name: string, vibeGrade: Grade): string {
     : `${name} 저녁, 정말 조용한가요?`
 }
 
+/** Figma W-04 표기: 두 자리 시각 ('03시', '18시') */
 export function formatHour(h: number): string {
-  return `${h}시`
+  return `${String(h).padStart(2, '0')}시`
 }
