@@ -25,6 +25,33 @@ const STROKE: Record<DayGroup, string> = {
   weekend: 'var(--color-chart-weekend)',
 }
 
+/** 양 끝 눈금(0시·23시)이 차트 밖으로 잘리지 않게 안쪽으로 정렬 */
+function HourTick({
+  x = 0,
+  y = 0,
+  payload,
+}: {
+  x?: number
+  y?: number
+  payload?: { value: number }
+}) {
+  const v = payload?.value ?? 0
+  const anchor = v === 0 ? 'start' : v === 23 ? 'end' : 'middle'
+  return (
+    <text
+      className="recharts-cartesian-axis-tick-value"
+      x={x}
+      y={y}
+      dy={12}
+      textAnchor={anchor}
+      fontSize={12}
+      fill="var(--color-text-tertiary)"
+    >
+      {`${v}시`}
+    </text>
+  )
+}
+
 /** 24시간 보행 곡선. 주중·주말 선 2개, 선택한 날은 진하게 */
 export default function HourlyCurveChart({
   hourly,
@@ -52,10 +79,9 @@ export default function HourlyCurveChart({
         dataKey="h"
         ticks={compact ? COMPACT_TICKS : TICKS}
         interval={0}
-        tickFormatter={(v: number) => `${v}시`}
         tickLine={false}
         axisLine={false}
-        tick={{ fontSize: 12, fill: 'var(--color-text-tertiary)' }}
+        tick={<HourTick />}
       />
       <YAxis hide domain={[0, 100]} />
       <Tooltip
