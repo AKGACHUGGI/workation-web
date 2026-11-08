@@ -2,3 +2,4 @@ pnpm-lock.yaml
 dist
 test-results
 playwright-report
+src/mocks/tier/generated
