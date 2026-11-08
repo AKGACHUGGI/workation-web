@@ -120,6 +120,14 @@
   --color-chart-weekday: var(--color-gray-800);
   --color-chart-weekend: var(--color-rausch-500);
   --color-chart-grid: var(--color-gray-200);
+  /* chart/series — 활동 유형 4종 (순서 ACTIVITY_KEYS: 저녁 상권·주말 관광·평일 업무·새벽 주거) */
+  --color-chart-1: var(--color-gray-800);
+  --color-chart-2: var(--color-rausch-500);
+  --color-chart-3: var(--color-babu-600);
+  --color-chart-4: var(--color-arches-500);
+  /* chart/line — 24시간 곡선 강조/보조 */
+  --color-chart-line-strong: var(--color-gray-800);
+  --color-chart-line-muted: var(--color-gray-400);
 
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
