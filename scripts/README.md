@@ -26,3 +26,14 @@ python3 scripts/gen-mock.py <processed_dir> <feature_dir>
 ## region (W-03)
 
 `gen-mock.py` 에 `region` 서브커맨드를 추가해 `src/mocks/region/{sggId}-{month}.ts` 를 생성한다 (스펙 W-03 §5-2 산출 규칙: stats·months 는 특수시설 동 제외 합계, `peerOffpeakMonths` 는 또래 z − 혼잡 z 상위 2개월, `seasonType` 은 동 계절 NMF 평균 최대). 생성 전까지는 `src/mocks/region/generate.ts` 의 `makeRegionMock` 이 결정적 가짜 값을 돌려준다. `tags`·`landmark`·`links`·`photos` 는 `src/mocks/region/manual.ts` 에서 수동 관리.
+
+## gen-geo.py — 행정동 폴리곤
+
+```bash
+pip install geopandas shapely
+python scripts/gen-geo.py ~/data/bnd_dong_00_2025.shp public/geo --tolerance 20
+```
+
+- 출력: `public/geo/{sggId}.json` (시군구별, ≤ 100KB 목표). 1차는 고성군 `51820.json` 만 커밋한다.
+- 원본 shp 는 저장소에 넣지 않는다. 출처·라이선스(통계청 SGIS / 공공데이터포털)는 열린 항목.
+- 지도 키가 없으면 `MapPlaceholder` 가 뜨고 폴리곤은 쓰이지 않는다.
