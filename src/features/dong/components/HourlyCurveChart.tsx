@@ -15,7 +15,9 @@ type Props = {
   animate?: boolean
 }
 
+/** Figma: W-04 전체 폭 곡선은 3시간 간격(251:3755), W-05 열(compact)은 0·6·12·18·23(251:4133) */
 const TICKS = [0, 3, 6, 9, 12, 15, 18, 21, 23]
+const COMPACT_TICKS = [0, 6, 12, 18, 23]
 
 /** Figma 251:3740 범례: 주중 = chart/weekday(잉크), 주말 = chart/weekend(브랜드). 선택 안 된 선은 옅게 */
 const STROKE: Record<DayGroup, string> = {
@@ -48,12 +50,12 @@ export default function HourlyCurveChart({
       <CartesianGrid vertical={false} stroke="var(--color-chart-grid)" />
       <XAxis
         dataKey="h"
-        ticks={TICKS}
+        ticks={compact ? COMPACT_TICKS : TICKS}
         interval={0}
         tickFormatter={(v: number) => `${v}시`}
         tickLine={false}
         axisLine={false}
-        tick={{ fontSize: compact ? 10 : 12, fill: 'var(--color-text-tertiary)' }}
+        tick={{ fontSize: 12, fill: 'var(--color-text-tertiary)' }}
       />
       <YAxis hide domain={[0, 100]} />
       <Tooltip
