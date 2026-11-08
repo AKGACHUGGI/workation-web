@@ -25,8 +25,10 @@ export default function TierControls({
   month,
   onMonthChange,
 }: Props) {
+  // Figma 195:2244: 한 줄 — 왼쪽 탭 · 가운데 프리셋 칩 · 오른쪽 월(라벨 + 칩 몇 개가 보이는 가로 스크롤)
+  // 월 칩은 스펙 §3-2 대로 연간+12개월 13개를 유지하고, 폭만 좁혀 선택 칩 주변이 보이게 한다
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center justify-between gap-6">
       <Segmented
         ariaLabel="등급 기준"
         options={[
@@ -38,7 +40,6 @@ export default function TierControls({
       />
       {tab === 'value' && (
         <div role="group" aria-label="프리셋" className="flex shrink-0 items-center gap-2">
-          <span className="text-body-sm text-text-secondary">프리셋</span>
           {PRESET_KEYS.map((key) => (
             <Chip key={key} selected={preset === key} onClick={() => onPresetChange(key)}>
               {PRESET_LABEL[key]}
@@ -46,7 +47,7 @@ export default function TierControls({
           ))}
         </div>
       )}
-      <MonthChips value={month} onChange={onMonthChange} className="flex-1" />
+      <MonthChips value={month} onChange={onMonthChange} className="max-w-xs" />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import GradeBadge from '@/components/ui/GradeBadge'
 import { GRADE_BG, GRADE_FG } from '@/components/ui/gradeClass'
 import type { MetricKey } from '@/features/metric/types'
 import TierCard from '@/features/tier/components/TierCard'
@@ -29,24 +30,24 @@ export default function TierSection({
   const { grade, entries } = group
   const overflow = collapsible && entries.length > VISIBLE
   const shown = overflow && !expanded ? entries.slice(0, VISIBLE) : entries
+  // Figma Tier/S(195:2264): 흰 패널 · 헤어라인 · rounded-xl · p 16 · gap 16.
+  // 왼쪽 176px 등급 카드(등급 배경 · GradeBadge md · 범위 16 Medium 등급색 · 설명 12 · 개수 12 tertiary)
   return (
     <section
       aria-label={`${grade} 등급`}
-      className="border-border-default flex overflow-hidden rounded-2xl border"
+      className="border-border-default bg-bg-surface flex gap-4 rounded-xl border p-4"
     >
-      <div
-        className={`flex w-40 shrink-0 flex-col gap-1 p-5 ${GRADE_BG[grade]} ${GRADE_FG[grade]}`}
-      >
-        <span className="font-display text-display-3xl">{grade}</span>
-        <span className="text-body-sm font-medium">{TIER_RANGE[grade]}</span>
-        <span className="text-caption-xs">{description}</span>
-        <span className="text-caption-xs mt-auto">{entries.length}개 지역</span>
+      <div className={`flex w-44 shrink-0 flex-col gap-2 rounded-lg p-4 ${GRADE_BG[grade]}`}>
+        <GradeBadge grade={grade} className="self-start" />
+        <span className={`text-body-base font-medium ${GRADE_FG[grade]}`}>{TIER_RANGE[grade]}</span>
+        <span className="text-caption-xs text-text-secondary">{description}</span>
+        <span className="text-caption-xs text-text-tertiary">{entries.length}개 지역</span>
       </div>
-      <div className="flex-1 p-5">
+      <div className="min-w-0 flex-1">
         {entries.length === 0 ? (
           <p className="text-body-sm text-text-tertiary">이 등급에 해당하는 동네가 없습니다</p>
         ) : (
-          <ul className="grid grid-cols-3 gap-4">
+          <ul className="grid grid-cols-3 gap-3">
             {shown.map((entry) => (
               <li key={entry.item.id}>
                 <TierCard entry={entry} tab={tab} selected={selected} monthLabel={monthLabel} />

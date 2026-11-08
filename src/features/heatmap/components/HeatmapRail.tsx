@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import GoogleMapProvider from '@/components/map/GoogleMapProvider'
-import MapPlaceholder from '@/components/map/MapPlaceholder'
+import { hasMapsKey } from '@/components/map/mapsKey'
 import HeatLegend from '@/features/heatmap/components/HeatLegend'
 import HeatmapControls from '@/features/heatmap/components/HeatmapControls'
-import HeatmapPlaceholderList from '@/features/heatmap/components/HeatmapPlaceholderList'
+import HeatmapSchematic from '@/features/heatmap/components/HeatmapSchematic'
 import RegionHeatmap from '@/features/heatmap/components/RegionHeatmap'
 import {
   DEFAULT_HEAT_METRIC,
@@ -20,7 +20,10 @@ import { useWeights } from '@/features/popular/useWeights'
 import type { TierScope } from '@/features/tier/types'
 import { useMonthParam, useQueryState } from '@/hooks/useQueryState'
 
-const NOTE = '지역을 클릭하면 상세(W-03)로 이동 · 행정동 레벨은 선택한 시군구 안에서만 표시됩니다'
+const GUIDE_TITLE = '지역을 클릭하면 상세(W-03)로 이동'
+const GUIDE_BODY =
+  '행정동 레벨은 선택한 시군구 안에서만 표시됩니다. 지도 색은 선택한 지표의 점수(0~100)입니다.'
+const SCHEMATIC_NOTE = '도식 지도 · 실제는 GeoJSON'
 const PICK_SGG = '행정동을 보려면 시군구를 먼저 클릭하세요'
 
 type Props = { hoverId: string | null; onHover: (id: string | null) => void }
@@ -74,52 +77,58 @@ export default function HeatmapRail({ hoverId, onHover }: Props) {
   const needPick = scope === 'dong' && sgg === null
   const { entries: shown, isPending, isError, refetch } = needPick ? sigunguHeat : scoped
 
+  // Figma MapRail(274:4821): 패널(헤어라인 · rounded-xl · p 16 · 간격 12) + 그 아래 안내 박스(bg/subtle)
   return (
-    <aside className="w-map-rail border-border-default flex shrink-0 flex-col gap-4 self-start rounded-2xl border p-5">
-      <HeatmapControls
-        scope={scope}
-        onScopeChange={setScope}
-        metric={metric}
-        onMetricChange={setMetric}
-      />
-      {isError ? (
-        <div className="text-body-sm text-text-secondary flex items-center gap-2">
-          히트맵을 불러오지 못했습니다
-          <button type="button" onClick={() => refetch()} className="text-text-primary underline">
-            다시 시도
-          </button>
+    <aside className="w-map-rail flex shrink-0 flex-col gap-4 self-start">
+      <div className="border-border-default bg-bg-surface flex flex-col gap-3 rounded-xl border p-4">
+        <HeatmapControls
+          scope={scope}
+          onScopeChange={setScope}
+          metric={metric}
+          onMetricChange={setMetric}
+        />
+        {isError ? (
+          <div className="text-body-sm text-text-secondary flex items-center gap-2">
+            히트맵을 불러오지 못했습니다
+            <button type="button" onClick={() => refetch()} className="text-text-primary underline">
+              다시 시도
+            </button>
+          </div>
+        ) : (
+          <GoogleMapProvider
+            fallback={
+              <HeatmapSchematic
+                entries={shown}
+                hoverId={hoverId}
+                onHover={onHover}
+                onPick={needPick ? pickSigungu : undefined}
+                pending={isPending}
+              />
+            }
+          >
+            <RegionHeatmap
+              scope={scope}
+              sgg={sgg}
+              pickMode={needPick}
+              entries={shown}
+              hoverId={hoverId}
+              onHover={onHover}
+              onPickSigungu={pickSigungu}
+            />
+          </GoogleMapProvider>
+        )}
+        {needPick && <p className="text-body-sm text-text-secondary">{PICK_SGG}</p>}
+        <div className="flex items-center justify-between">
+          <HeatLegend />
+          {!hasMapsKey() && (
+            <span className="text-caption-xs text-text-tertiary">{SCHEMATIC_NOTE}</span>
+          )}
         </div>
-      ) : (
-        <GoogleMapProvider
-          fallback={
-            <MapPlaceholder>
-              {isPending ? (
-                <p className="text-caption-xs text-text-tertiary">불러오는 중…</p>
-              ) : (
-                <HeatmapPlaceholderList
-                  entries={shown}
-                  hoverId={hoverId}
-                  onHover={onHover}
-                  onPick={needPick ? pickSigungu : undefined}
-                />
-              )}
-            </MapPlaceholder>
-          }
-        >
-          <RegionHeatmap
-            scope={scope}
-            sgg={sgg}
-            pickMode={needPick}
-            entries={shown}
-            hoverId={hoverId}
-            onHover={onHover}
-            onPickSigungu={pickSigungu}
-          />
-        </GoogleMapProvider>
-      )}
-      {needPick && <p className="text-body-sm text-text-secondary">{PICK_SGG}</p>}
-      <HeatLegend />
-      <p className="text-caption-xs text-text-tertiary">{NOTE}</p>
+      </div>
+      <div className="bg-bg-subtle flex flex-col gap-1.5 rounded-xl p-4">
+        <p className="text-body-sm text-text-primary font-medium">{GUIDE_TITLE}</p>
+        <p className="text-body-sm text-text-secondary">{GUIDE_BODY}</p>
+      </div>
     </aside>
   )
 }

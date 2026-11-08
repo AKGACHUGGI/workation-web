@@ -13,10 +13,10 @@ type Props = {
   inherited?: MetricKey[]
 }
 
-/** 카드 세부 등급: 조용·시기·또래·숙박·활기 + metricGrade 배지 */
+/** 카드 세부 등급: 조용·시기·또래·숙박·활기 + metricGrade 배지 (Figma SubGrades: 줄 간격 4 · 쌍 간격 8 · 라벨-배지 3) */
 export default function SubGradeChips({ scores, selected = null, inherited = [] }: Props) {
   return (
-    <ul aria-label="세부 등급" className="flex flex-wrap gap-x-3 gap-y-1">
+    <ul aria-label="세부 등급" className="flex flex-wrap gap-x-2 gap-y-1">
       {METRIC_KEYS.map((key) => {
         const dim = selected !== null && !selected.includes(key)
         const isInherited = inherited.includes(key)
@@ -25,7 +25,7 @@ export default function SubGradeChips({ scores, selected = null, inherited = [] 
             data-metric={key}
             data-dim={dim || undefined}
             tabIndex={isInherited ? 0 : undefined}
-            className={`inline-flex items-center gap-1 ${dim ? 'opacity-dim' : ''}`}
+            className={`inline-flex items-center gap-0.75 ${dim ? 'opacity-dim' : ''}`}
           >
             <span className="text-caption-xs text-text-secondary">{METRIC_SHORT_LABEL[key]}</span>
             <GradeBadge grade={metricGrade(scores[key])} size="sm" />
