@@ -90,6 +90,10 @@
   --color-brand-hover: var(--color-rausch-600);
   --color-brand-soft: var(--color-rausch-50);
   --color-brand-soft-border: var(--color-rausch-100);
+  /* 제공자 브랜드 색 — 각사 로그인 버튼 가이드 규정 색이라 토큰 예외로 등록 (W-07) */
+  --color-brand-kakao: #fee500;
+  --color-brand-kakao-fg: #191919;
+  --color-brand-google-border: var(--color-gray-300);
 
   /* selected/* — 칩·세그먼트·탭 선택 상태는 잉크 */
   --color-selected-bg: var(--color-gray-800);
@@ -209,6 +213,7 @@
   --container-map-rail: 420px; /* w-map-rail: W-01 히트맵 패널 */
   --container-modal-sm: 440px; /* w-modal-sm: 로그인 모달 */
   --container-modal-md: 640px; /* w-modal-md: 동 추가 모달 */
+  --spacing-icon-brand: 18px; /* size-icon-brand: 카카오·Google 로그인 버튼 심볼 (각사 가이드) */
 
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
