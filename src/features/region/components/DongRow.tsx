@@ -32,7 +32,7 @@ export default function DongRow({ name, kind, subtitle, gradeLabel, grade, href,
       <Tag>{DONG_KIND_LABEL[kind]}</Tag>
     )
   return (
-    <li className="border-border-default flex items-center gap-3 border-b px-4 py-3">
+    <li className="border-border-default flex items-center gap-3 border-b px-4 py-3 last:border-b-0">
       {leading}
       <Link to={href} className="flex min-w-0 flex-1 items-center gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
