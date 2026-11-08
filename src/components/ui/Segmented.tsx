@@ -25,12 +25,14 @@ export default function Segmented<T extends string>({
   size = 'md',
   className = '',
 }: Props<T>) {
-  const h = size === 'sm' ? 'h-7 px-3' : 'h-9 px-4'
+  // Figma: sm = W-01 지도 패널 범위 토글(px 10 · py 4 · 12/16 Medium), md = DayToggle(px 16 · py 6 · 14/20 Medium)
+  const item =
+    size === 'sm' ? 'px-2.5 py-1 text-caption-segment' : 'px-4 py-1.5 text-body-sm font-medium'
   return (
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className={`bg-bg-surface-strong inline-flex items-center gap-1 rounded-lg p-1 ${className}`}
+      className={`bg-bg-subtle inline-flex items-center gap-1 rounded-lg p-1 ${className}`}
     >
       {options.map((opt) => {
         const selected = opt.value === value
@@ -47,7 +49,7 @@ export default function Segmented<T extends string>({
             aria-disabled={opt.disabled || undefined}
             title={opt.title}
             onClick={opt.disabled ? undefined : () => onChange(opt.value)}
-            className={`text-caption-segment inline-flex items-center rounded-md whitespace-nowrap ${h} ${tone} ${dim}`}
+            className={`inline-flex items-center rounded-md whitespace-nowrap ${item} ${tone} ${dim}`}
           >
             {opt.label}
           </button>

@@ -25,7 +25,8 @@ export default function PhotoThumb({ photoUrl, alt, label, className = '' }: Pro
         />
       )}
       {label && (
-        <span className="bg-bg-surface text-caption-segment text-text-primary absolute top-2 left-2 rounded-md px-2 py-1">
+        // Figma ListingCard FloatBadge: 흰 pill · 11/13 Bold · card-float 그림자, 사진 안쪽 12px
+        <span className="bg-bg-surface text-caption-badge text-text-primary shadow-float absolute top-3 left-3 rounded-full px-2.5 py-1">
           {label}
         </span>
       )}

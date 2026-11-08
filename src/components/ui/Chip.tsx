@@ -12,7 +12,7 @@ type Props = {
   'aria-describedby'?: string
 }
 
-/** Figma Chip 7:139. 선택 상태는 잉크(selected-*), 토글은 aria-pressed */
+/** Figma Chip 7:139. h 32 · px 16 · 14/20 Medium · rounded-full. 선택 상태는 잉크(selected-*), 토글은 aria-pressed */
 export default function Chip({
   selected = false,
   disabled = false,
@@ -34,7 +34,7 @@ export default function Chip({
       aria-describedby={describedBy}
       title={title}
       onClick={disabled ? undefined : onClick}
-      className={`text-caption-segment inline-flex h-8 shrink-0 items-center gap-1 rounded-full border px-4 whitespace-nowrap ${tone} ${dim} ${className}`}
+      className={`text-body-sm inline-flex h-8 shrink-0 items-center gap-1 rounded-full border px-4 font-medium whitespace-nowrap ${tone} ${dim} ${className}`}
     >
       {children}
     </button>
