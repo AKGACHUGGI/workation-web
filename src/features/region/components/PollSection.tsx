@@ -3,6 +3,7 @@ import FallbackImage from '@/components/ui/FallbackImage'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
 import DetailSection from '@/features/region/components/DetailSection'
 import type { PollResponse } from '@/features/region/types'
+import Avatar from '@/components/ui/Avatar'
 
 type Props = {
   question: string
@@ -103,10 +104,7 @@ export default function PollSection({
                     className="to-scrim/50 absolute inset-0 bg-linear-to-b from-transparent"
                   />
                   <figcaption className="text-caption-segment text-text-inverse relative flex items-center gap-1">
-                    <span className="bg-brand-soft border-brand-soft-border text-text-brand text-caption-xs flex size-6 items-center justify-center rounded-full border font-bold">
-                      {p.author.slice(0, 1)}
-                    </span>
-                    @{p.author}
+                    <Avatar initial={p.author} size="sm" />@{p.author}
                   </figcaption>
                 </figure>
               ))}

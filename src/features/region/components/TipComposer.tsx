@@ -1,5 +1,6 @@
 import { Camera } from 'lucide-react'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
+import Avatar from '@/components/ui/Avatar'
 
 type Props = { placeholder: string }
 
@@ -17,12 +18,7 @@ export default function TipComposer({ placeholder }: Props) {
       onFocus={open}
       className="bg-bg-subtle hover:bg-bg-surface-strong flex w-full items-center gap-3 rounded-xl py-2.5 pr-2.5 pl-4 text-left"
     >
-      <span
-        aria-hidden
-        className="bg-brand-soft border-brand-soft-border text-text-brand text-caption-xs flex size-6 shrink-0 items-center justify-center rounded-full border font-bold"
-      >
-        나
-      </span>
+      <Avatar initial="나" size="sm" />
       <span className="text-body-sm text-text-tertiary flex-1">{placeholder}</span>
       <Camera size={20} aria-hidden className="text-text-secondary shrink-0" />
       <span

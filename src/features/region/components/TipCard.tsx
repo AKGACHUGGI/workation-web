@@ -6,6 +6,7 @@ import { monthLabel } from '@/features/metric/month'
 import BrandTag from '@/features/region/components/BrandTag'
 import { relativeTime } from '@/features/region/relativeTime'
 import type { Note } from '@/features/region/types'
+import Avatar from '@/components/ui/Avatar'
 
 type Props = {
   note: Note
@@ -28,12 +29,7 @@ export default function TipCard({ note, targetHref, targetLabel, trailing }: Pro
   return (
     <article className="border-border-default bg-bg-surface flex flex-col gap-2.5 rounded-xl border p-4">
       <header className="flex items-center gap-2.5">
-        <span
-          aria-hidden
-          className="bg-brand-soft border-brand-soft-border text-text-brand text-body-sm flex size-8 shrink-0 items-center justify-center rounded-full border font-bold"
-        >
-          {note.author.initial}
-        </span>
+        <Avatar initial={note.author.initial} size="md" />
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="text-body-sm text-text-primary font-bold">{note.author.nickname}</span>
           <span className="text-caption-xs text-text-tertiary">{meta}</span>

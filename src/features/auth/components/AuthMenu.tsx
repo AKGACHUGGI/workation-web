@@ -77,7 +77,7 @@ export default function AuthMenu() {
         className={PILL}
       >
         <Menu size={16} aria-hidden />
-        <Avatar initial={me.initial} size="sm" />
+        <Avatar initial={me.initial} size="md" />
       </button>
       {open && (
         <div
