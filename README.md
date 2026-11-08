@@ -80,10 +80,10 @@ docs/               프로젝트 문서
 
 ## 환경 변수
 
-| 변수                | 설명                                | 기본값                  |
-| ------------------- | ----------------------------------- | ----------------------- |
-| `VITE_API_BASE_URL` | workation-backend 주소              | `http://localhost:8000` |
-| `VITE_USE_MOCK`     | `'true'` 면 `src/mocks` 데이터 사용 | (미설정 = 실제 API)     |
+| 변수                | 설명                                                     | 기본값                  |
+| ------------------- | -------------------------------------------------------- | ----------------------- |
+| `VITE_API_BASE_URL` | workation-backend 주소. 개발 서버는 /api 를 여기로 proxy | `http://localhost:8000` |
+| `VITE_USE_MOCK`     | `'true'` 면 `src/mocks` 데이터 사용                      | (미설정 = 실제 API)     |
 
 `.env` 는 커밋하지 않습니다. 새 변수를 추가할 때는 `.env.example` 과 `src/vite-env.d.ts` 의 `ImportMetaEnv` 를 함께 갱신합니다.
 

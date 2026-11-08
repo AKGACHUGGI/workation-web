@@ -3,6 +3,8 @@ import { render } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import ToastProvider from '@/components/ui/toast/ToastProvider'
+import AuthProvider from '@/features/auth/AuthProvider'
+import { authKeys } from '@/features/auth/queryKeys'
 
 /** 테스트에서 현재 URL(path+search)을 읽기 위한 프로브 */
 function LocationProbe() {
@@ -22,21 +24,25 @@ export default function renderWithRouter(
   { route = '/', path = '*' }: Options = {},
 ) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  // 비로그인으로 시작. 쓰기 동작은 로그인 모달을 연다 (W-07)
+  client.setQueryData(authKeys.me, null)
   return render(
     <QueryClientProvider client={client}>
       <ToastProvider>
         <MemoryRouter initialEntries={[route]}>
-          <Routes>
-            <Route
-              path={path}
-              element={
-                <>
-                  {ui}
-                  <LocationProbe />
-                </>
-              }
-            />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route
+                path={path}
+                element={
+                  <>
+                    {ui}
+                    <LocationProbe />
+                  </>
+                }
+              />
+            </Routes>
+          </AuthProvider>
         </MemoryRouter>
       </ToastProvider>
     </QueryClientProvider>,
