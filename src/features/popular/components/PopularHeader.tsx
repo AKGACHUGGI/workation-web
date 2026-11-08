@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Dropdown from '@/components/ui/Dropdown'
 import { PRESET_LABEL } from '@/features/metric/constants'
 import { PRESET_KEYS } from '@/features/metric/types'
@@ -15,6 +16,8 @@ type Props = {
   onPresetChange: (p: PresetKey) => void
   selected: MetricKey[]
   onSelectedChange: (keys: MetricKey[]) => void
+  /** 제목 아래 "AI가 이해한 조건" 줄 (검색했을 때만) */
+  conditions?: ReactNode
 }
 
 /** "인기 지역 N곳" + 프리셋·정렬 드롭다운 (+ 직접 설정 토글) */
@@ -26,11 +29,16 @@ export default function PopularHeader({
   onPresetChange,
   selected,
   onSelectedChange,
+  conditions,
 }: Props) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-heading-xl text-text-primary">인기 지역 {count}곳</h2>
+      {/* Figma 274:4775: 제목 18 Bold + 아래 조건 줄 / 오른쪽 프리셋·정렬 */}
+      <div className="flex items-center justify-between gap-6">
+        <div className="flex min-w-0 flex-col gap-2">
+          <h2 className="text-heading-lg text-text-primary">인기 지역 {count}곳</h2>
+          {conditions}
+        </div>
         <div className="flex items-center gap-2">
           <Dropdown
             ariaLabel="프리셋"

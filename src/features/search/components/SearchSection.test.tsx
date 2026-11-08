@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import renderWithRouter from '@/test/renderWithRouter'
+import IntentTags from '@/features/search/components/IntentTags'
 import SearchSection from '@/features/search/components/SearchSection'
+import { useSearchIntent } from '@/features/search/useSearchIntent'
 
 // W-04 가 vitest.config 의 test.env 에 VITE_USE_MOCK='true' 를 넣으므로 isMock 은 true 다.
 // 그래도 W-04 보다 먼저 구현될 때(env 없음 → 실제 api 호출)와 mockDelay 를 피하려고 api 모듈을 mock 응답으로 교체한다.
@@ -13,9 +15,32 @@ vi.mock('@/features/search/api', () => ({
   },
 }))
 
+/** HomePage 와 같은 조합: 검색 상태(useSearchIntent)를 히어로와 "AI가 이해한 조건" 줄에 나눠 준다 */
+function Harness() {
+  const search = useSearchIntent()
+  return (
+    <>
+      <SearchSection
+        q={search.q}
+        pending={search.pending}
+        noResult={search.noResult}
+        onSubmit={search.submit}
+      />
+      {search.intent && (
+        <IntentTags
+          tags={search.intent.tags}
+          onRemove={search.removeTag}
+          onClear={search.clear}
+          onEdit={() => {}}
+        />
+      )}
+    </>
+  )
+}
+
 describe('SearchSection', () => {
   it('예시 칩 클릭 → 조건 태그 + URL 반영', async () => {
-    renderWithRouter(<SearchSection />, { route: '/' })
+    renderWithRouter(<Harness />, { route: '/' })
     await userEvent.click(screen.getByRole('button', { name: /11월에 조용한 해안/ }))
     await waitFor(() => expect(screen.getByText('AI가 이해한 조건')).toBeInTheDocument())
     expect(screen.getByRole('button', { name: '11월 삭제' })).toBeInTheDocument()
@@ -27,7 +52,7 @@ describe('SearchSection', () => {
   })
 
   it('태그 삭제 → 해당 축 제거, 조건 지우기 → 전부 제거', async () => {
-    renderWithRouter(<SearchSection />, { route: '/' })
+    renderWithRouter(<Harness />, { route: '/' })
     await userEvent.click(screen.getByRole('button', { name: /11월에 조용한 해안/ }))
     await userEvent.click(await screen.findByRole('button', { name: '해안 삭제' }))
     expect(screen.getByTestId('location')).not.toHaveTextContent('terrain=')
@@ -37,7 +62,7 @@ describe('SearchSection', () => {
   })
 
   it('결과 0건 안내', async () => {
-    renderWithRouter(<SearchSection />, { route: '/' })
+    renderWithRouter(<Harness />, { route: '/' })
     await userEvent.type(screen.getByRole('searchbox'), '아무말{Enter}')
     expect(await screen.findByText(/조건을 찾지 못했어요/)).toBeInTheDocument()
   })

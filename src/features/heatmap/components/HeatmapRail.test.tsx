@@ -16,7 +16,7 @@ describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
     renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
       route: '/?month=2025-10',
     })
-    expect(await screen.findByText('양양군 54')).toBeInTheDocument()
+    expect(await screen.findByRole('link', { name: '양양군 54' })).toBeInTheDocument()
     expect(screen.getAllByRole('link')).toHaveLength(12)
   })
 
@@ -24,7 +24,7 @@ describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
     renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
       route: '/?month=2025-10',
     })
-    await screen.findByText('양양군 54')
+    await screen.findByRole('link', { name: '양양군 54' })
     await userEvent.click(screen.getByRole('button', { name: '동네 조용함' }))
     expect(screen.getByTestId('location')).toHaveTextContent('metric=quiet')
   })

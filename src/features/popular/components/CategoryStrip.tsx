@@ -23,7 +23,8 @@ export default function CategoryStrip() {
   }
 
   return (
-    <nav aria-label="카테고리" className="border-border-default flex items-center gap-8 border-b">
+    // Figma CategoryStrip(274:4714): 가운데 정렬 · 간격 36 · 아이콘 24 + 라벨 12 + 활성 2px 잉크 밑줄
+    <nav aria-label="카테고리" className="flex items-end justify-center gap-9 pt-3">
       {CATEGORIES.map(({ key, label, icon: Icon, action }) => {
         const active = isActive(action)
         const decorative = action.kind === 'none'
@@ -34,14 +35,16 @@ export default function CategoryStrip() {
             aria-pressed={decorative ? undefined : active}
             aria-disabled={decorative || undefined}
             onClick={decorative ? undefined : () => act(action)}
-            className={`text-caption-segment -mb-px flex flex-col items-center gap-1 border-b-2 pb-3 ${
-              active
-                ? 'border-text-primary text-text-primary'
-                : 'text-text-secondary border-transparent'
+            className={`text-caption-segment flex flex-col items-center gap-1.5 px-1 pt-2 ${
+              active ? 'text-text-primary' : 'text-text-secondary'
             } ${decorative ? 'cursor-default' : 'hover:text-text-primary'}`}
           >
-            <Icon size={22} aria-hidden />
+            <Icon size={24} strokeWidth={1.5} aria-hidden />
             {label}
+            <span
+              aria-hidden
+              className={`h-0.5 w-full ${active ? 'bg-text-primary' : 'bg-transparent'}`}
+            />
           </button>
         )
       })}

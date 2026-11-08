@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import ListingCard from '@/components/ui/ListingCard'
 import { useFavorites } from '@/features/me/useFavorites'
@@ -26,10 +27,12 @@ type Props = {
   month: MonthParam
   hoverId: string | null
   onHover: (id: string | null) => void
+  /** PopularHeader 제목 아래 "AI가 이해한 조건" 줄 */
+  conditions?: ReactNode
 }
 
 /** 인기 지역 카드 3열. 정렬·필터·점수·등급은 여기서 계산 */
-export default function PopularRegions({ items, month, hoverId, onHover }: Props) {
+export default function PopularRegions({ items, month, hoverId, onHover, conditions }: Props) {
   const [sort, setSort] = useQueryState<PopularSort>('sort', parseSort, DEFAULT_SORT)
   const [terrain, setTerrain] = useTerrainParam()
   const { preset, setPreset, selected, setSelected, weights } = useWeights()
@@ -54,6 +57,7 @@ export default function PopularRegions({ items, month, hoverId, onHover }: Props
         onPresetChange={setPreset}
         selected={selected}
         onSelectedChange={setSelected}
+        conditions={conditions}
       />
       {list.length === 0 ? (
         <PopularEmpty onClearFilter={() => setTerrain([])} />
