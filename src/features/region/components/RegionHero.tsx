@@ -10,6 +10,8 @@ type Props = {
   onShare: () => void
   onSave: () => void
   saveLabel?: string
+  /** 즐겨찾기에 있음 → 하트 채움 + aria-pressed */
+  saved?: boolean
 }
 
 /** 브레드크럼 · 제목 · 메타 줄 · 태그 · 공유/저장 */
@@ -21,6 +23,7 @@ export default function RegionHero({
   onShare,
   onSave,
   saveLabel = '저장',
+  saved = false,
 }: Props) {
   return (
     <section className="flex flex-col gap-3">
@@ -54,9 +57,15 @@ export default function RegionHero({
           <button
             type="button"
             onClick={onSave}
+            aria-pressed={saved}
             className="border-border-default text-body-sm text-text-primary hover:border-border-strong flex items-center gap-1 rounded-lg border px-3 py-2"
           >
-            <Heart size={16} /> {saveLabel}
+            <Heart
+              size={16}
+              aria-hidden
+              className={saved ? 'fill-accent-save text-accent-save' : undefined}
+            />{' '}
+            {saveLabel}
           </button>
         </div>
       </div>

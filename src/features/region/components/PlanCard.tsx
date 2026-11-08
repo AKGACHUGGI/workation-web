@@ -20,6 +20,8 @@ type Props = {
   onFavorite: () => void
   onShare: () => void
   summary: { label: string; value: string }[]
+  /** 즐겨찾기에 있음 → 라벨 '즐겨찾기에 있음' + aria-pressed */
+  favorite?: boolean
 }
 
 const select =
@@ -37,6 +39,7 @@ export default function PlanCard({
   onFavorite,
   onShare,
   summary,
+  favorite = false,
 }: Props) {
   const [stay, setStay] = useState<(typeof STAY_OPTIONS)[number]>('2주')
   return (
@@ -96,9 +99,10 @@ export default function PlanCard({
       <button
         type="button"
         onClick={onFavorite}
+        aria-pressed={favorite}
         className="bg-brand-primary text-body-sm text-text-inverse hover:bg-brand-hover rounded-lg px-4 py-3 font-medium"
       >
-        이 지역 즐겨찾기
+        {favorite ? '즐겨찾기에 있음' : '이 지역 즐겨찾기'}
       </button>
       <button
         type="button"

@@ -3,9 +3,9 @@ import { Heart, Columns2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import GradeBadge from '@/components/ui/GradeBadge'
 import { GRADE_FG } from '@/components/ui/gradeClass'
-import { useRequireLogin } from '@/features/auth/useRequireLogin'
 import { formatHour } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
+import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL } from '@/features/metric/constants'
 import { MONTHS, monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
@@ -34,7 +34,8 @@ export default function DongPlanCard({
   sgg,
 }: Props) {
   const [stay, setStay] = useState<(typeof STAY)[number]>('2주')
-  const requireLogin = useRequireLogin()
+  const { isFavorite, toggle } = useFavorites()
+  const saved = isFavorite('dongs', detail.id)
   const compareLink = useCarryLink(`/compare?dongs=${detail.id}`)
   const sggLink = useCarryLink(`/regions/${detail.sigungu.id}`)
   const select =
@@ -103,10 +104,12 @@ export default function DongPlanCard({
 
       <button
         type="button"
-        onClick={() => requireLogin(() => {})}
+        onClick={() => toggle('dongs', detail.id)}
+        aria-pressed={saved}
         className="bg-brand-primary text-body-sm text-text-inverse hover:bg-brand-hover inline-flex h-11 items-center justify-center gap-2 rounded-lg font-medium"
       >
-        <Heart size={16} aria-hidden /> 이 동네 즐겨찾기
+        <Heart size={16} aria-hidden className={saved ? 'fill-current' : undefined} />{' '}
+        {saved ? '즐겨찾기에 있음' : '이 동네 즐겨찾기'}
       </button>
       <Link
         to={compareLink}
