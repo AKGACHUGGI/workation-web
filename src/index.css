@@ -15,7 +15,9 @@
 */
 @theme {
   /* ---------- 서체 ---------- */
-  --font-sans: 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* 본문은 맑은 고딕(시스템). macOS 에는 없으므로 Apple SD Gothic Neo 로 대체된다. */
+  --font-sans:
+    'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Black Han Sans', var(--font-sans);
   --font-hand: 'Gaegu', var(--font-sans);
 
@@ -199,6 +201,15 @@
   --breakpoint-tablet: 744px;
   --breakpoint-desktop: 1128px;
   --container-page: 1440px;
+
+  /* ---------- 레이아웃 치수 ---------- */
+  --container-desktop: 1128px; /* min-w-desktop: 최소 폭, 이보다 좁으면 가로 스크롤 */
+  --height-navbar: 64px; /* h-navbar (h-* 는 --height·--spacing 네임스페이스만 읽는다) */
+  --container-sidebar: 360px; /* w-sidebar: W-03·W-04 사이드바 */
+  --container-map-rail: 420px; /* w-map-rail: W-01 히트맵 패널 */
+
+  /* ---------- 불투명도 ---------- */
+  --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
 }
 
 /* 간격은 Tailwind 기본 --spacing(0.25rem = 4px) 이 Figma space/1~16 과 동일하므로 그대로 사용 */
