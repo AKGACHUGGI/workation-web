@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import renderWithRouter from '@/test/renderWithRouter'
 import HeatmapRail from '@/features/heatmap/components/HeatmapRail'
@@ -46,5 +46,28 @@ describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
     await userEvent.click(await screen.findByRole('button', { name: '양양군 54' }))
     expect(screen.getByTestId('location')).toHaveTextContent('sgg=51830')
     expect(screen.queryByText(/시군구를 먼저/)).not.toBeInTheDocument()
+  })
+
+  it('행정동 모드: 지도 위 시군구 선택 칩 12개, 고른 뒤에도 다른 시군구로 바꿀 수 있다', async () => {
+    renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
+      route: '/?scope=dong&month=2025-10&sgg=51830',
+    })
+    const group = await screen.findByRole('group', { name: '시군구 선택' })
+    const chips = await within(group).findAllByRole('button')
+    expect(chips).toHaveLength(12)
+    expect(within(group).getByRole('button', { name: '양양군' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    await userEvent.click(within(group).getByRole('button', { name: '고성군' }))
+    expect(screen.getByTestId('location')).toHaveTextContent('sgg=51820')
+  })
+
+  it('시군구 범위에서는 선택 칩이 없다', async () => {
+    renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
+      route: '/?month=2025-10',
+    })
+    await screen.findByRole('link', { name: '양양군 54' })
+    expect(screen.queryByRole('group', { name: '시군구 선택' })).not.toBeInTheDocument()
   })
 })
