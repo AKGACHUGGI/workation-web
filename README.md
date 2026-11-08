@@ -20,6 +20,9 @@
 | UI            | React + TypeScript                     | 19.3 / 6.0                      |
 | 스타일        | Tailwind CSS (`@tailwindcss/vite`)     | 4.3                             |
 | 라우팅        | react-router-dom                       | 7.18                            |
+| 서버 상태     | @tanstack/react-query                  | 5.x                             |
+| 테스트        | Vitest + Testing Library / Playwright  | 5.x / 1.65                      |
+| 아이콘        | lucide-react                           | 1.x                             |
 | 린트          | oxlint                                 | 1.89                            |
 | 포맷          | Prettier + prettier-plugin-tailwindcss | 3.9 / 0.8                       |
 
@@ -38,14 +41,18 @@ npm 이나 yarn 으로 설치하면 `preinstall` 단계에서 차단됩니다.
 
 ## 스크립트
 
-| 명령                | 설명                                          |
-| ------------------- | --------------------------------------------- |
-| `pnpm dev`          | 개발 서버 (HMR)                               |
-| `pnpm build`        | `tsc -b` 타입 체크 후 프로덕션 빌드 → `dist/` |
-| `pnpm preview`      | 빌드 결과 로컬 미리보기                       |
-| `pnpm lint`         | oxlint 정적 분석                              |
-| `pnpm format`       | Prettier 로 전체 포맷                         |
-| `pnpm format:check` | 포맷 검사만 (CI 용)                           |
+| 명령                | 설명                                                        |
+| ------------------- | ----------------------------------------------------------- |
+| `pnpm dev`          | 개발 서버 (HMR)                                             |
+| `pnpm build`        | `tsc -b` 타입 체크 후 프로덕션 빌드 → `dist/`               |
+| `pnpm preview`      | 빌드 결과 로컬 미리보기                                     |
+| `pnpm lint`         | oxlint 정적 분석                                            |
+| `pnpm format`       | Prettier 로 전체 포맷                                       |
+| `pnpm format:check` | 포맷 검사만 (CI 용)                                         |
+| `pnpm test`         | Vitest 단위 테스트 1회 실행                                 |
+| `pnpm test:watch`   | Vitest 감시 모드                                            |
+| `pnpm e2e`          | Playwright E2E (`VITE_USE_MOCK=true` 로 dev 서버 자동 기동) |
+| `pnpm e2e:install`  | 처음 한 번, Playwright Chromium 설치                        |
 
 ## 폴더 구조
 
@@ -53,15 +60,18 @@ npm 이나 yarn 으로 설치하면 `preinstall` 단계에서 차단됩니다.
 src/
   main.tsx          진입점 (StrictMode + App)
   App.tsx           RouterProvider
-  router.tsx        라우트 등록 (명세서 W-01~W-06)
+  router.tsx        라우트 등록 (명세서 W-01~W-08)
   index.css         Tailwind 진입점 + @theme 디자인 토큰
   pages/            화면 단위 컴포넌트 (라우트 1개 = 파일 1개)
   components/       화면 공용 UI (RootLayout, Navbar, Card 등)
   features/         도메인별 묶음 (API 호출 + 상태 + 전용 컴포넌트)
   lib/              api.ts 등 프레임워크 무관 유틸
   hooks/            공용 React 훅
+  mocks/            mock 응답 데이터 (VITE_USE_MOCK)
+  test/             테스트 헬퍼
   types/            공용 타입
   assets/           이미지·폰트
+e2e/                Playwright
 public/             그대로 서빙되는 정적 파일 (favicon 등)
 docs/               프로젝트 문서
 ```
@@ -70,9 +80,10 @@ docs/               프로젝트 문서
 
 ## 환경 변수
 
-| 변수                | 설명                   | 기본값                  |
-| ------------------- | ---------------------- | ----------------------- |
-| `VITE_API_BASE_URL` | workation-backend 주소 | `http://localhost:8000` |
+| 변수                | 설명                                                     | 기본값                  |
+| ------------------- | -------------------------------------------------------- | ----------------------- |
+| `VITE_API_BASE_URL` | workation-backend 주소. 개발 서버는 /api 를 여기로 proxy | `http://localhost:8000` |
+| `VITE_USE_MOCK`     | `'true'` 면 `src/mocks` 데이터 사용                      | (미설정 = 실제 API)     |
 
 `.env` 는 커밋하지 않습니다. 새 변수를 추가할 때는 `.env.example` 과 `src/vite-env.d.ts` 의 `ImportMetaEnv` 를 함께 갱신합니다.
 
@@ -84,5 +95,5 @@ docs/               프로젝트 문서
   - 그림자: `shadow-float` 하나만
   - 타이포: `text-heading-xl`, `text-body-sm`, `text-number-rating` 처럼 Figma 텍스트 스타일 이름 그대로. Black Han Sans 는 `font-display` 를 함께 지정
   - 간격: Tailwind 기본 4px 단위가 Figma space/1~16 과 동일
-- 서체는 `index.html` 에서 Google Fonts 로 로드합니다(Noto Sans KR 400/500/700, Black Han Sans, Gaegu 400/700).
+- 서체: 본문 Noto Sans KR · 로고 Black Han Sans · 손글씨 Gaegu. 모두 `@fontsource` 로 번들에 포함하며 외부 CDN 을 쓰지 않습니다(Figma 01 Foundations 와 동일).
 - 컴포넌트에서 hex 임의값(`text-[#222]`)을 쓰지 않습니다. 값 변경은 Figma → `디자인/디자인-원칙.md` → `src/index.css` 순서로 반영합니다.

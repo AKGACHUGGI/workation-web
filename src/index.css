@@ -15,7 +15,8 @@
 */
 @theme {
   /* ---------- 서체 ---------- */
-  --font-sans: 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Figma 01 Foundations: 본문 Noto Sans KR · 로고 Black Han Sans · 손글씨 Gaegu (모두 @fontsource 번들) */
+  --font-sans: 'Noto Sans KR', 'Apple SD Gothic Neo', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Black Han Sans', var(--font-sans);
   --font-hand: 'Gaegu', var(--font-sans);
 
@@ -88,6 +89,10 @@
   --color-brand-hover: var(--color-rausch-600);
   --color-brand-soft: var(--color-rausch-50);
   --color-brand-soft-border: var(--color-rausch-100);
+  /* 제공자 브랜드 색 — 각사 로그인 버튼 가이드 규정 색이라 토큰 예외로 등록 (W-07) */
+  --color-brand-kakao: #fee500;
+  --color-brand-kakao-fg: #191919;
+  --color-brand-google-border: var(--color-gray-300);
 
   /* selected/* — 칩·세그먼트·탭 선택 상태는 잉크 */
   --color-selected-bg: var(--color-gray-800);
@@ -118,6 +123,14 @@
   --color-chart-weekday: var(--color-gray-800);
   --color-chart-weekend: var(--color-rausch-500);
   --color-chart-grid: var(--color-gray-200);
+  /* chart/series — 활동 유형 4종 (순서 ACTIVITY_KEYS: 저녁 상권·주말 관광·평일 업무·새벽 주거) */
+  --color-chart-1: var(--color-gray-800);
+  --color-chart-2: var(--color-rausch-500);
+  --color-chart-3: var(--color-babu-600);
+  --color-chart-4: var(--color-arches-500);
+  /* chart/line — 24시간 곡선 강조/보조 */
+  --color-chart-line-strong: var(--color-gray-800);
+  --color-chart-line-muted: var(--color-gray-400);
 
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
@@ -151,11 +164,13 @@
   --text-display-3xl: 30px;
   --text-display-3xl--line-height: 36px;
   --text-display-3xl--font-weight: 700;
+  --text-display-3xl--letter-spacing: -0.02em; /* Figma -2% */
 
   /* heading */
   --text-heading-2xl: 24px;
   --text-heading-2xl--line-height: 32px;
   --text-heading-2xl--font-weight: 700;
+  --text-heading-2xl--letter-spacing: -0.02em; /* Figma -2% */
   --text-heading-xl: 20px;
   --text-heading-xl--line-height: 28px;
   --text-heading-xl--font-weight: 700;
@@ -184,6 +199,10 @@
   --text-caption-badge--line-height: 13px;
   --text-caption-badge--font-weight: 700;
 
+  /* handwriting — Gaegu 20/26. 온보딩·빈 상태·보조 문구에만 (font-hand 와 함께) */
+  --text-hand: 20px;
+  --text-hand--line-height: 26px;
+
   /* number — 숫자는 잉크색, 종합 점수만 64px */
   --text-number-rating: 64px;
   --text-number-rating--line-height: 70px;
@@ -194,11 +213,24 @@
   --text-number-2xl: 24px;
   --text-number-2xl--line-height: 28px;
   --text-number-2xl--font-weight: 700;
+  --text-number-2xl--letter-spacing: -0.02em; /* Figma -2% */
 
   /* ---------- 반응형 구간 (디자인 원칙 §5) ---------- */
   --breakpoint-tablet: 744px;
   --breakpoint-desktop: 1128px;
   --container-page: 1440px;
+
+  /* ---------- 레이아웃 치수 ---------- */
+  --container-desktop: 1128px; /* min-w-desktop: 최소 폭, 이보다 좁으면 가로 스크롤 */
+  --height-navbar: 80px; /* Figma Web/NavbarV2 */ /* h-navbar (h-* 는 --height·--spacing 네임스페이스만 읽는다) */
+  --container-sidebar: 372px; /* w-sidebar: W-03·W-04 사이드바 (Figma Rail 251:3836) */
+  --container-map-rail: 420px; /* w-map-rail: W-01 히트맵 패널 */
+  --container-modal-sm: 440px; /* w-modal-sm: 로그인 모달 */
+  --container-modal-md: 640px; /* w-modal-md: 동 추가 모달 */
+  --spacing-icon-brand: 18px; /* size-icon-brand: 카카오·Google 로그인 버튼 심볼 (각사 가이드) */
+
+  /* ---------- 불투명도 ---------- */
+  --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
 }
 
 /* 간격은 Tailwind 기본 --spacing(0.25rem = 4px) 이 Figma space/1~16 과 동일하므로 그대로 사용 */

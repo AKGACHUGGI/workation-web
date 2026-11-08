@@ -7,3 +7,8 @@ export function hasMapsKey(): boolean {
 export function mapsKey(): string {
   return import.meta.env.VITE_GOOGLE_MAPS_KEY ?? ''
 }
+
+/** AdvancedMarker 는 Map ID 가 있어야 그려진다. 운영 ID 가 없으면 Google 의 개발용 ID */
+export function mapsMapId(): string {
+  return import.meta.env.VITE_GOOGLE_MAPS_MAP_ID?.trim() || 'DEMO_MAP_ID'
+}
