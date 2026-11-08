@@ -18,4 +18,11 @@ describe('Toggle', () => {
     await userEvent.click(screen.getByRole('switch'))
     expect(onChange).not.toHaveBeenCalled()
   })
+  it('설명은 라벨 아래에, 켜짐은 brand 색', () => {
+    render(
+      <Toggle id="t3" label="알림" description="추천 월이 다가오면" checked onChange={() => {}} />,
+    )
+    expect(screen.getByText('추천 월이 다가오면')).toBeInTheDocument()
+    expect(screen.getByRole('switch', { name: '알림' })).toHaveClass('bg-brand-primary')
+  })
 })

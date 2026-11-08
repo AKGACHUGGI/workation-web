@@ -31,15 +31,14 @@ export default function NotificationSettings() {
         <div className="bg-bg-subtle h-24 animate-pulse rounded-lg" />
       ) : (
         ITEMS.map((item) => (
-          <div key={item.key} className="flex flex-col gap-0.5">
-            <Toggle
-              id={`setting-${item.key}`}
-              label={item.label}
-              checked={data[item.key]}
-              onChange={(next) => update.mutate({ [item.key]: next })}
-            />
-            <span className="text-caption-xs text-text-tertiary">{item.hint}</span>
-          </div>
+          <Toggle
+            key={item.key}
+            id={`setting-${item.key}`}
+            label={item.label}
+            description={item.hint}
+            checked={data[item.key]}
+            onChange={(next) => update.mutate({ [item.key]: next })}
+          />
         ))
       )}
     </MePanel>
