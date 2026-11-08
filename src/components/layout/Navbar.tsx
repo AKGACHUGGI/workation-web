@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
 import { NAV_ITEMS } from '@/components/layout/navItems'
+import AuthMenu from '@/features/auth/components/AuthMenu'
 import { carryQuery } from '@/hooks/carryQuery'
 
 /** Figma Web/NavbarV2. 로고 · 메뉴 · 로그인. 메뉴 이동 시 month·preset 쿼리 유지 */
@@ -30,14 +31,8 @@ export default function Navbar() {
             </NavLink>
           ))}
         </nav>
-        {/* W-07 에서 AuthMenu 로 교체한다 */}
         <div data-slot="auth-menu">
-          <button
-            type="button"
-            className="border-border-default text-body-sm text-text-primary hover:border-border-strong rounded-lg border px-4 py-2"
-          >
-            로그인
-          </button>
+          <AuthMenu />
         </div>
       </PageContainer>
     </header>
