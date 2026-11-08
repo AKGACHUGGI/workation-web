@@ -28,7 +28,7 @@ export default function SocialLoginButton({ provider, onClick, loading, disabled
       onClick={onClick}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`text-body-base disabled:opacity-dim relative flex h-12 w-full items-center justify-center gap-2 rounded-lg font-medium disabled:cursor-not-allowed ${tone}`}
+      className={`text-body-base disabled:opacity-dim relative flex h-13 w-full items-center justify-center gap-2 rounded-xl px-4 font-medium disabled:cursor-not-allowed ${tone}`}
     >
       {loading ? (
         <Loader2 aria-hidden="true" className="size-icon-brand animate-spin" />
