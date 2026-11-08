@@ -22,3 +22,7 @@ python3 scripts/gen-mock.py <processed_dir> <feature_dir>
 - **10월(`2025-10`)은 항상 `sigungu-2025-10.ts`·`dong-2025-10.ts` 수작업 픽스처를 쓴다.** 테스트·E2E·다른 화면(W-03~W-08) 기대값이 이 값에 묶여 있다.
 - 생성 파일이 없으면 `deriveMonth`(결정적 생성기)가 대신 응답한다. 개발·CI 는 생성 파일 없이 돈다.
 - 백분위 규칙은 W-02 스펙 §5 와 같다(스크립트 docstring 참고). 백엔드 구현과 결과가 다르면 스펙을 기준으로 맞춘다.
+
+## region (W-03)
+
+`gen-mock.py` 에 `region` 서브커맨드를 추가해 `src/mocks/region/{sggId}-{month}.ts` 를 생성한다 (스펙 W-03 §5-2 산출 규칙: stats·months 는 특수시설 동 제외 합계, `peerOffpeakMonths` 는 또래 z − 혼잡 z 상위 2개월, `seasonType` 은 동 계절 NMF 평균 최대). 생성 전까지는 `src/mocks/region/generate.ts` 의 `makeRegionMock` 이 결정적 가짜 값을 돌려준다. `tags`·`landmark`·`links`·`photos` 는 `src/mocks/region/manual.ts` 에서 수동 관리.
