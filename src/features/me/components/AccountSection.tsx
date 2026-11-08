@@ -6,10 +6,15 @@ import { useToast } from '@/components/ui/toast/useToast'
 import { deleteMe, logout } from '@/features/auth/api'
 import { PROVIDER_LABEL } from '@/features/auth/types'
 import type { Me } from '@/features/auth/types'
+import MePanel from '@/features/me/components/MePanel'
 import { ME_COPY } from '@/features/me/copy'
 import type { MeSummary } from '@/features/me/types'
 
 type Props = { me: Me; summary?: MeSummary }
+
+/** Figma Button ghost (h-10): 잉크 글자, hover 밑줄 */
+const GHOST =
+  'text-body-base text-text-primary disabled:opacity-dim h-10 rounded-lg px-6 font-medium hover:underline'
 
 export default function AccountSection({ me, summary }: Props) {
   const [confirming, setConfirming] = useState(false)
@@ -60,31 +65,20 @@ export default function AccountSection({ me, summary }: Props) {
   }
 
   return (
-    <section className="border-border-default bg-bg-surface flex flex-col gap-4 rounded-xl border p-5">
-      <h2 className="text-title-md text-text-primary">계정</h2>
-      <dl className="flex flex-col gap-2">
+    <MePanel title="계정">
+      <dl className="flex flex-col gap-4">
         {rows.map(([k, v]) => (
-          <div key={k} className="flex justify-between gap-4">
-            <dt className="text-caption-xs text-text-tertiary shrink-0">{k}</dt>
-            <dd className="text-body-sm text-text-primary text-right">{v}</dd>
+          <div key={k} className="text-body-sm flex justify-between gap-4">
+            <dt className="text-text-secondary shrink-0">{k}</dt>
+            <dd className="text-text-primary text-right font-medium">{v}</dd>
           </div>
         ))}
       </dl>
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={busy}
-          className="border-border-default text-body-sm text-text-primary disabled:opacity-dim flex-1 rounded-lg border py-2"
-        >
+        <button type="button" onClick={handleLogout} disabled={busy} className={GHOST}>
           로그아웃
         </button>
-        <button
-          type="button"
-          onClick={() => setConfirming(true)}
-          disabled={busy}
-          className="text-body-sm text-signal-avoid disabled:opacity-dim flex-1 rounded-lg py-2"
-        >
+        <button type="button" onClick={() => setConfirming(true)} disabled={busy} className={GHOST}>
           계정 삭제
         </button>
       </div>
@@ -98,6 +92,6 @@ export default function AccountSection({ me, summary }: Props) {
         danger
         pending={busy}
       />
-    </section>
+    </MePanel>
   )
 }

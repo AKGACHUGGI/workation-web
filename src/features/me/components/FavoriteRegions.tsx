@@ -1,6 +1,6 @@
 import ListingCard from '@/components/ui/ListingCard'
 import { favoriteMeta2, weightsFor } from '@/features/me/favoriteMeta'
-import { ME_COPY } from '@/features/me/copy'
+import MePanel from '@/features/me/components/MePanel'
 import type { FavoriteRegion } from '@/features/me/types'
 import { useRemoveFavoriteWithUndo } from '@/features/me/useRemoveFavoriteWithUndo'
 import { METRIC_SHORT_LABEL } from '@/features/metric/constants'
@@ -27,13 +27,10 @@ export default function FavoriteRegions({ regions, month, preset, metrics }: Pro
   const base = useCarryLink('/regions')
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-heading-lg text-text-primary">즐겨찾기 지역 {regions.length}곳</h2>
-        <span className="text-caption-xs text-text-tertiary">
-          웹·앱 동기화 · {monthLabel(month)} 기준
-        </span>
-      </div>
+    <MePanel
+      title={`즐겨찾기 지역 ${regions.length}곳`}
+      aside={`웹·앱 동기화 · ${monthLabel(month)} 기준`}
+    >
       <div className="grid grid-cols-3 gap-6">
         {regions.map((r, i) => (
           <ListingCard
@@ -54,7 +51,6 @@ export default function FavoriteRegions({ regions, month, preset, metrics }: Pro
           />
         ))}
       </div>
-      <p className="text-caption-xs text-text-tertiary">{ME_COPY.syncNote}</p>
-    </section>
+    </MePanel>
   )
 }

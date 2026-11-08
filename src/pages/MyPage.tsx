@@ -13,6 +13,7 @@ import MyTabs from '@/features/me/components/MyTabs'
 import MyTips from '@/features/me/components/MyTips'
 import NotificationSettings from '@/features/me/components/NotificationSettings'
 import ProfileHeader from '@/features/me/components/ProfileHeader'
+import SyncNote from '@/features/me/components/SyncNote'
 import { DEFAULT_MY_TAB, parseMyTab } from '@/features/me/components/tabs'
 import type { MyTab } from '@/features/me/components/tabs'
 import { useMeSummary } from '@/features/me/useMeSummary'
@@ -62,7 +63,7 @@ export default function MyPage() {
   const favEmpty = fav && fav.regions.length === 0 && fav.dongs.length === 0
 
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       <ProfileHeader me={me} summary={summaryData} onRetrySummary={() => summary.refetch()} />
       <MyTabs
         value={tab}
@@ -70,8 +71,9 @@ export default function MyPage() {
         tipCount={summaryData?.tipCount}
         photoCount={summaryData?.photoCount}
       />
-      <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-2 flex flex-col gap-10">
+      {/* Figma: 본문 952 + 간격 24 + 사이드 400 */}
+      <div className="flex items-start gap-6">
+        <div className="flex min-w-0 flex-1 flex-col gap-6">
           {tab === 'favorites' &&
             (favorites.isPending ? (
               <div className="bg-bg-subtle h-64 animate-pulse rounded-xl" />
@@ -100,9 +102,10 @@ export default function MyPage() {
           {tab === 'tips' && <MyTips />}
           {tab === 'photos' && <MyPhotos />}
         </div>
-        <aside className="flex flex-col gap-6">
+        <aside className="flex w-100 shrink-0 flex-col gap-6">
           <NotificationSettings />
           <AccountSection me={me} summary={summaryData} />
+          <SyncNote />
         </aside>
       </div>
     </PageContainer>

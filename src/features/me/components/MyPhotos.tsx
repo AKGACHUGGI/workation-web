@@ -1,5 +1,6 @@
-import { Plus } from 'lucide-react'
+import { Camera } from 'lucide-react'
 import { useToast } from '@/components/ui/toast/useToast'
+import MePanel from '@/features/me/components/MePanel'
 import { ME_COPY } from '@/features/me/copy'
 import UserPhotoTile from '@/features/me/components/UserPhotoTile'
 import { useMyPhotos } from '@/features/me/useMyPhotos'
@@ -23,29 +24,26 @@ export default function MyPhotos() {
   const pending = data.items.length - approved
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-heading-lg text-text-primary">내 사진 {data.items.length}장</h2>
-        <span className="text-caption-xs text-text-tertiary">
-          검수 완료 {approved} · 대기 {pending}
-        </span>
-      </div>
-      <div className="grid grid-cols-4 gap-4">
+    <MePanel
+      title={`내 사진 ${data.items.length}장`}
+      aside={`검수 완료 ${approved} · 대기 ${pending}`}
+    >
+      <div className="grid grid-cols-4 gap-2">
         {data.items.map((p) => (
           <UserPhotoTile key={p.id} photo={p} />
         ))}
         <button
           type="button"
           onClick={() => show(ME_COPY.uploadSoon)}
-          className="border-border-default text-body-sm text-text-secondary flex aspect-4/3 flex-col items-center justify-center gap-2 rounded-xl border border-dashed"
+          className="bg-bg-subtle border-border-strong text-caption-xs text-text-secondary flex h-37.5 flex-col items-center justify-center gap-1 rounded-lg border border-dashed font-medium"
         >
-          <Plus className="h-5 w-5" />
+          <Camera size={20} aria-hidden />
           이달의 사진 올리기
         </button>
       </div>
       {data.items.length === 0 && (
         <p className="text-body-sm text-text-secondary text-center">{ME_COPY.photosEmpty}</p>
       )}
-    </section>
+    </MePanel>
   )
 }

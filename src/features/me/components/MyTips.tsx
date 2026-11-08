@@ -1,5 +1,6 @@
 import { useToast } from '@/components/ui/toast/useToast'
 import TipCard from '@/features/region/components/TipCard'
+import MePanel from '@/features/me/components/MePanel'
 import { ME_COPY } from '@/features/me/copy'
 import { useDeleteMyTip, useMyTips } from '@/features/me/useMyTips'
 import { useCarryLink } from '@/hooks/useCarryLink'
@@ -26,11 +27,7 @@ export default function MyTips() {
   const helpfulSum = data.pages[0]?.helpfulSum ?? 0
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-heading-lg text-text-primary">내 팁 {items.length}개</h2>
-        <span className="text-caption-xs text-text-tertiary">도움돼요 합계 {helpfulSum}</span>
-      </div>
+    <MePanel title={`내 팁 ${items.length}개`} aside={`도움돼요 합계 ${helpfulSum}`}>
       {items.length === 0 && (
         <p className="text-body-sm text-text-secondary py-8 text-center">{ME_COPY.tipsEmpty}</p>
       )}
@@ -68,6 +65,6 @@ export default function MyTips() {
           더 보기
         </button>
       )}
-    </section>
+    </MePanel>
   )
 }

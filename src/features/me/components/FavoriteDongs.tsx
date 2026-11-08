@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import MePanel from '@/features/me/components/MePanel'
 import DongRow from '@/features/region/components/DongRow'
 import type { FavoriteDong } from '@/features/me/types'
 import { useRemoveFavoriteWithUndo } from '@/features/me/useRemoveFavoriteWithUndo'
@@ -23,9 +24,9 @@ export default function FavoriteDongs({ dongs }: Props) {
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-heading-lg text-text-primary">즐겨찾기 동네 {dongs.length}곳</h2>
+    <MePanel
+      title={`즐겨찾기 동네 ${dongs.length}곳`}
+      aside={
         <div className="flex items-center gap-2">
           {selecting ? (
             <>
@@ -70,7 +71,8 @@ export default function FavoriteDongs({ dongs }: Props) {
             </button>
           )}
         </div>
-      </div>
+      }
+    >
       <ul className="border-border-default rounded-xl border px-4">
         {dongs.map((d) => {
           const checked = selected.includes(d.id)
@@ -109,6 +111,6 @@ export default function FavoriteDongs({ dongs }: Props) {
           )
         })}
       </ul>
-    </section>
+    </MePanel>
   )
 }

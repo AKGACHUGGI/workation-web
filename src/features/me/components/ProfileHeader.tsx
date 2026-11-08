@@ -31,10 +31,10 @@ export default function ProfileHeader({ me, summary, onRetrySummary }: Props) {
   }
 
   return (
-    <section className="border-border-default bg-bg-surface flex items-center justify-between rounded-2xl border p-6">
-      <div className="flex items-center gap-4">
+    <section className="border-border-default bg-bg-surface flex items-center justify-between gap-5 rounded-2xl border p-6">
+      <div className="flex min-w-0 flex-1 items-center gap-5">
         <Avatar initial={me.initial} size="lg" />
-        <div className="flex flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-1">
           <div className="flex items-center gap-2">
             {editing ? (
               <NicknameEditor
@@ -43,7 +43,7 @@ export default function ProfileHeader({ me, summary, onRetrySummary }: Props) {
                 onCancel={() => setEditing(false)}
               />
             ) : (
-              <h1 className="text-heading-xl text-text-primary">{me.nickname}</h1>
+              <h1 className="text-heading-2xl text-text-primary">{me.nickname}</h1>
             )}
             <Tag>{PROVIDER_LABEL[me.provider]} 연결됨</Tag>
           </div>
@@ -63,7 +63,7 @@ export default function ProfileHeader({ me, summary, onRetrySummary }: Props) {
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="border-border-default text-body-sm text-text-primary hover:border-border-strong rounded-lg border px-4 py-2"
+          className="border-text-primary bg-bg-surface text-body-base text-text-primary h-10 shrink-0 rounded-lg border px-6 font-medium"
         >
           프로필 편집
         </button>
