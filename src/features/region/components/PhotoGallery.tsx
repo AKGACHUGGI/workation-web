@@ -19,7 +19,7 @@ export default function PhotoGallery({ photos, alt }: Props) {
       <div className="grid grid-cols-2 gap-2">
         {rest.slice(0, 4).map((p, i) => (
           <img
-            key={p.url}
+            key={`${p.url}-${i}`}
             src={p.url}
             alt={`${alt} ${i + 2}`}
             className="bg-bg-subtle aspect-[4/3] w-full rounded-xl object-cover"

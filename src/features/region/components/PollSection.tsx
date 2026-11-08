@@ -73,9 +73,9 @@ export default function PollSection({
       <div>
         <h2 className="text-heading-lg text-text-primary mb-3">이달의 사진</h2>
         <div className="grid grid-cols-4 gap-2">
-          {(data?.photos ?? []).slice(0, 3).map((p) => (
+          {(data?.photos ?? []).slice(0, 3).map((p, i) => (
             <img
-              key={p.url}
+              key={`${p.url}-${i}`}
               src={p.url}
               alt={`${p.author}의 사진`}
               className="bg-bg-subtle aspect-square w-full rounded-xl object-cover"

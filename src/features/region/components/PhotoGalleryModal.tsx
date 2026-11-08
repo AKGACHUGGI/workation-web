@@ -32,7 +32,7 @@ export default function PhotoGalleryModal({ photos, alt, open, onClose }: Props)
       <div className="grid grid-cols-3 gap-3">
         {photos.map((p, i) => (
           <img
-            key={p.url}
+            key={`${p.url}-${i}`}
             src={p.url}
             alt={`${alt} ${i + 1}`}
             className="bg-bg-subtle aspect-[4/3] w-full rounded-xl object-cover"
