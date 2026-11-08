@@ -95,5 +95,5 @@ docs/               프로젝트 문서
   - 그림자: `shadow-float` 하나만
   - 타이포: `text-heading-xl`, `text-body-sm`, `text-number-rating` 처럼 Figma 텍스트 스타일 이름 그대로. Black Han Sans 는 `font-display` 를 함께 지정
   - 간격: Tailwind 기본 4px 단위가 Figma space/1~16 과 동일
-- 서체: 본문은 맑은 고딕(시스템 폰트, macOS 에서는 Apple SD Gothic Neo 로 대체). 로고 Black Han Sans · 손글씨 Gaegu 는 `@fontsource` 로 번들에 포함하며 외부 CDN 을 쓰지 않습니다.
+- 서체: 본문 Noto Sans KR · 로고 Black Han Sans · 손글씨 Gaegu. 모두 `@fontsource` 로 번들에 포함하며 외부 CDN 을 쓰지 않습니다(Figma 01 Foundations 와 동일).
 - 컴포넌트에서 hex 임의값(`text-[#222]`)을 쓰지 않습니다. 값 변경은 Figma → `디자인/디자인-원칙.md` → `src/index.css` 순서로 반영합니다.
