@@ -2,7 +2,6 @@ import { api, apiBlob } from '@/lib/api'
 import { NotFoundError } from '@/lib/errors'
 import { isMock, mockDelay } from '@/lib/mock'
 import type { ReportPreset, ReportResponse } from '@/features/report/types'
-import { getReportMock } from '@/mocks/report'
 
 type Params = { year: number; preset: ReportPreset }
 
@@ -15,6 +14,8 @@ function qs({ year, preset }: Params): string {
 /** GET /api/reports/{sggId}?year=&preset= */
 export async function fetchReport(id: string, params: Params): Promise<ReportResponse> {
   if (isMock) {
+    // mock 은 동적 import — 실서버 빌드에서 src/mocks 가 메인 번들에 들어가지 않게 한다 (W-02~W-04 와 같은 방식)
+    const { getReportMock } = await import('@/mocks/report')
     const data = getReportMock(id, params.preset)
     if (!data) throw new NotFoundError(`/api/reports/${id}`)
     return mockDelay(data)
