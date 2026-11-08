@@ -6,6 +6,7 @@ import HeatLegend from '@/features/heatmap/components/HeatLegend'
 import HeatmapControls from '@/features/heatmap/components/HeatmapControls'
 import HeatmapSchematic from '@/features/heatmap/components/HeatmapSchematic'
 import RegionHeatmap from '@/features/heatmap/components/RegionHeatmap'
+import SigunguPicker from '@/features/heatmap/components/SigunguPicker'
 import {
   DEFAULT_HEAT_METRIC,
   DEFAULT_SCOPE,
@@ -24,7 +25,6 @@ const GUIDE_TITLE = '지역을 클릭하면 상세(W-03)로 이동'
 const GUIDE_BODY =
   '행정동 레벨은 선택한 시군구 안에서만 표시됩니다. 지도 색은 선택한 지표의 점수(0~100)입니다.'
 const SCHEMATIC_NOTE = '도식 지도 · 실제는 GeoJSON'
-const PICK_SGG = '행정동을 보려면 시군구를 먼저 클릭하세요'
 
 type Props = { hoverId: string | null; onHover: (id: string | null) => void }
 
@@ -87,6 +87,9 @@ export default function HeatmapRail({ hoverId, onHover }: Props) {
           metric={metric}
           onMetricChange={setMetric}
         />
+        {scope === 'dong' && (
+          <SigunguPicker regions={sigunguHeat.entries} selected={sgg} onPick={pickSigungu} />
+        )}
         {isError ? (
           <div className="text-body-sm text-text-secondary flex items-center gap-2">
             히트맵을 불러오지 못했습니다
@@ -117,7 +120,6 @@ export default function HeatmapRail({ hoverId, onHover }: Props) {
             />
           </GoogleMapProvider>
         )}
-        {needPick && <p className="text-body-sm text-text-secondary">{PICK_SGG}</p>}
         <div className="flex items-center justify-between">
           <HeatLegend />
           {!hasMapsKey() && (

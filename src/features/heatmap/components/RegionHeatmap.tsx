@@ -21,6 +21,14 @@ type Props = {
   onPickSigungu: (id: string) => void
 }
 
+/** 행정동 범위에서 시군구를 고르기 전: 누를 수 있는 곳이라는 게 보이도록 브랜드 색 테두리 + 옅은 채움 */
+const PICKABLE: PolygonStyle = {
+  fill: 'var(--color-brand-soft)',
+  fillOpacity: 0.55,
+  stroke: 'var(--color-brand-primary)',
+  strokeWidth: 1.5,
+}
+
 const DIM: PolygonStyle = {
   fill: 'var(--color-gray-300)',
   fillOpacity: 0.35,
@@ -59,7 +67,11 @@ export default function RegionHeatmap({
     (id: string): PolygonStyle => {
       const e = byId.get(id)
       const hovered = hoverId === id
-      if (pickMode || !e || e.dimmed) return { ...DIM, strokeWidth: hovered ? 2 : 1 }
+      if (pickMode)
+        return hovered
+          ? { ...PICKABLE, fill: 'var(--color-brand-primary)', fillOpacity: 0.45, strokeWidth: 3 }
+          : PICKABLE
+      if (!e || e.dimmed) return { ...DIM, strokeWidth: hovered ? 2 : 1 }
       return {
         fill: `var(${HEAT_VAR[e.step]})`,
         fillOpacity: hovered ? 0.85 : 0.65,
@@ -72,8 +84,8 @@ export default function RegionHeatmap({
 
   const getLabel = useCallback(
     (id: string) => {
-      if (pickMode) return undefined
       const e = byId.get(id)
+      if (pickMode) return e?.name // 고르기 전에는 이름만 (어느 시군구인지 보이게)
       return e ? `${e.name} ${e.score}` : undefined
     },
     [byId, pickMode],
