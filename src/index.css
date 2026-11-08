@@ -164,6 +164,7 @@
   --text-display-3xl: 30px;
   --text-display-3xl--line-height: 36px;
   --text-display-3xl--font-weight: 700;
+  --text-display-3xl--letter-spacing: -0.02em; /* Figma -2% */
 
   /* heading */
   --text-heading-2xl: 24px;
