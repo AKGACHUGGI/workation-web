@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import PageContainer from '@/components/layout/PageContainer'
 import { monthLabel } from '@/features/metric/month'
 import { buildTiers, filterTiers } from '@/features/tier/buildTiers'
 import CustomMetricToggles from '@/features/tier/components/CustomMetricToggles'
@@ -35,7 +34,8 @@ export default function TierPage() {
   const copy = { tab: p.tab, preset: p.preset, metrics: p.metrics, metric: p.metric }
 
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    // Figma W-02 본문: 좌우 32 · 위 32 (본문 폭 1376)
+    <div className="max-w-page min-w-desktop mx-auto flex w-full flex-col gap-6 px-8 py-8">
       <TierHeader count={data?.items.length} scope={scope} onScopeChange={p.setScope} />
       <TierControls
         tab={p.tab}
@@ -85,6 +85,6 @@ export default function TierPage() {
       )}
 
       <p className="text-caption-xs text-text-tertiary">{tierFootnote(copy)}</p>
-    </PageContainer>
+    </div>
   )
 }
