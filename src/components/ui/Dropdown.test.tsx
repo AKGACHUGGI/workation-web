@@ -63,4 +63,21 @@ describe('Dropdown', () => {
     await userEvent.click(screen.getByText('바깥'))
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
   })
+  it('icon·formatLabel: 트리거에 아이콘과 가공 라벨, 접근 이름은 원래 라벨', () => {
+    render(
+      <Dropdown
+        options={[{ value: 'quiet', label: '조용한 곳' }]}
+        value="quiet"
+        onChange={() => {}}
+        ariaLabel="프리셋"
+        variant="strong"
+        icon={<svg data-testid="lead-icon" />}
+        formatLabel={(l) => `${l} 프리셋`}
+      />,
+    )
+    const trigger = screen.getByRole('button', { name: '프리셋: 조용한 곳' })
+    expect(trigger).toHaveTextContent('조용한 곳 프리셋')
+    expect(trigger).toHaveClass('border-border-strong', 'h-10')
+    expect(screen.getByTestId('lead-icon')).toBeInTheDocument()
+  })
 })

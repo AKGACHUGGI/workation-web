@@ -27,7 +27,14 @@ export default function ReportHeader({ currentId, onExportPdf, isExporting }: Pr
         <p className="text-body-base text-text-secondary">{REPORT_DESCRIPTION}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <Dropdown options={SIGUNGU_OPTIONS} value={currentId} onChange={goTo} ariaLabel="시군구" />
+        <Dropdown
+          options={SIGUNGU_OPTIONS}
+          value={currentId}
+          onChange={goTo}
+          ariaLabel="시군구"
+          variant="strong"
+          className="w-50"
+        />
         <button
           type="button"
           onClick={onExportPdf}
