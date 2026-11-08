@@ -207,6 +207,8 @@
   --height-navbar: 64px; /* h-navbar (h-* 는 --height·--spacing 네임스페이스만 읽는다) */
   --container-sidebar: 360px; /* w-sidebar: W-03·W-04 사이드바 */
   --container-map-rail: 420px; /* w-map-rail: W-01 히트맵 패널 */
+  --container-modal-sm: 440px; /* w-modal-sm: 로그인 모달 */
+  --container-modal-md: 640px; /* w-modal-md: 동 추가 모달 */
 
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
