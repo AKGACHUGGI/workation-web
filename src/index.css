@@ -132,6 +132,21 @@
   --color-chart-line-strong: var(--color-gray-800);
   --color-chart-line-muted: var(--color-gray-400);
 
+  /* explore/* — W-09 지도 탐색 (Figma 변수 explore/group/*, explore/map/*) */
+  --color-explore-group-trait: var(--color-gray-700);
+  --color-explore-group-trait-bg: var(--color-gray-100);
+  --color-explore-group-work: var(--color-rausch-500);
+  --color-explore-group-work-bg: var(--color-rausch-50);
+  --color-explore-group-stay: var(--color-babu-600);
+  --color-explore-group-stay-bg: var(--color-babu-50);
+  --color-explore-group-rest: var(--color-green-600);
+  --color-explore-group-rest-bg: var(--color-green-50);
+  --color-explore-group-life: var(--color-arches-600);
+  --color-explore-group-life-bg: var(--color-arches-50);
+  --color-explore-map-boundary: var(--color-gray-500);
+  --color-explore-map-excluded: var(--color-gray-300);
+  --color-explore-map-spotlight: var(--color-black);
+
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
   --color-heat-200: var(--color-rausch-200);
@@ -228,9 +243,12 @@
   --container-modal-sm: 440px; /* w-modal-sm: 로그인 모달 */
   --container-modal-md: 640px; /* w-modal-md: 동 추가 모달 */
   --spacing-icon-brand: 18px; /* size-icon-brand: 카카오·Google 로그인 버튼 심볼 (각사 가이드) */
+  --container-explore-panel: 440px; /* w-explore-panel: W-09 오른쪽 패널 */
+  --height-explore: calc(100dvh - var(--height-navbar)); /* h-explore: W-09 지도+패널 영역 */
 
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
+  --opacity-faded: 0.4; /* W-09 고르지 않은 장소 핀·가지 */
 }
 
 /* 간격은 Tailwind 기본 --spacing(0.25rem = 4px) 이 Figma space/1~16 과 동일하므로 그대로 사용 */
