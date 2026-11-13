@@ -22,7 +22,7 @@ const INTENTS = Object.keys(CANONICAL) as Intent[]
 const KEYWORDS: [Intent, RegExp][] = [
   ['weekend_hours', /주말/],
   ['weekday_hours', /평일|몇 ?시|시간|오전|아침|점심/],
-  ['months', /언제|몇 ?월|계절|성수기/],
+  ['months', /언제|\d+ ?월|몇 ?월|계절|성수기/],
   ['quiet', /조용|한적/],
   ['peer', /또래|사람/],
   ['evening', /저녁|밤|활기/],
