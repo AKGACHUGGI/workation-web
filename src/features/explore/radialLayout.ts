@@ -11,8 +11,14 @@ export const SIGUNGU_R = 34
 /** 같은 링 이웃 동 중심 사이 최소 거리 = 동 지름 + 이름 여백 */
 export const MIN_GAP = 2 * DONG_R + 22
 
-/** 반지름 = 그래프 영역 짧은 변 × 비율 (스펙 §4-6) */
-const RING = { type: 0.17, inner: 0.3, outer: 0.42 } as const
+/** 유형 원끼리 · 유형 원과 시군구 원 사이 최소 틈(px) */
+const TYPE_GAP = 4
+
+/**
+ * 반지름 = 그래프 영역 짧은 변 × 비율 (스펙 §4-6). 유형 링 0.19 = 시군구 원과 틈 ≥ TYPE_GAP,
+ * 두 줄일 때 안쪽 동 링과도 겹치지 않는 값 (0.17 은 강릉에서 유형 원이 시군구 원·서로에 붙었다, 2026-11-14)
+ */
+const RING = { type: 0.19, inner: 0.3, outer: 0.42 } as const
 
 export type Size = { w: number; h: number }
 export type Point = { x: number; y: number; r: number }
@@ -46,6 +52,32 @@ export function centerOut(n: number): number[] {
 const byName = (a: PinDong, b: PinDong) => a.name.localeCompare(b.name, 'ko')
 
 /**
+ * 유형 노드 각도(시계 방향 순)를 이웃끼리 minDeg 이상 벌린다. 붙은 두 각도를 가운데에서 반씩 민다.
+ * 유형은 최대 3개라 몇 번이면 끝난다. 동 수가 적은 유형이 이웃하면(강릉 몰입 2 · 네트워킹 4) 필요하다
+ */
+function spreadAngles(angles: number[], minDeg: number): number[] {
+  const out = [...angles]
+  const n = out.length
+  if (n < 2) return out
+  for (let pass = 0; pass < 50; pass++) {
+    let moved = false
+    for (let k = 0; k < n; k++) {
+      const next = k + 1 < n ? out[k + 1] : out[0] + 360
+      const gap = next - out[k]
+      if (gap < minDeg - 1e-9) {
+        const push = (minDeg - gap) / 2
+        out[k] -= push
+        if (k + 1 < n) out[k + 1] += push
+        else out[0] += push
+        moved = true
+      }
+    }
+    if (!moved) break
+  }
+  return out
+}
+
+/**
  * ① 방사형 배치 (스펙 §4). 가운데 시군구, 안쪽 링 유형, 바깥 링 동.
  * 각도 몫 = 동 수 비례. 유형 없음 무리는 가운데가 아래(90°), 유형은 이어서 시계 방향 몰입 → 네트워킹 → 로컬.
  * 무리 안: 유형은 점수 높은 순으로 가운데부터 번갈아, 유형 없음은 이름 가나다순
@@ -72,20 +104,28 @@ export function radialLayout(pins: PinDong[], size: Size): Map<string, Point> {
 
   const start = 90 - (none.length * step) / 2
   const typeR = ringRadius(size).type
+  const types: { type: TypeName; deg: number }[] = []
   let i = 0
   for (const g of groups) {
     const k = g.dongs.length
     const order = g.type === null ? [...Array(k).keys()] : centerOut(k)
     g.dongs.forEach((p, rank) => out.set(p.id, dongSlot(i + order[rank], n, start, size)))
-    if (g.type !== null) {
-      const mid = rad(start + (i + k / 2) * step)
-      out.set(typeNodeId(g.type), {
-        x: cx + typeR * Math.cos(mid),
-        y: cy + typeR * Math.sin(mid),
-        r: TYPE_R,
-      })
-    }
+    if (g.type !== null) types.push({ type: g.type, deg: start + (i + k / 2) * step })
     i += k
   }
+  // 원 둘(TYPE_R) + 틈이 유형 링 위에서 차지하는 각도
+  const minDeg = (2 * Math.asin((TYPE_R + TYPE_GAP / 2) / typeR) * 180) / Math.PI
+  const spread = spreadAngles(
+    types.map((t) => t.deg),
+    minDeg,
+  )
+  types.forEach((t, k) => {
+    const a = rad(spread[k])
+    out.set(typeNodeId(t.type), {
+      x: cx + typeR * Math.cos(a),
+      y: cy + typeR * Math.sin(a),
+      r: TYPE_R,
+    })
+  })
   return out
 }

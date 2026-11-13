@@ -64,7 +64,7 @@ describe('radialLayout', () => {
     for (const t of ['몰입형', '네트워킹형', '로컬살이형'] as const) {
       const p = layout.get(typeNodeId(t))!
       expect(p.r).toBe(TYPE_R)
-      expect(dist(p, { ...C, r: 0 })).toBeCloseTo(S * 0.17, 5)
+      expect(dist(p, { ...C, r: 0 })).toBeCloseTo(S * 0.19, 5)
     }
     expect(twoRings(21, SIZE)).toBe(false)
     for (const p of PINS) {
@@ -82,8 +82,11 @@ describe('radialLayout', () => {
 
   it('각도 몫은 동 수에 비례, 시계 방향으로 몰입 → 네트워킹 → 로컬', () => {
     const start = 90 - (5 * STEP) / 2
-    expect(angle(layout.get(typeNodeId('몰입형'))!)).toBeCloseTo(start + 6 * STEP, 5)
-    expect(angle(layout.get(typeNodeId('네트워킹형'))!)).toBeCloseTo(start + 9 * STEP, 5)
+    // 몰입형(2동)·네트워킹형(4동)은 서로 붙지 않게 최소 각도만큼 벌어진다 (각 1° 안팎)
+    expect(angleDiff(angle(layout.get(typeNodeId('몰입형'))!), start + 6 * STEP)).toBeLessThan(2)
+    expect(angleDiff(angle(layout.get(typeNodeId('네트워킹형'))!), start + 9 * STEP)).toBeLessThan(
+      2,
+    )
     expect(angle(layout.get(typeNodeId('로컬살이형'))!)).toBeCloseTo(start + 16 * STEP, 5)
   })
 
@@ -94,7 +97,28 @@ describe('radialLayout', () => {
       ['로컬살이형', 'l0'],
     ] as const) {
       const diff = angleDiff(angle(layout.get(top)!), angle(layout.get(typeNodeId(t))!))
-      expect(diff).toBeLessThanOrEqual(STEP / 2 + 1e-9)
+      expect(diff).toBeLessThanOrEqual(STEP / 2 + 2) // 유형 원 벌림 몫 2° 까지
+    }
+  })
+
+  it('유형 원끼리, 유형 원과 시군구 원이 겹치지 않는다 (작은 무리가 이웃해도)', () => {
+    const tiny = [
+      pin('a', '가동', '몰입형', 50),
+      pin('b', '나동', '네트워킹형', 50),
+      ...Array.from({ length: 32 }, (_, i) => pin(`l${i}`, `로컬${i}동`, '로컬살이형', 60)),
+    ]
+    for (const set of [PINS, tiny]) {
+      const m = radialLayout(set, SIZE)
+      const center = m.get(SIGUNGU_NODE)!
+      const types = (['몰입형', '네트워킹형', '로컬살이형'] as const).map((t) =>
+        m.get(typeNodeId(t))!,
+      )
+      for (let a = 0; a < types.length; a++) {
+        expect(dist(types[a], center)).toBeGreaterThanOrEqual(TYPE_R + SIGUNGU_R + 4)
+        for (let b = a + 1; b < types.length; b++) {
+          expect(dist(types[a], types[b])).toBeGreaterThanOrEqual(2 * TYPE_R + 4)
+        }
+      }
     }
   })
 
