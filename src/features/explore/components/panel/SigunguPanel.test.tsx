@@ -77,14 +77,11 @@ describe('SigunguPanel', () => {
     onHoverDong: vi.fn(),
     onOpenDong: vi.fn(),
   }
-  it('헤더 · 범례 한 줄 · 그래프 · 유형 없음 안내 · 출처, 관계 칩 없음, 선택 없으면 카드 없음', () => {
+  it('헤더 · 그래프 · 유형 없음 안내 · 출처, 범례·관계 칩 없음, 선택 없으면 카드 없음', () => {
     render(<SigunguPanel {...base} />)
     expect(screen.getByRole('heading', { level: 2, name: '강릉시' })).toBeInTheDocument()
     expect(screen.getByText('강원특별자치도 · 행정동 21곳')).toBeInTheDocument()
-    const legend = screen.getByRole('group', { name: '그래프 범례' })
-    expect(legend).toHaveTextContent('워케이션 유형')
-    expect(legend).toHaveTextContent('바닷가')
-    expect(legend).toHaveTextContent('뚜렷한 유형 없음')
+    expect(screen.queryByText('워케이션 유형')).not.toBeInTheDocument()
     expect(screen.queryByRole('group', { name: '관계' })).not.toBeInTheDocument()
     expect(screen.getByRole('group', { name: '강릉시 지식그래프' })).toBeInTheDocument()
     expect(screen.getByText(HINT)).toBeInTheDocument()

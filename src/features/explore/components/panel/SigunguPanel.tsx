@@ -3,7 +3,6 @@ import { EXPLORE_COPY } from '@/features/explore/copy'
 import { radialLayout } from '@/features/explore/radialLayout'
 import { buildSigunguGraph } from '@/features/explore/sigunguGraph'
 import type { PinDong } from '@/features/explore/types'
-import GraphLegend from '@/features/explore/components/panel/GraphLegend'
 import SelectionCard from '@/features/explore/components/panel/SelectionCard'
 import SigunguGraph from '@/features/explore/components/panel/SigunguGraph'
 import type { GraphPick } from '@/features/explore/components/panel/SigunguGraph'
@@ -21,7 +20,7 @@ type Props = {
   onOpenDong: (dongId: string) => void
 }
 
-/** ① 패널 (Figma 432:9976, 스펙 2026-11-14 §3). 헤더 · 범례 · 방사형 그래프 · 유형 없음 안내 · 카드 · 출처 */
+/** ① 패널 (Figma 432:9976, 스펙 2026-11-14 §3). 헤더 · 방사형 그래프 · 유형 없음 안내 · 카드 · 출처 */
 export default function SigunguPanel({
   name,
   province,
@@ -43,7 +42,6 @@ export default function SigunguPanel({
           {EXPLORE_COPY.sigunguSub(province, pins.length)}
         </p>
       </header>
-      <GraphLegend />
       <SigunguGraph
         name={name}
         graph={graph}

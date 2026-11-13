@@ -3,6 +3,3 @@ export const NODE_FILL = {
   sigungu: 'var(--color-text-primary)',
   type: 'var(--color-explore-fact-type)',
 } as const
-
-/** 범례 유형 색 점 (동적 문자열 조합 금지 → 상수) */
-export const TYPE_DOT_BG = 'bg-explore-fact-type'

@@ -23,7 +23,6 @@ export default function SigunguGraphSkeleton({ ids }: Props) {
         <Block className="h-6 w-22.5" />
         <Block className="h-3 w-45" />
       </div>
-      <Block className="h-4 w-62.5" />
       <svg aria-hidden viewBox={`0 0 ${GRAPH_W} ${GRAPH_H}`} className="h-100 w-full shrink-0">
         <circle
           data-skeleton-center
