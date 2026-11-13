@@ -41,7 +41,7 @@ describe('DongPanel', () => {
     expect(p.onOpenSimilar).toHaveBeenCalledWith(JUMUNJIN.similar[0])
   })
 
-  it('토글 하나로 링·시간대 칩·24시간 막대가 함께 바뀐다', async () => {
+  it('상세 칸 토글 하나로 시간대 칩·24시간 막대가 함께 바뀐다', async () => {
     mocked.mockResolvedValue(JUMUNJIN)
     renderWithRouter(<DongPanel dongId={JUMUNJIN.id} {...props()} />)
     await screen.findByRole('heading', { level: 2, name: '주문진읍' })
@@ -49,8 +49,7 @@ describe('DongPanel', () => {
     expect(
       screen.getByRole('button', { name: hourChipLabel(JUMUNJIN.hourly, 'weekend')! }),
     ).toBeInTheDocument()
-    expect(screen.getByText('주말 시간대별 차량 이동')).toBeInTheDocument()
-    expect(screen.getByText('주말 기준')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: '주말' })).toHaveAttribute('aria-selected', 'true')
   })
 
   it('한산한 달 칩 → 상세 칸만 바뀌고 높이 클래스는 같다', async () => {

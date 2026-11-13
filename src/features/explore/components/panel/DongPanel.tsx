@@ -74,8 +74,8 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
     <article aria-label={dong.name} className="flex flex-1 flex-col gap-3 pt-4">
       <PanelHeader dong={dong} onBack={onBack} />
       <TypeBars types={dong.types} />
-      <DongFactGraph dong={dong} day={day} onDay={setDay} detail={detail} onDetail={setDetail} />
-      <DetailSlot dong={dong} day={day} detail={detail} />
+      <DongFactGraph dong={dong} day={day} detail={detail} onDetail={setDetail} />
+      <DetailSlot dong={dong} day={day} onDay={setDay} detail={detail} />
       <Briefing sentences={dong.briefing} />
       <SimilarList
         similar={dong.similar}

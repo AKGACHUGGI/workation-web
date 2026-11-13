@@ -48,11 +48,6 @@ describe('EXPLORE_COPY', () => {
 })
 
 describe('EXPLORE_COPY 패널 문구', () => {
-  it('시간대 막대 요약은 천 단위 쉼표', () => {
-    expect(EXPLORE_COPY.hourBarsSummary(9, 12, 2064)).toBe(
-      '9시 가장 한산 · 12시 가장 많음 (2,064명)',
-    )
-  })
   it('바닷가 칩은 소수 1자리', () => {
     expect(EXPLORE_COPY.coastChip(0)).toBe('바닷가 0.0km')
   })

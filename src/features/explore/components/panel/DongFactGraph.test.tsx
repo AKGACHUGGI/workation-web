@@ -9,7 +9,6 @@ const setup = (over: Partial<Parameters<typeof DongFactGraph>[0]> = {}) => {
   const props = {
     dong: JUMUNJIN,
     day: 'weekday' as const,
-    onDay: vi.fn(),
     detail: 'hour' as const,
     onDetail: vi.fn(),
     ...over,
@@ -27,7 +26,6 @@ describe('DongFactGraph', () => {
     expect(evening.tagName).toBe('DIV')
     await userEvent.click(evening)
     expect(props.onDetail).not.toHaveBeenCalled()
-    expect(props.onDay).not.toHaveBeenCalled()
   })
 
   it('값 없는 등급은 그 칩만 숨긴다', () => {
@@ -51,22 +49,18 @@ describe('DongFactGraph', () => {
     expect(screen.getByRole('button', { name: /^한산한 달/ })).toBeInTheDocument()
   })
 
-  it('토글 주말 → onDay(weekend). day=weekend 이면 시간대 칩·가운데 글자가 바뀐다', async () => {
+  it('day=weekend 이면 시간대 칩이 주말 값. 평일·주말 토글은 그래프에 없다 (상세 칸으로 옮김)', () => {
     const { props, rerender } = setup()
-    await userEvent.click(screen.getByRole('tab', { name: '주말' }))
-    expect(props.onDay).toHaveBeenCalledWith('weekend')
-
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     rerender(<DongFactGraph {...props} day="weekend" />)
-    expect(screen.getByRole('tab', { name: '주말' })).toHaveAttribute('aria-selected', 'true')
     expect(
       screen.getByRole('button', { name: hourChipLabel(JUMUNJIN.hourly, 'weekend')! }),
     ).toBeInTheDocument()
-    expect(screen.getByText('주말 기준')).toBeInTheDocument()
   })
 
   it('가운데는 동 이름 원 하나. 24시간 링은 그리지 않는다 (차량은 상세 칸 막대에서만)', () => {
     const { container } = setup()
-    expect(container.querySelector('[data-node="dong"]')).toHaveTextContent('주문진읍')
+    expect(container.querySelector('[data-node="dong"]')).toHaveTextContent(/^주문진읍$/)
     expect(container.querySelectorAll('[data-hour]')).toHaveLength(0)
     expect(screen.queryByText('이 동 하루 기준')).not.toBeInTheDocument()
   })

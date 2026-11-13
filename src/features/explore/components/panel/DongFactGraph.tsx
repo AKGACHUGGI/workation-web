@@ -7,7 +7,6 @@ import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 type Props = {
   dong: DongDetail
   day: DayGroup
-  onDay: (day: DayGroup) => void
   detail: DetailKind
   onDetail: (kind: DetailKind) => void
 }
@@ -25,7 +24,6 @@ const GRADE_SLOTS = [
 ] as const
 const HOUR_TOP = 52
 const MONTH_TOP = 124
-const DAYS: DayGroup[] = ['weekday', 'weekend']
 
 /** '도로 한산 · 평일 9시' → ['도로 한산', '평일 9시'] (칩 두 줄) */
 function splitAt(label: string, sep: string): [string, string] {
@@ -48,11 +46,11 @@ function ChipText({ label, sep }: { label: string; sep: string }) {
 
 /**
  * 눌리는 칩(시간대·한산한 달)만 상자와 › 아이콘을 두고, 등급 칩은 글자만 둔다 (눌림 구분, 2026-11-13).
- * ② 동 근거 그래프 (Figma 436:10491 배치): 가운데 동 원 + 등급·시간대·한산한 달 칩 + 평일·주말 토글.
+ * ② 동 근거 그래프 (Figma 436:10491 배치): 가운데 동 원 + 등급·시간대·한산한 달 칩.
+ * 평일·주말 토글은 시간대 막대에만 영향이 있어 상세 칸(DetailSlot)으로 옮겼다. day 는 시간대 칩 글자에만 쓴다.
  * Figma·스펙 §3-3 의 24시간 링은 상세 칸 막대와 같은 정보라 빼고 원만 둔다 (2026-11-13 사용자 결정)
  */
-export default function DongFactGraph({ dong, day, onDay, detail, onDetail }: Props) {
-  const dayLabel = EXPLORE_COPY.dayLabel[day]
+export default function DongFactGraph({ dong, day, detail, onDetail }: Props) {
   const grades = GRADE_SLOTS.flatMap((slot) => {
     const g = dong.grades[slot.key]
     return g ? [{ ...slot, label: gradeChipLabel(slot.key, g) }] : []
@@ -103,9 +101,6 @@ export default function DongFactGraph({ dong, day, onDay, detail, onDetail }: Pr
         className="border-text-primary bg-bg-surface absolute top-28 left-1/2 flex size-24 -translate-1/2 flex-col items-center justify-center rounded-full border-2"
       >
         <span className="text-caption-xs text-text-primary font-bold">{dong.name}</span>
-        <span className="text-explore-2xs text-text-secondary">
-          {EXPLORE_COPY.factGraphCenterSub(dayLabel)}
-        </span>
       </div>
 
       {grades.map((g) => (
@@ -142,28 +137,6 @@ export default function DongFactGraph({ dong, day, onDay, detail, onDetail }: Pr
           </button>
         )
       })}
-
-      <div
-        role="tablist"
-        aria-label={EXPLORE_COPY.dayToggleLabel}
-        className="bg-bg-subtle absolute top-0 right-0 inline-flex rounded-full p-0.5"
-      >
-        {DAYS.map((d) => {
-          const on = d === day
-          return (
-            <button
-              key={d}
-              type="button"
-              role="tab"
-              aria-selected={on}
-              onClick={() => onDay(d)}
-              className={`text-explore-xs rounded-full px-2.5 py-0.75 ${on ? 'bg-bg-inverse text-text-inverse font-bold' : 'text-text-secondary'}`}
-            >
-              {EXPLORE_COPY.dayLabel[d]}
-            </button>
-          )
-        })}
-      </div>
     </section>
   )
 }
