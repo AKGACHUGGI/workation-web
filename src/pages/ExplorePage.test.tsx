@@ -35,14 +35,20 @@ describe('ExplorePage', () => {
     expect(await screen.findByRole('region', { name: '연곡면' })).toHaveTextContent('공통 3')
   })
 
-  it('①: 관계 칩을 끄면 그 사실 노드가 빠진다', async () => {
+  it('①: 조용함 등급 칩을 켜면 조용함 사실 노드가 생기고, 끄면 빠진다', async () => {
     const user = userEvent.setup()
     renderWithRouter(<ExplorePage />, { route: '/explore?sgg=51150' })
     const graph = await screen.findByRole('group', { name: '강릉시 지식그래프' }, { timeout: 3000 })
-    expect(within(graph).getByRole('button', { name: '사실 바닷가' })).toBeInTheDocument()
-    const chips = screen.getByRole('group', { name: '관계' })
-    await user.click(within(chips).getByRole('button', { name: /가까움/ }))
-    expect(within(graph).queryByRole('button', { name: '사실 바닷가' })).not.toBeInTheDocument()
+    const quietNodes = () => within(graph).queryAllByRole('button', { name: /^사실 조용함/ })
+    expect(quietNodes()).toHaveLength(0)
+    const chip = within(screen.getByRole('group', { name: '관계' })).getByRole('button', {
+      name: '조용함 등급',
+    })
+    await user.click(chip)
+    expect(chip).toHaveAttribute('aria-pressed', 'true')
+    expect(quietNodes().length).toBeGreaterThan(0)
+    await user.click(chip)
+    expect(quietNodes()).toHaveLength(0)
   })
 
   it('①: 그래프 동 노드 hover → 페이지 hoveredDong → 그래프 미리 강조', async () => {

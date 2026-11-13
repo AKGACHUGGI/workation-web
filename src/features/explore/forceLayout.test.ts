@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { FACT_R, createLayout, nodeRadius } from '@/features/explore/forceLayout'
-import { RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
+import { DEFAULT_RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
 import { GANGNEUNG_PINS } from '@/test/fixtures/explore'
 
 const W = 399
 const H = 400
-const on = new Set(RELATIONS.filter((r) => r.defaultOn).map((r) => r.key))
+const on = new Set(DEFAULT_RELATIONS)
 const graph = buildSigunguGraph(GANGNEUNG_PINS, on)
 
 describe('nodeRadius', () => {

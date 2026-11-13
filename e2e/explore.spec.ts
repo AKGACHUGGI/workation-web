@@ -38,6 +38,25 @@ test.describe('W-09 지도 탐색 v6', () => {
     await expect(top).toContainText('61')
   })
 
+  test('① 관계 줄: 유형·바닷가·생활권/관광지는 고정, 조용함 등급 칩을 켜고 끄면 사실 노드가 생기고 빠진다', async ({
+    page,
+  }) => {
+    await page.goto(`/explore?sgg=${GANGNEUNG}`)
+    const graph = page.getByRole('group', { name: '강릉시 지식그래프' })
+    await expect(graph.locator('[data-kind="dong"]')).toHaveCount(21)
+    const row = page.getByRole('group', { name: '관계' })
+    await expect(row.getByRole('button')).toHaveText(['조용함 등급', '저녁 활기 등급'])
+    await expect(row).toContainText('워케이션 유형')
+    await expect(page.getByText(/1위 유형|가까움/)).toHaveCount(0)
+
+    const quiet = graph.getByRole('button', { name: /^사실 조용함/ })
+    await expect(quiet).toHaveCount(0)
+    await row.getByRole('button', { name: '조용함 등급' }).click()
+    await expect(quiet.first()).toBeVisible()
+    await row.getByRole('button', { name: '조용함 등급' }).click()
+    await expect(quiet).toHaveCount(0)
+  })
+
   test('주말 토글 → 시간대 칩 주말, 한산한 달 → 강릉시 기준 막대, 브리핑 위치 그대로', async ({
     page,
   }) => {

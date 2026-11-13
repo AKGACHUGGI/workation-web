@@ -15,14 +15,17 @@ const YEONGOK = '5115037000'
 const name = (id: string) => pins.find((p) => p.id === id)!.name
 
 describe('RELATIONS', () => {
-  it('칩 5개, 기본 켬 = 1위 유형·가까움·생활', () => {
+  it('이름은 사실 노드에 맞춘다, 토글은 조용함·저녁 활기 등급 2개뿐', () => {
     expect(RELATIONS.map((r) => r.label)).toEqual([
-      '1위 유형',
-      '가까움',
-      '생활',
-      '조용함',
-      '저녁 활기',
+      '워케이션 유형',
+      '바닷가',
+      '생활권/관광지',
+      '조용함 등급',
+      '저녁 활기 등급',
     ])
+    expect(RELATIONS.filter((r) => r.toggle).map((r) => r.key)).toEqual(['quiet', 'evening'])
+  })
+  it('기본 켬 = 항상 켜진 세 관계 (토글 칩은 꺼짐)', () => {
     expect([...DEFAULT_RELATIONS]).toEqual(['type', 'coast', 'life'])
   })
 })
@@ -43,7 +46,7 @@ describe('buildSigunguGraph', () => {
     expect(g.links).toHaveLength(21 + 10 + 21)
     expect(g.nodes.some((n) => n.id === '51150' || n.label === '강릉시')).toBe(false)
   })
-  it('동 노드: 라벨 = 이름, score = 1위 유형 점수', () => {
+  it('동 노드: 라벨 = 이름, score = 가장 맞는 유형 점수', () => {
     const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
     expect(g.nodes.find((n) => n.id === '5115025000')).toEqual({
       id: '5115025000',
