@@ -62,6 +62,9 @@ describe('AskThread', () => {
     expect(screen.getByText(JUMUNJIN.briefing.join(' '))).toBeInTheDocument()
     expect(log()).toHaveAttribute('aria-live', 'polite')
     expect(log()).toBeEmptyDOMElement()
+    // 대화가 길어져도 칸이 끝없이 늘지 않고 대화 목록 안에서 스크롤된다 (2026-11-13 사용자 결정)
+    expect(log()).toHaveClass('max-h-72', 'overflow-y-auto')
+    expect(log()).toHaveAttribute('tabindex', '0')
     expect(chips().map((c) => c.textContent)).toEqual([
       '이 동네 조용해?',
       '평일엔 몇 시가 붐비고 몇 시가 한산해?',

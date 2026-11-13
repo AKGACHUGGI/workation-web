@@ -13,6 +13,7 @@ const CHIP =
 
 /**
  * ② 동네에 물어보기 (물어보기 스펙 §3, Figma 444:9872~9966). 브리핑 칸 안에 대화 · 예시 칩 · 입력을 붙인다.
+ * 대화 목록은 높이 288px 까지만 늘고 그 안에서 스크롤된다(칩·입력은 아래에 고정, 2026-11-13 사용자 결정).
  * 새 차례가 붙거나 답이 오면 그 말풍선이 보이게 내린다(동작 줄이기면 즉시). 돌아온 동의 기록에서는 내리지 않는다
  */
 export default function AskThread({ dong }: Props) {
@@ -33,7 +34,8 @@ export default function AskThread({ dong }: Props) {
         role="log"
         aria-live="polite"
         aria-label={EXPLORE_COPY.askLog}
-        className="flex flex-col gap-2 empty:hidden"
+        tabIndex={0}
+        className="flex max-h-72 flex-col gap-2 overflow-y-auto overscroll-contain empty:hidden"
       >
         {thread.turns.map((turn) => (
           <AskBubble
