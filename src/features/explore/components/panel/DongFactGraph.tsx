@@ -1,7 +1,5 @@
-import { HEAT_VAR, colorScale } from '@/features/heatmap/colorScale'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import { gradeChipLabel, hourChipLabel, monthChipLabel } from '@/features/explore/labels'
-import { ringCells } from '@/features/explore/ring'
 import type { DayGroup, DetailKind, DongDetail } from '@/features/explore/types'
 import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 
@@ -13,13 +11,9 @@ type Props = {
   onDetail: (kind: DetailKind) => void
 }
 
-// Figma 436:10491 (400×212) 좌표
+// Figma 436:10491 (400×212) 좌표. 가운데 원은 링 자리(132) 안쪽에 둔다
 const W = 400
 const H = 212
-const RING = 132
-const R_OUT = 66
-const R_IN = 44
-const GAP_DEG = 1.2
 const CENTER = { x: 200, y: 112 }
 const CHIP_W = 110
 const CHIP_H = 40
@@ -31,24 +25,6 @@ const GRADE_SLOTS = [
 const HOUR_TOP = 52
 const MONTH_TOP = 124
 const DAYS: DayGroup[] = ['weekday', 'weekend']
-const TICKS = [
-  { label: '0', x: RING / 2, y: -4 },
-  { label: '6', x: RING + 7, y: RING / 2 + 3 },
-  { label: '12', x: RING / 2, y: RING + 10 },
-  { label: '18', x: -8, y: RING / 2 + 3 },
-]
-
-function point(r: number, deg: number): string {
-  const a = ((deg - 90) * Math.PI) / 180
-  return `${(RING / 2 + r * Math.cos(a)).toFixed(2)} ${(RING / 2 + r * Math.sin(a)).toFixed(2)}`
-}
-
-/** hour 칸의 도넛 조각 (위 0시부터 시계방향 15°씩) */
-function ringPath(hour: number): string {
-  const a0 = hour * 15 + GAP_DEG / 2
-  const a1 = (hour + 1) * 15 - GAP_DEG / 2
-  return `M ${point(R_OUT, a0)} A ${R_OUT} ${R_OUT} 0 0 1 ${point(R_OUT, a1)} L ${point(R_IN, a1)} A ${R_IN} ${R_IN} 0 0 0 ${point(R_IN, a0)} Z`
-}
 
 /** '도로 한산 · 평일 9시' → ['도로 한산', '평일 9시'] (칩 두 줄) */
 function splitAt(label: string, sep: string): [string, string] {
@@ -69,9 +45,11 @@ function ChipText({ label, sep }: { label: string; sep: string }) {
   )
 }
 
-/** ② 그래프 (Figma 436:10491): 24시간 링 + 등급·시간대·한산한 달 칩 + 평일·주말 토글 (스펙 §3-3) */
-export default function HourRingGraph({ dong, day, onDay, detail, onDetail }: Props) {
-  const cells = ringCells(dong.hourly, day)
+/**
+ * ② 동 근거 그래프 (Figma 436:10491 배치): 가운데 동 원 + 등급·시간대·한산한 달 칩 + 평일·주말 토글.
+ * Figma·스펙 §3-3 의 24시간 링은 상세 칸 막대와 같은 정보라 빼고 원만 둔다 (2026-11-13 사용자 결정)
+ */
+export default function DongFactGraph({ dong, day, onDay, detail, onDetail }: Props) {
   const dayLabel = EXPLORE_COPY.dayLabel[day]
   const grades = GRADE_SLOTS.flatMap((slot) => {
     const g = dong.grades[slot.key]
@@ -85,7 +63,7 @@ export default function HourRingGraph({ dong, day, onDay, detail, onDetail }: Pr
 
   return (
     <section
-      aria-label={EXPLORE_COPY.ringLabel(dayLabel)}
+      aria-label={EXPLORE_COPY.factGraphLabel}
       data-section="graph"
       className={`relative w-full shrink-0 ${DONG_SECTION_H.graph}`}
     >
@@ -118,43 +96,15 @@ export default function HourRingGraph({ dong, day, onDay, detail, onDetail }: Pr
         ))}
       </svg>
 
-      <div className="absolute top-11.5 left-1/2 size-33 -translate-x-1/2">
-        <svg aria-hidden viewBox={`0 0 ${RING} ${RING}`} className="size-full overflow-visible">
-          <circle cx={RING / 2} cy={RING / 2} r={R_IN} className="fill-bg-surface" />
-          {cells.map((c) => (
-            <path
-              key={c.hour}
-              d={ringPath(c.hour)}
-              data-hour={c.hour}
-              fill={
-                c.value === null
-                  ? 'var(--color-chart-bar-muted)'
-                  : `var(${HEAT_VAR[colorScale(c.intensity * 100)]})`
-              }
-            />
-          ))}
-          {TICKS.map((t) => (
-            <text
-              key={t.label}
-              x={t.x}
-              y={t.y}
-              textAnchor="middle"
-              className="fill-text-tertiary text-explore-3xs"
-            >
-              {t.label}
-            </text>
-          ))}
-        </svg>
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-caption-xs text-text-primary font-bold">{dong.name}</span>
-          <span className="text-explore-2xs text-text-secondary">
-            {EXPLORE_COPY.ringCenterSub(dayLabel)}
-          </span>
-        </div>
+      <div
+        data-node="dong"
+        className="border-text-primary bg-bg-surface absolute top-28 left-1/2 flex size-24 -translate-1/2 flex-col items-center justify-center rounded-full border-2"
+      >
+        <span className="text-caption-xs text-text-primary font-bold">{dong.name}</span>
+        <span className="text-explore-2xs text-text-secondary">
+          {EXPLORE_COPY.factGraphCenterSub(dayLabel)}
+        </span>
       </div>
-      <p className="text-explore-3xs text-text-tertiary absolute top-48 left-1/2 -translate-x-1/2">
-        {EXPLORE_COPY.ringCaption}
-      </p>
 
       {grades.map((g) => (
         <div

@@ -50,7 +50,7 @@ describe('DongPanel', () => {
       screen.getByRole('button', { name: hourChipLabel(JUMUNJIN.hourly, 'weekend')! }),
     ).toBeInTheDocument()
     expect(screen.getByText('주말 시간대별 차량 이동')).toBeInTheDocument()
-    expect(screen.getByText('주말 차량')).toBeInTheDocument()
+    expect(screen.getByText('주말 기준')).toBeInTheDocument()
   })
 
   it('한산한 달 칩 → 상세 칸만 바뀌고 높이 클래스는 같다', async () => {

@@ -4,7 +4,7 @@ import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 
 const TYPE_BARS = ['w-62.5', 'w-50', 'w-42.5', 'w-35']
 const BRIEF_LINES = ['w-full', 'w-75', 'w-55']
-// HourRingGraph 칩 자리 (Figma 436:10491 의 y 22·88·154 / 52·124)
+// DongFactGraph 칩 자리 (Figma 436:10491 의 y 22·88·154 / 52·124)
 const GRADE_TOPS = ['top-5.5', 'top-22', 'top-38.5']
 const PICK_TOPS = ['top-13', 'top-31']
 
@@ -37,8 +37,7 @@ export default function PanelSkeleton() {
       </div>
 
       <div data-section="graph" className={`relative shrink-0 ${DONG_SECTION_H.graph}`}>
-        <Block shape="circle" className="absolute top-11.5 left-1/2 size-33 -translate-x-1/2" />
-        <div className="bg-bg-surface absolute top-28 left-1/2 size-22 -translate-1/2 rounded-full" />
+        <Block shape="circle" className="absolute top-28 left-1/2 size-24 -translate-1/2" />
         <Block shape="pill" className="absolute top-0 right-0 h-6 w-21.5" />
         {GRADE_TOPS.map((top) => (
           <Block key={top} shape="card" className={`absolute left-0 h-10 w-27.5 ${top}`} />

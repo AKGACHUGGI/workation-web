@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import HourRingGraph from '@/features/explore/components/panel/HourRingGraph'
+import DongFactGraph from '@/features/explore/components/panel/DongFactGraph'
 import { gradeChipLabel, hourChipLabel, monthChipLabel } from '@/features/explore/labels'
 import { JUMUNJIN } from '@/test/fixtures/explore'
 
-const setup = (over: Partial<Parameters<typeof HourRingGraph>[0]> = {}) => {
+const setup = (over: Partial<Parameters<typeof DongFactGraph>[0]> = {}) => {
   const props = {
     dong: JUMUNJIN,
     day: 'weekday' as const,
@@ -14,11 +14,11 @@ const setup = (over: Partial<Parameters<typeof HourRingGraph>[0]> = {}) => {
     onDetail: vi.fn(),
     ...over,
   }
-  const view = render(<HourRingGraph {...props} />)
+  const view = render(<DongFactGraph {...props} />)
   return { ...view, props }
 }
 
-describe('HourRingGraph', () => {
+describe('DongFactGraph', () => {
   it('등급 칩 3개(등급 + 점수), 버튼이 아니고 눌러도 아무 일 없음', async () => {
     const { container, props } = setup()
     const grades = container.querySelectorAll('[data-chip="grade"]')
@@ -51,27 +51,23 @@ describe('HourRingGraph', () => {
     expect(screen.getByRole('button', { name: /^한산한 달/ })).toBeInTheDocument()
   })
 
-  it('토글 주말 → onDay(weekend). day=weekend 이면 링 색·시간대 칩·가운데 글자가 바뀐다', async () => {
-    const { container, props, rerender } = setup()
+  it('토글 주말 → onDay(weekend). day=weekend 이면 시간대 칩·가운데 글자가 바뀐다', async () => {
+    const { props, rerender } = setup()
     await userEvent.click(screen.getByRole('tab', { name: '주말' }))
     expect(props.onDay).toHaveBeenCalledWith('weekend')
 
-    const fillAt = (h: number) =>
-      container.querySelector(`path[data-hour="${h}"]`)!.getAttribute('fill')
-    const weekday14 = fillAt(14)
-    rerender(<HourRingGraph {...props} day="weekend" />)
+    rerender(<DongFactGraph {...props} day="weekend" />)
     expect(screen.getByRole('tab', { name: '주말' })).toHaveAttribute('aria-selected', 'true')
-    expect(fillAt(14)).not.toBe(weekday14)
     expect(
       screen.getByRole('button', { name: hourChipLabel(JUMUNJIN.hourly, 'weekend')! }),
     ).toBeInTheDocument()
-    expect(screen.getByText('주말 차량')).toBeInTheDocument()
+    expect(screen.getByText('주말 기준')).toBeInTheDocument()
   })
 
-  it('링 24칸, 가운데 동 이름, "이 동 하루 기준"', () => {
+  it('가운데는 동 이름 원 하나. 24시간 링은 그리지 않는다 (차량은 상세 칸 막대에서만)', () => {
     const { container } = setup()
-    expect(container.querySelectorAll('path[data-hour]')).toHaveLength(24)
-    expect(screen.getByText('주문진읍')).toBeInTheDocument()
-    expect(screen.getByText('이 동 하루 기준')).toBeInTheDocument()
+    expect(container.querySelector('[data-node="dong"]')).toHaveTextContent('주문진읍')
+    expect(container.querySelectorAll('[data-hour]')).toHaveLength(0)
+    expect(screen.queryByText('이 동 하루 기준')).not.toBeInTheDocument()
   })
 })

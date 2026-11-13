@@ -6,7 +6,7 @@ import { useDongQuery } from '@/features/explore/useDongQuery'
 import { NotFoundError } from '@/lib/errors'
 import Briefing from '@/features/explore/components/panel/Briefing'
 import DetailSlot from '@/features/explore/components/panel/DetailSlot'
-import HourRingGraph from '@/features/explore/components/panel/HourRingGraph'
+import DongFactGraph from '@/features/explore/components/panel/DongFactGraph'
 import PanelHeader from '@/features/explore/components/panel/PanelHeader'
 import PanelMessage from '@/features/explore/components/panel/PanelMessage'
 import PanelSkeleton from '@/features/explore/components/panel/PanelSkeleton'
@@ -74,7 +74,7 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
     <article aria-label={dong.name} className="flex flex-1 flex-col gap-3 pt-4">
       <PanelHeader dong={dong} onBack={onBack} />
       <TypeBars types={dong.types} />
-      <HourRingGraph dong={dong} day={day} onDay={setDay} detail={detail} onDetail={setDetail} />
+      <DongFactGraph dong={dong} day={day} onDay={setDay} detail={detail} onDetail={setDetail} />
       <DetailSlot dong={dong} day={day} detail={detail} />
       <Briefing sentences={dong.briefing} />
       <SimilarList
