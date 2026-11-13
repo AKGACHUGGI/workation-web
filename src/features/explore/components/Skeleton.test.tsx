@@ -21,4 +21,16 @@ describe('Skeleton Block', () => {
     expect(el).toHaveClass('bg-explore-skeleton-map', 'rounded-full')
     expect(el).not.toHaveClass('rounded-sm')
   })
+  it('card·slot 은 ② 칩·상세 칸 모서리', () => {
+    const { container } = render(
+      <>
+        <Block shape="card" />
+        <Block shape="slot" />
+      </>,
+    )
+    const [card, slot] = container.querySelectorAll('[data-skeleton]')
+    expect(card).toHaveClass('rounded-lg')
+    expect(card).not.toHaveClass('rounded-sm')
+    expect(slot).toHaveClass('rounded-xl')
+  })
 })
