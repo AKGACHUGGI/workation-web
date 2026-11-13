@@ -37,3 +37,13 @@ python scripts/gen-geo.py ~/data/bnd_dong_00_2025.shp public/geo --tolerance 20
 - 출력: `public/geo/{sggId}.json` (시군구별, ≤ 100KB 목표). 1차는 고성군 `51820.json` 만 커밋한다.
 - 원본 shp 는 저장소에 넣지 않는다. 출처·라이선스(통계청 SGIS / 공공데이터포털)는 열린 항목.
 - 지도 키가 없으면 `MapPlaceholder` 가 뜨고 폴리곤은 쓰이지 않는다.
+
+## gen-explore-base.py — W-09 탐색 mock 기반 자료
+
+`public/geo` 의 시군구·행정동 경계에서 이름·중심(`labelLat/labelLng`)·bbox 를 뽑아 `src/mocks/explore/base.generated.ts` 를 만든다. 경계 파일이 바뀌면 다시 실행한다.
+
+```bash
+python3 scripts/gen-explore-base.py && pnpm exec prettier --write src/mocks/explore/base.generated.ts
+```
+
+태그·장소 수·장소 이름·비슷한 동은 `src/mocks/explore/table.ts` 에서 수작업으로 관리한다(스펙 W-09 §10 기대값이 여기에 묶여 있다).

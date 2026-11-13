@@ -6,7 +6,8 @@ export type GeoGeometry = PolygonGeometry | MultiPolygonGeometry
 
 export type GeoFeature = {
   type: 'Feature'
-  properties: { id: string; name: string }
+  /** labelLat·labelLng = 폴리곤 안쪽 라벨 점 (scripts/gen-geo.py, Postgres ST_PointOnSurface 와 같음) */
+  properties: { id: string; name: string; labelLat?: number; labelLng?: number }
   geometry: GeoGeometry
 }
 

@@ -132,6 +132,55 @@
   --color-chart-line-strong: var(--color-gray-800);
   --color-chart-line-muted: var(--color-gray-400);
 
+  /* explore/* — W-09 지도 탐색 (Figma 변수 explore/group/*, explore/map/*) */
+  --color-explore-group-trait: var(--color-gray-700);
+  --color-explore-group-trait-bg: var(--color-gray-100);
+  --color-explore-group-work: var(--color-rausch-500);
+  --color-explore-group-work-bg: var(--color-rausch-50);
+  --color-explore-group-stay: var(--color-babu-600);
+  --color-explore-group-stay-bg: var(--color-babu-50);
+  --color-explore-group-rest: var(--color-green-600);
+  --color-explore-group-rest-bg: var(--color-green-50);
+  --color-explore-group-life: var(--color-arches-600);
+  --color-explore-group-life-bg: var(--color-arches-50);
+  --color-explore-map-boundary: var(--color-gray-500);
+  --color-explore-map-excluded: var(--color-gray-300);
+  /* Figma explore/map/land-alt — 지도 SDK 로딩 중 바탕 (원시 색에 없는 지도 땅 색) */
+  --color-explore-map-land-alt: #eceae3;
+  /* explore/skeleton/* (스펙 §9-1) — 패널 / 지도 위(땅 색 위에서 보이게 진하게) / 반짝임 */
+  --color-explore-skeleton-base: var(--color-gray-100);
+  --color-explore-skeleton-map: var(--color-gray-300);
+  --color-explore-skeleton-shine: var(
+    --color-white
+  ); /* gray/50 은 gray/100 바탕과 거의 같아 안 보여 흰색 */
+  /* explore/fact/* — ① 시군구 지식그래프 사실 노드 (스펙 §3-2 표) */
+  --color-explore-fact-type: var(--color-arches-500);
+  --color-explore-fact-coast: var(--color-babu-600);
+  --color-explore-fact-life: var(--color-green-600);
+  --color-explore-fact-grade: var(--color-text-secondary);
+  --color-explore-coast-bg: var(--color-babu-50); /* ② 헤더 바닷가 칩 바탕 */
+
+  /* explore 패널 작은 글자 — Figma ①-v6·②-v6 (13·11·10·9px). 기존 caption 보다 작아 따로 둔다 */
+  --text-explore-sm: 13px;
+  --text-explore-sm--line-height: 18px;
+  --text-explore-xs: 11px;
+  --text-explore-xs--line-height: 14px;
+  --text-explore-2xs: 10px;
+  --text-explore-2xs--line-height: 13px;
+  --text-explore-3xs: 9px;
+  --text-explore-3xs--line-height: 11px;
+
+  /* ② 상세 칸 내용 교체 (스펙 §4: 페이드 150ms, 높이 애니메이션 없음) */
+  --animate-explore-fade: explore-fade 150ms ease-out;
+  @keyframes explore-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
   --color-heat-200: var(--color-rausch-200);
@@ -228,6 +277,27 @@
   --container-modal-sm: 440px; /* w-modal-sm: 로그인 모달 */
   --container-modal-md: 640px; /* w-modal-md: 동 추가 모달 */
   --spacing-icon-brand: 18px; /* size-icon-brand: 카카오·Google 로그인 버튼 심볼 (각사 가이드) */
+  --container-explore-panel: 440px; /* w-explore-panel: W-09 오른쪽 패널 */
+  --height-explore: calc(100dvh - var(--height-navbar)); /* h-explore: W-09 지도+패널 영역 */
+
+  /* ---------- 애니메이션 ---------- */
+  /* W-09 스켈레톤 반짝임: 왼 → 오 1.5초 (스펙 §9-1) */
+  --animate-skeleton-shine: skeleton-shine 1.5s linear infinite;
+  @keyframes skeleton-shine {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+  /* SVG 원(① 그래프 스켈레톤)은 ::after 띠를 못 붙여 깜빡임으로 진행을 보인다 */
+  --animate-skeleton-pulse: skeleton-pulse 1.5s ease-in-out infinite;
+  @keyframes skeleton-pulse {
+    50% {
+      opacity: 0.4;
+    }
+  }
 
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
@@ -253,4 +323,34 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-text-primary);
   outline-offset: 2px;
+}
+
+/* W-09 스켈레톤 반짝임 (스펙 §9-1). 회색 상자에 붙이면 위로 밝은 띠가 지나간다. 동작 줄이기면 회색만 */
+@utility skeleton-shine {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-explore-skeleton-shine),
+      transparent
+    );
+    animation: var(--animate-skeleton-shine);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      display: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-explore-fade,
+  .animate-skeleton-pulse {
+    animation: none;
+  }
 }
