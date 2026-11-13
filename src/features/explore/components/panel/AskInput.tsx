@@ -7,7 +7,8 @@ type Props = { disabled: boolean; onSend: (question: string) => void }
 /**
  * ② 물어보기 입력 + 보내기 (Figma Input 444:9859). 100자에서 더 입력되지 않고 글자 수를 보인다.
  * Enter 로 보내고, 한글 조합 중 Enter(isComposing, Safari keyCode 229)는 무시한다 (물어보기 스펙 §3).
- * 대기 중에는 칸 전체를 흐리게(Figma 444:9891 opacity 0.4)
+ * 대기 중에는 칸 전체를 흐리게(Figma 444:9891 opacity 0.4). 포커스는 입력 칸 테두리로 보인다
+ * (전역 :focus-visible 외곽선이 칸 안에 상자로 겹쳐 input 에서만 끈다)
  */
 export default function AskInput({ disabled, onSend }: Props) {
   const [value, setValue] = useState('')
@@ -32,7 +33,7 @@ export default function AskInput({ disabled, onSend }: Props) {
             e.preventDefault()
             send()
           }}
-          className="text-caption-xs text-text-primary placeholder:text-text-tertiary min-w-0 flex-1 bg-transparent focus-visible:outline-none disabled:cursor-not-allowed"
+          className="text-caption-xs text-text-primary placeholder:text-text-tertiary min-w-0 flex-1 bg-transparent outline-none! disabled:cursor-not-allowed"
         />
         {value.length > 0 && (
           <span className="text-explore-2xs text-text-tertiary shrink-0 tabular-nums">
