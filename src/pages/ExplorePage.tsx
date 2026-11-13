@@ -14,8 +14,6 @@ import type { GraphPick } from '@/features/explore/components/panel/SigunguGraph
 import SigunguGraphSkeleton from '@/features/explore/components/panel/SigunguGraphSkeleton'
 import SigunguPanel from '@/features/explore/components/panel/SigunguPanel'
 import { EXPLORE_COPY } from '@/features/explore/copy'
-import { DEFAULT_RELATIONS } from '@/features/explore/sigunguGraph'
-import type { RelationKey } from '@/features/explore/sigunguGraph'
 import type { SimilarDong } from '@/features/explore/types'
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
 import { useExploreCamera } from '@/features/explore/useExploreCamera'
@@ -36,7 +34,6 @@ export default function ExplorePage() {
   const [collapsed, setCollapsed] = useState(false)
   /** 지도 핀 ↔ 그래프 동 노드 미리 강조 (URL 에 넣지 않음) */
   const [hoveredDong, setHoveredDong] = useState<string | null>(null)
-  const [relsOn, setRelsOn] = useState<ReadonlySet<RelationKey>>(DEFAULT_RELATIONS)
   const [pick, setPick] = useState<GraphPick | null>(null)
 
   // 시군구가 바뀌면 그래프 선택·미리 강조를 지운다 (렌더 중 상태 맞추기)
@@ -47,13 +44,6 @@ export default function ExplorePage() {
     setHoveredDong(null)
   }
 
-  const toggleRel = (key: RelationKey) =>
-    setRelsOn((prev) => {
-      const next = new Set(prev)
-      if (next.has(key)) next.delete(key)
-      else next.add(key)
-      return next
-    })
   // ② [← 그래프]: ① 로, 그 동 선택 상태 유지 (스펙 §5)
   const backFromDong = (dongId: string) => {
     setPick({ kind: 'dong', id: dongId })
@@ -90,8 +80,6 @@ export default function ExplorePage() {
         name={meta.name}
         province={meta.province}
         pins={pins.data.dongs}
-        relsOn={relsOn}
-        onToggleRel={toggleRel}
         pick={pick}
         onPick={setPick}
         hoveredDong={hoveredDong}
