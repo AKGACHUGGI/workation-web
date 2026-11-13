@@ -210,7 +210,7 @@ function seedMonths(sigunguId: string): number[] {
 }
 
 /** 받침 있으면 '은', 없으면 '는' */
-function topicOf(word: string): string {
+export function topicOf(word: string): string {
   const code = word.charCodeAt(word.length - 1) - 0xac00
   return code >= 0 && code % 28 !== 0 ? `${word}은` : `${word}는`
 }

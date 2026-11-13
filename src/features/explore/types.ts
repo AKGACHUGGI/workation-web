@@ -68,3 +68,23 @@ export type DongDetail = {
 
 /** ② 상세 칸 선택 */
 export type DetailKind = 'hour' | 'month'
+
+/** POST /api/explore/dongs/{id}/ask 의 source (물어보기 스펙 §5). guide = 답할 수 없는 질문 안내 */
+export type AskSource = 'llm' | 'mixed' | 'rule' | 'guide'
+/** POST /api/explore/dongs/{id}/ask 응답 (물어보기 스펙 §5) */
+export type AskResponse = {
+  question: string
+  answer: string[]
+  intents: string[]
+  source: AskSource
+  /** 다음에 누를 예시 질문 3개 */
+  examples: string[]
+}
+/** retry = 네트워크·503 등(다시 시도), limit = 429, invalid = 400 */
+export type AskErrorKind = 'retry' | 'limit' | 'invalid'
+export type AskTurn =
+  | { id: string; question: string; status: 'pending' }
+  | { id: string; question: string; status: 'done'; answer: string[]; source: AskSource }
+  | { id: string; question: string; status: 'error'; kind: AskErrorKind }
+/** 동 하나의 대화 기록. 화면이 떠 있는 동안만 QueryClient 에 남는다 */
+export type AskThread = { turns: AskTurn[]; examples: string[] }

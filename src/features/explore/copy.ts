@@ -98,6 +98,9 @@ export function legendTags(pins: { tags: string[] }[]): string[] {
   return TAG_ORDER.filter((t) => used.has(t))
 }
 
+/** 물어보기 질문 최대 글자 수 (백엔드 400 QUESTION_INVALID 기준) */
+export const ASK_MAX = 100
+
 export const EXPLORE_COPY = {
   pageTitle: '지도 탐색',
   collapsePanel: '패널 접기',
@@ -154,4 +157,22 @@ export const EXPLORE_COPY = {
   dongError: '그래프를 불러오지 못했어요.',
   dongNotFound: '동네 정보를 찾을 수 없어요.',
   closePanel: '패널 닫기',
+  // ── 동네에 물어보기 (v6.1) ──
+  askLabel: '이 동네에 물어보기',
+  askPlaceholder: '이 동네에 대해 물어보세요',
+  askSend: '보내기',
+  askCount: (n: number) => `${n}/${ASK_MAX}`,
+  askLog: '물어본 대화',
+  askExamplesLabel: '예시 질문',
+  askWaiting: '답을 기다리는 중',
+  askRetry: '다시 시도',
+  askError: '지금은 답을 가져오지 못했어요.',
+  askLimit: '잠시 후 다시 물어봐 주세요.',
+  askInvalid: '질문은 1~100자로 적어 주세요.',
+  /** 첫 칩 3개 = 백엔드 대표 질문 (백엔드 스펙 §3-1) */
+  askExamples: [
+    '이 동네 조용해?',
+    '평일엔 몇 시가 붐비고 몇 시가 한산해?',
+    '비슷한 동네는 어디야?',
+  ],
 } as const
