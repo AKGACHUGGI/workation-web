@@ -28,7 +28,7 @@ const setup = (over: { pick?: GraphPick | null; hoveredDong?: string | null } = 
 }
 
 describe('SigunguGraph', () => {
-  it('가운데 시군구(버튼 아님) · 유형 3 · 동 21, 바닷가 🌊 10, 점선 5', () => {
+  it('가운데 시군구(버튼 아님) · 유형 3 · 동 21, 점선 5, 바닷가 표시 없음', () => {
     const { svg } = setup()
     expect(svg.querySelectorAll('[data-kind="sigungu"]')).toHaveLength(1)
     expect(within(svg).getByText('강릉시')).toBeInTheDocument()
@@ -40,7 +40,7 @@ describe('SigunguGraph', () => {
       '로컬살이형',
     ])
     expect(svg.querySelectorAll('[data-kind="dong"]')).toHaveLength(21)
-    expect(svg.querySelectorAll('[data-coast]')).toHaveLength(10)
+    expect(svg).not.toHaveTextContent('🌊')
     expect(svg.querySelectorAll('line[data-dashed]')).toHaveLength(5)
   })
 

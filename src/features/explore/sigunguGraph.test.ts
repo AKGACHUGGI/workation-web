@@ -30,7 +30,6 @@ describe('buildSigunguGraph', () => {
       kind: 'dong',
       label: '주문진읍',
       type: '로컬살이형',
-      coastal: true,
     })
   })
 

@@ -140,11 +140,6 @@ export default function SigunguGraph({
                   className="fill-bg-surface stroke-brand-primary"
                   strokeWidth={selected ? 3.5 : 2.5}
                 />
-                {n.coastal && (
-                  <text data-coast aria-hidden x={p.r * 0.6} y={-p.r * 0.6} fontSize={10}>
-                    🌊
-                  </text>
-                )}
                 <text
                   y={p.r + 10}
                   textAnchor="middle"

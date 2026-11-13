@@ -41,13 +41,12 @@ test.describe('W-09 지도 탐색 v6', () => {
     await expect(top).toContainText('60')
   })
 
-  test('① 방사형: 바닷가 🌊 10 · 점선 5 · 안내 문구, 유형 노드 → 동 10곳, 왕산면 → 유형 없음 → ② 막대 3개', async ({
+  test('① 방사형: 점선 5 · 안내 문구, 유형 노드 → 동 10곳, 왕산면 → 유형 없음 → ② 막대 3개', async ({
     page,
   }) => {
     await page.goto(`/explore?sgg=${GANGNEUNG}`)
     const graph = page.getByRole('group', { name: '강릉시 지식그래프' })
     await expect(graph.locator('[data-kind="dong"]')).toHaveCount(21)
-    await expect(graph.locator('[data-coast]')).toHaveCount(10)
     await expect(graph.locator('line[data-dashed]')).toHaveCount(5)
     await expect(page.getByRole('group', { name: '관계' })).toHaveCount(0)
     await expect(page.getByText('뚜렷한 유형이 없는 동네예요. 눌러서 자세히 보세요.')).toBeVisible()

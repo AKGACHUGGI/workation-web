@@ -9,7 +9,7 @@ export const typeNodeId = (t: TypeName) => `type:${t}`
 export type GraphNode =
   | { id: string; kind: 'sigungu'; label: string }
   | { id: string; kind: 'type'; label: TypeName }
-  | { id: string; kind: 'dong'; label: string; type: TypeName | null; coastal: boolean }
+  | { id: string; kind: 'dong'; label: string; type: TypeName | null }
 /** dashed = 시군구 ─ 대표 유형 없는 동 */
 export type GraphLink = { source: string; target: string; dashed: boolean }
 export type SigunguGraphData = { nodes: GraphNode[]; links: GraphLink[] }
@@ -28,7 +28,6 @@ export function buildSigunguGraph(name: string, pins: PinDong[]): SigunguGraphDa
       kind: 'dong',
       label: p.name,
       type: p.topType,
-      coastal: p.coastal,
     })),
   ]
   const links: GraphLink[] = [
