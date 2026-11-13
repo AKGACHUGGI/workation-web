@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { describe, expect, it } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { fetchDong, fetchPins } from '@/features/explore/api'
+import { askDong, fetchDong, fetchPins } from '@/features/explore/api'
 import { exploreKeys } from '@/features/explore/queryKeys'
 import { useDongQuery } from '@/features/explore/useDongQuery'
 import { usePinsQuery } from '@/features/explore/usePinsQuery'
@@ -20,6 +20,7 @@ describe('exploreKeys', () => {
   it('스펙 §6-3 키', () => {
     expect(exploreKeys.pins('51150')).toEqual(['explore', 'pins', '51150'])
     expect(exploreKeys.dong('5115025000')).toEqual(['explore', 'dong', '5115025000'])
+    expect(exploreKeys.askThread('5115025000')).toEqual(['explore', 'ask', '5115025000'])
   })
 })
 
@@ -31,6 +32,13 @@ describe('fetch (mock)', () => {
   it('없는 id 는 NotFoundError', async () => {
     await expect(fetchPins('99999')).rejects.toBeInstanceOf(NotFoundError)
     await expect(fetchDong('0000000000')).rejects.toBeInstanceOf(NotFoundError)
+    await expect(askDong('0000000000', '이 동네 조용해?')).rejects.toBeInstanceOf(NotFoundError)
+  })
+  it('물어보기: 주문진읍 조용함', async () => {
+    expect(await askDong('5115025000', '이 동네 조용해?')).toMatchObject({
+      answer: ['조용함은 B등급(31점)이에요.'],
+      source: 'rule',
+    })
   })
 })
 

@@ -4,7 +4,11 @@ import userEvent from '@testing-library/user-event'
 import renderWithRouter from '@/test/renderWithRouter'
 import { GEUMAM, JUMUNJIN } from '@/test/fixtures/explore'
 
-vi.mock('@/features/explore/api', () => ({ fetchDong: vi.fn(), fetchPins: vi.fn() }))
+vi.mock('@/features/explore/api', () => ({
+  askDong: vi.fn(),
+  fetchDong: vi.fn(),
+  fetchPins: vi.fn(),
+}))
 
 import { fetchDong } from '@/features/explore/api'
 import DongPanel from '@/features/explore/components/panel/DongPanel'
