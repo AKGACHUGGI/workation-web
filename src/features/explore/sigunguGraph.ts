@@ -1,7 +1,12 @@
 import { hashString } from '@/features/explore/hash'
-import type { PinDong } from '@/features/explore/types'
+import type { PinDong, TypeName } from '@/features/explore/types'
 
 export type RelationKey = 'type' | 'coast' | 'life' | 'quiet' | 'evening'
+
+/** ① 가운데 시군구 노드 id (방사형, 2026-11-14) */
+export const SIGUNGU_NODE = 'sigungu'
+/** ① 유형 노드 id */
+export const typeNodeId = (t: TypeName) => `type:${t}`
 
 /**
  * ① 관계 (스펙 §3-2 표). 순서 = 칩 줄 순서 = 사실 노드 순서. 이름은 사실 노드에 맞춘다.
