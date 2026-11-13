@@ -123,6 +123,7 @@ export const EXPLORE_COPY = {
     '지도에서 시군구를 눌러 보세요. 누르면 그 시군구의 동네들이 유형별로 이어진 그래프가 열려요.',
   sigunguSub: (province: string, n: number) => `${province} · 행정동 ${n}곳`,
   relationChipsLabel: '관계',
+  relationToggleLead: '등급 겹쳐 보기',
   graphLabel: (name: string) => `${name} 지식그래프`,
   factNode: (label: string) => `사실 ${label}`,
   cardCommon: (n: number) => `공통 ${n}`,
