@@ -145,6 +145,17 @@
   --color-explore-group-life-bg: var(--color-arches-50);
   --color-explore-map-boundary: var(--color-gray-500);
   --color-explore-map-excluded: var(--color-gray-300);
+  /* Figma explore/map/land-alt — 지도 SDK 로딩 중 바탕 (원시 색에 없는 지도 땅 색) */
+  --color-explore-map-land-alt: #eceae3;
+  /* explore/skeleton/* (스펙 §9-1) — 패널 / 지도 위(땅 색 위에서 보이게 진하게) / 반짝임 */
+  --color-explore-skeleton-base: var(--color-gray-100);
+  --color-explore-skeleton-map: var(--color-gray-300);
+  --color-explore-skeleton-shine: var(--color-gray-50);
+  /* explore/fact/* — ① 시군구 지식그래프 사실 노드 (스펙 §3-2 표) */
+  --color-explore-fact-type: var(--color-arches-500);
+  --color-explore-fact-coast: var(--color-babu-600);
+  --color-explore-fact-life: var(--color-green-600);
+  --color-explore-fact-grade: var(--color-text-secondary);
 
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
@@ -245,6 +256,18 @@
   --container-explore-panel: 440px; /* w-explore-panel: W-09 오른쪽 패널 */
   --height-explore: calc(100dvh - var(--height-navbar)); /* h-explore: W-09 지도+패널 영역 */
 
+  /* ---------- 애니메이션 ---------- */
+  /* W-09 스켈레톤 반짝임: 왼 → 오 1.5초 (스펙 §9-1) */
+  --animate-skeleton-shine: skeleton-shine 1.5s linear infinite;
+  @keyframes skeleton-shine {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
 }
@@ -269,4 +292,27 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-text-primary);
   outline-offset: 2px;
+}
+
+/* W-09 스켈레톤 반짝임 (스펙 §9-1). 회색 상자에 붙이면 위로 밝은 띠가 지나간다. 동작 줄이기면 회색만 */
+@utility skeleton-shine {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-explore-skeleton-shine),
+      transparent
+    );
+    animation: var(--animate-skeleton-shine);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      display: none;
+    }
+  }
 }
