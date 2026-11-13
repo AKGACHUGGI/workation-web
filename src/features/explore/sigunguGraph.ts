@@ -1,120 +1,79 @@
-import { hashString } from '@/features/explore/hash'
-import type { PinDong } from '@/features/explore/types'
+import { TYPE_NAMES } from '@/features/explore/types'
+import type { PinDong, TypeName } from '@/features/explore/types'
 
-export type RelationKey = 'type' | 'coast' | 'life' | 'quiet' | 'evening'
+/** ① 가운데 시군구 노드 id (방사형, 2026-11-14) */
+export const SIGUNGU_NODE = 'sigungu'
+/** ① 유형 노드 id */
+export const typeNodeId = (t: TypeName) => `type:${t}`
 
-/**
- * ① 관계 (스펙 §3-2 표). 순서 = 칩 줄 순서 = 사실 노드 순서. 이름은 사실 노드에 맞춘다.
- * toggle = 켜기·끄기 칩 (기본 꺼짐). 나머지는 항상 켜 두고 칩 줄 앞에 색 점과 이름만 보인다
- */
-export const RELATIONS: { key: RelationKey; label: string; toggle: boolean }[] = [
-  { key: 'type', label: '워케이션 유형', toggle: false },
-  { key: 'coast', label: '바닷가', toggle: false },
-  { key: 'life', label: '생활권/관광지', toggle: false },
-  { key: 'quiet', label: '조용함 등급', toggle: true },
-  { key: 'evening', label: '저녁 활기 등급', toggle: true },
-]
-
-export const DEFAULT_RELATIONS: ReadonlySet<RelationKey> = new Set(
-  RELATIONS.filter((r) => !r.toggle).map((r) => r.key),
-)
-
-export type GraphNode = { id: string; kind: 'dong' | RelationKey; label: string; score?: number }
-export type GraphLink = { source: string; target: string; rel: RelationKey }
+export type GraphNode =
+  | { id: string; kind: 'sigungu'; label: string }
+  | { id: string; kind: 'type'; label: TypeName }
+  | { id: string; kind: 'dong'; label: string; type: TypeName | null }
+/** dashed = 시군구 ─ 대표 유형 없는 동 */
+export type GraphLink = { source: string; target: string; dashed: boolean }
 export type SigunguGraphData = { nodes: GraphNode[]; links: GraphLink[] }
 
-type Fact = { id: string; kind: RelationKey; label: string }
-
-/** 핀 하나가 가진 사실 노드 (켜진 관계만) */
-function factsOf(pin: PinDong, relsOn: ReadonlySet<RelationKey>): Fact[] {
-  const facts: Fact[] = []
-  if (relsOn.has('type') && pin.topType)
-    facts.push({ id: `type:${pin.topType}`, kind: 'type', label: pin.topType })
-  if (relsOn.has('coast') && pin.coastal)
-    facts.push({ id: 'coast', kind: 'coast', label: '바닷가' })
-  if (relsOn.has('life') && pin.life)
-    facts.push({ id: `life:${pin.life}`, kind: 'life', label: pin.life })
-  if (relsOn.has('quiet') && pin.grades.quiet)
-    facts.push({
-      id: `quiet:${pin.grades.quiet}`,
-      kind: 'quiet',
-      label: `조용함 ${pin.grades.quiet}`,
-    })
-  if (relsOn.has('evening') && pin.grades.evening)
-    facts.push({
-      id: `evening:${pin.grades.evening}`,
-      kind: 'evening',
-      label: `저녁 활기 ${pin.grades.evening}`,
-    })
-  return facts
-}
-
-const relOrder = (k: RelationKey) => RELATIONS.findIndex((r) => r.key === k)
-
 /**
- * ① 시군구 지식그래프 (스펙 §7). 동 노드 + 켜진 관계의 사실 노드(이어진 동이 있는 것만)와 선.
- * 시군구 노드는 만들지 않는다 (모든 동이 같은 시군구라 정보가 없음)
+ * ① 방사형 지식그래프 (스펙 2026-11-14 §3). 노드 = 시군구 1 · 유형(이어진 동이 있는 것만) · 동.
+ * 선 = 시군구─유형, 유형─동, 시군구─유형 없는 동(점선). 노드 순서 = 그리는 순서 = Tab 순서(유형 → 동)
  */
-export function buildSigunguGraph(
-  pins: PinDong[],
-  relsOn: ReadonlySet<RelationKey>,
-): SigunguGraphData {
-  const dongNodes: GraphNode[] = pins.map((p) =>
-    p.topScore === null
-      ? { id: p.id, kind: 'dong', label: p.name }
-      : { id: p.id, kind: 'dong', label: p.name, score: p.topScore },
-  )
-  const facts = new Map<string, Fact>()
-  const links: GraphLink[] = []
-  for (const p of pins) {
-    for (const f of factsOf(p, relsOn)) {
-      facts.set(f.id, f)
-      links.push({ source: p.id, target: f.id, rel: f.kind })
-    }
-  }
-  const factNodes: GraphNode[] = [...facts.values()]
-    .sort((a, b) => relOrder(a.kind) - relOrder(b.kind) || a.label.localeCompare(b.label, 'ko'))
-    .map((f) => ({ id: f.id, kind: f.kind, label: f.label }))
-  return { nodes: [...dongNodes, ...factNodes], links }
+export function buildSigunguGraph(name: string, pins: PinDong[]): SigunguGraphData {
+  const types = TYPE_NAMES.filter((t) => pins.some((p) => p.topType === t))
+  const nodes: GraphNode[] = [
+    { id: SIGUNGU_NODE, kind: 'sigungu', label: name },
+    ...types.map((t): GraphNode => ({ id: typeNodeId(t), kind: 'type', label: t })),
+    ...pins.map((p): GraphNode => ({
+      id: p.id,
+      kind: 'dong',
+      label: p.name,
+      type: p.topType,
+    })),
+  ]
+  const links: GraphLink[] = [
+    ...types.map((t) => ({ source: SIGUNGU_NODE, target: typeNodeId(t), dashed: false })),
+    ...pins.map((p) =>
+      p.topType
+        ? { source: typeNodeId(p.topType), target: p.id, dashed: false }
+        : { source: SIGUNGU_NODE, target: p.id, dashed: true },
+    ),
+  ]
+  return { nodes, links }
+}
+
+/** 선택 카드 사실 칩과 공통 비교에 쓰는 핀 사실 (스펙 §5): 대표 유형 · 바닷가 · 생활권/관광지 · 조용함 · 저녁 활기 */
+export function pinFacts(pin: PinDong): string[] {
+  return [
+    pin.topType,
+    pin.coastal ? '바닷가' : null,
+    pin.life,
+    pin.grades.quiet && `조용함 ${pin.grades.quiet}`,
+    pin.grades.evening && `저녁 활기 ${pin.grades.evening}`,
+  ].filter((f): f is string => Boolean(f))
 }
 
 /**
- * 선택 카드의 `공통 n: …` (스펙 §3-2). 그 동과 공통 사실이 많은 동 순, 같으면 이름 순, 0개 제외.
- * common 은 공통 사실 라벨 (그래프의 사실 노드 순)
+ * 선택 카드의 `공통 n: …` (스펙 §5). 그 동과 핀 사실이 많이 겹치는 동 순, 같으면 이름 순, 0개 제외.
+ * common 은 겹치는 사실 (pinFacts 순)
  */
 export function sharedFacts(
-  graph: SigunguGraphData,
+  pins: PinDong[],
   dongId: string,
 ): { dongId: string; name: string; common: string[] }[] {
-  const factsBy = new Map<string, Set<string>>()
-  for (const l of graph.links) {
-    const set = factsBy.get(l.source) ?? new Set<string>()
-    set.add(l.target)
-    factsBy.set(l.source, set)
-  }
-  const mine = factsBy.get(dongId) ?? new Set<string>()
-  const factOrder = graph.nodes.filter((n) => n.kind !== 'dong')
-  return graph.nodes
-    .filter((n) => n.kind === 'dong' && n.id !== dongId)
-    .map((n) => {
-      const theirs = factsBy.get(n.id) ?? new Set<string>()
-      const common = factOrder.filter((f) => mine.has(f.id) && theirs.has(f.id)).map((f) => f.label)
-      return { dongId: n.id, name: n.label, common }
+  const me = pins.find((p) => p.id === dongId)
+  if (!me) return []
+  const mine = pinFacts(me)
+  return pins
+    .filter((p) => p.id !== dongId)
+    .map((p) => {
+      const theirs = new Set(pinFacts(p))
+      return { dongId: p.id, name: p.name, common: mine.filter((f) => theirs.has(f)) }
     })
     .filter((s) => s.common.length > 0)
     .sort((a, b) => b.common.length - a.common.length || a.name.localeCompare(b.name, 'ko'))
 }
 
-/** 사실 노드 클릭 → 그 사실을 가진 동 id (동 노드 순) */
-export function factDongs(graph: SigunguGraphData, factId: string): string[] {
-  const linked = new Set(graph.links.filter((l) => l.target === factId).map((l) => l.source))
-  return graph.nodes.filter((n) => n.kind === 'dong' && linked.has(n.id)).map((n) => n.id)
-}
-
-/** d3-force 처음 위치. id 해시로 고정해 같은 데이터면 같은 모양으로 열린다 (스펙 §7) */
-export function seedPosition(id: string, w: number, h: number): { x: number; y: number } {
-  return {
-    x: ((hashString(id) % 10000) / 10000) * w,
-    y: ((hashString(`${id}:y`) % 10000) / 10000) * h,
-  }
+/** 유형 노드 클릭 → 그 유형이 대표인 동 (핀 순서) */
+export function typeDongs(pins: PinDong[], type: TypeName): PinDong[] {
+  return pins.filter((p) => p.topType === type)
 }

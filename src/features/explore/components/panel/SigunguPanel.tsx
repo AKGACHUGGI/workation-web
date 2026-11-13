@@ -1,21 +1,18 @@
 import { useMemo } from 'react'
 import { EXPLORE_COPY } from '@/features/explore/copy'
+import { radialLayout } from '@/features/explore/radialLayout'
 import { buildSigunguGraph } from '@/features/explore/sigunguGraph'
-import type { RelationKey } from '@/features/explore/sigunguGraph'
 import type { PinDong } from '@/features/explore/types'
-import RelationChips from '@/features/explore/components/panel/RelationChips'
 import SelectionCard from '@/features/explore/components/panel/SelectionCard'
 import SigunguGraph from '@/features/explore/components/panel/SigunguGraph'
 import type { GraphPick } from '@/features/explore/components/panel/SigunguGraph'
 import SourceLine from '@/features/explore/components/panel/SourceLine'
-import { SIGUNGU_HEADER_H } from '@/features/explore/components/panel/panelLayout'
+import { GRAPH_H, GRAPH_W, SIGUNGU_HEADER_H } from '@/features/explore/components/panel/panelLayout'
 
 type Props = {
   name: string
   province: string
   pins: PinDong[]
-  relsOn: ReadonlySet<RelationKey>
-  onToggleRel: (key: RelationKey) => void
   pick: GraphPick | null
   onPick: (pick: GraphPick | null) => void
   hoveredDong: string | null
@@ -23,20 +20,19 @@ type Props = {
   onOpenDong: (dongId: string) => void
 }
 
-/** ① 패널 (Figma 432:9976). 시군구 노드는 그리지 않는다 (스펙 §3-2) */
+/** ① 패널 (Figma 432:9976, 스펙 2026-11-14 §3). 헤더 · 방사형 그래프 · 카드 · 출처 */
 export default function SigunguPanel({
   name,
   province,
   pins,
-  relsOn,
-  onToggleRel,
   pick,
   onPick,
   hoveredDong,
   onHoverDong,
   onOpenDong,
 }: Props) {
-  const graph = useMemo(() => buildSigunguGraph(pins, relsOn), [pins, relsOn])
+  const graph = useMemo(() => buildSigunguGraph(name, pins), [name, pins])
+  const layout = useMemo(() => radialLayout(pins, { w: GRAPH_W, h: GRAPH_H }), [pins])
   return (
     <div className="flex flex-1 flex-col gap-3.5 pt-5">
       <header className={`flex shrink-0 flex-col gap-1 ${SIGUNGU_HEADER_H}`}>
@@ -45,16 +41,16 @@ export default function SigunguPanel({
           {EXPLORE_COPY.sigunguSub(province, pins.length)}
         </p>
       </header>
-      <RelationChips on={relsOn} onToggle={onToggleRel} />
       <SigunguGraph
         name={name}
         graph={graph}
+        layout={layout}
         pick={pick}
         onPick={onPick}
         hoveredDong={hoveredDong}
         onHoverDong={onHoverDong}
       />
-      {pick && <SelectionCard graph={graph} pins={pins} pick={pick} onOpenDong={onOpenDong} />}
+      {pick && <SelectionCard pins={pins} pick={pick} onOpenDong={onOpenDong} />}
       <SourceLine>{EXPLORE_COPY.sigunguSource}</SourceLine>
     </div>
   )

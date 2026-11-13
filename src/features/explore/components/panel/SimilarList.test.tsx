@@ -17,7 +17,7 @@ describe('SimilarList', () => {
     expect(rows).toHaveLength(3)
     expect(rows[0]).toHaveTextContent('속초시 노학동')
     expect(rows[0]).toHaveTextContent('공통 6')
-    expect(rows[0]).toHaveTextContent('조용함 B · 1위 장기체류형 · 바닷가')
+    expect(rows[0]).toHaveTextContent('조용함 B · 1위 로컬살이형 · 바닷가')
     expect(rows[0]).toHaveTextContent(diffLabel(JUMUNJIN.similar[0].diff))
     await userEvent.click(rows[1])
     expect(onPick).toHaveBeenCalledWith(JUMUNJIN.similar[1])

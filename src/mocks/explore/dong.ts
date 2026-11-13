@@ -1,5 +1,5 @@
 import { hashString } from '@/features/explore/hash'
-import { TYPE_NAMES } from '@/features/explore/types'
+import { TYPE_MIN, TYPE_NAMES } from '@/features/explore/types'
 import type {
   DayGroup,
   DongDetail,
@@ -44,11 +44,6 @@ export const JUMUNJIN_DETAIL: DongDetail = {
   sido: '강원특별자치도',
   coastKm: 0,
   types: [
-    {
-      name: '장기체류형',
-      score: 61,
-      reason: '숙박 성향 64 · 한산한 달 7개(성수기보다 20% 이상 적은 달)',
-    },
     { name: '로컬살이형', score: 60, reason: '생활권 지수 0.74' },
     { name: '네트워킹형', score: 50, reason: '또래 밀도 39 · 저녁 활기 62' },
     { name: '몰입형', score: 36, reason: '조용함 31 · 오전 한산 44' },
@@ -66,7 +61,7 @@ export const JUMUNJIN_DETAIL: DongDetail = {
   briefing: [
     '평일 차량은 12시에 가장 많고, 업무시간엔 9시가 가장 한산해요.',
     '강릉시는 2·4·9월이 가장 한산하고 8월이 가장 붐벼요.',
-    '장기체류형 61점으로, 저녁 활기 A(62점)이에요. 저녁 활기는 강릉시 21동 중 1위예요.',
+    '로컬살이형 60점으로, 저녁 활기 A(62점)이에요. 저녁 활기는 강릉시 21동 중 1위예요.',
   ],
   similar: [
     {
@@ -74,7 +69,7 @@ export const JUMUNJIN_DETAIL: DongDetail = {
       name: '노학동',
       sigungu: '속초시',
       common: 6,
-      commonTop: ['조용함 B', '1위 장기체류형', '바닷가'],
+      commonTop: ['조용함 B', '1위 로컬살이형', '바닷가'],
       diff: { quiet: 8, peer: 13, evening: -15 },
     },
     {
@@ -107,11 +102,6 @@ export const GEUMAM_DETAIL: DongDetail = {
   types: [
     { name: '네트워킹형', score: 96, reason: '또래 밀도 97 · 저녁 활기 94' },
     { name: '로컬살이형', score: 53, reason: '생활권 지수 0.72' },
-    {
-      name: '장기체류형',
-      score: 26,
-      reason: '숙박 성향 27 · 한산한 달 3개(성수기보다 20% 이상 적은 달)',
-    },
     { name: '몰입형', score: 18, reason: '조용함 21 · 오전 한산 14' },
   ],
   grades: {
@@ -277,8 +267,9 @@ function seedDong(dongId: string): DongDetail | null {
   const sgg = SIGUNGU_BASE.find((s) => s.id === base?.sigunguId)
   if (!base || !pin || !sgg) return null
   const h = hashString(dongId)
-  const top = pin.topType ?? TYPE_NAMES[0]
-  const topScore = pin.topScore ?? 50
+  const top = pin.topType ?? TYPE_NAMES[h % TYPE_NAMES.length]
+  // 대표 유형이 없는 동은 1위도 TYPE_MIN 미만 (API 와 같은 뜻)
+  const topScore = pin.topScore ?? 20 + (h % (TYPE_MIN - 20))
   const types = [
     { name: top, score: topScore, reason: MOCK_REASON },
     ...TYPE_NAMES.filter((t) => t !== top).map((name, i) => ({
@@ -319,9 +310,13 @@ function seedDong(dongId: string): DongDetail | null {
     briefing: [
       `평일 차량은 ${weekday.peakHour}시에 가장 많고, 업무시간엔 ${weekday.quietHour}시가 가장 한산해요.`,
       `${topicOf(sgg.name)} ${quiet.join('·')}월이 가장 한산하고 ${busiest}월이 가장 붐벼요.`,
-      best
-        ? `${top} ${topScore}점으로, ${GRADE_NAME[best.key]} ${best.grade}(${best.score}점)이에요.`
-        : `${top} ${topScore}점이에요.`,
+      pin.topType === null
+        ? best
+          ? `${GRADE_NAME[best.key]} ${best.grade}(${best.score}점)이 이 동네의 가장 큰 특징이에요.`
+          : '뚜렷하게 맞는 워케이션 유형은 없어요.'
+        : best
+          ? `${top} ${topScore}점으로, ${GRADE_NAME[best.key]} ${best.grade}(${best.score}점)이에요.`
+          : `${top} ${topScore}점이에요.`,
     ],
     similar: similarOf(pin, sgg.id),
     syncedAt: SYNCED_AT,

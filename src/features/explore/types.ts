@@ -9,9 +9,11 @@ export type BBox = [number, number, number, number]
 export type ExploreSigungu = { id: string; name: string; provinceId: string; center: LatLng | null }
 
 export type DayGroup = 'weekday' | 'weekend'
-export type TypeName = '몰입형' | '네트워킹형' | '로컬살이형' | '장기체류형'
-/** 백엔드 동점 순서와 같다 (몰입형 → 장기체류형) */
-export const TYPE_NAMES: readonly TypeName[] = ['몰입형', '네트워킹형', '로컬살이형', '장기체류형']
+export type TypeName = '몰입형' | '네트워킹형' | '로컬살이형'
+/** 백엔드 동점 순서와 같다 (몰입형 → 로컬살이형). 장기체류형은 2026-11-14 삭제 */
+export const TYPE_NAMES: readonly TypeName[] = ['몰입형', '네트워킹형', '로컬살이형']
+/** 대표 유형 기준 = 백엔드 derive.TYPE_MIN. 1위가 이보다 낮으면 API 가 topType·topScore 를 null 로 준다 (mock 이 쓴다) */
+export const TYPE_MIN = 40
 export type LifeTag = '생활권' | '관광지'
 
 /** GET /api/explore/sigungu/{id}/pins 의 동 하나 (스펙 §6-1) */
@@ -21,6 +23,7 @@ export type PinDong = {
   center: LatLng | null
   /** 관광공사 동 태그 id, 백엔드 순서. 핀 아이콘은 앞 2개 */
   tags: string[]
+  /** 1위 점수가 TYPE_MIN 미만이면 topType · topScore 모두 null (뚜렷한 유형 없음) */
   topType: TypeName | null
   topScore: number | null
   coastal: boolean
@@ -54,7 +57,7 @@ export type DongDetail = {
   sigungu: { id: string; name: string }
   sido: string
   coastKm: number | null
-  /** 4개, 점수 높은 순 */
+  /** 3개, 점수 높은 순. 대표 유형이 없는 동도 3개 */
   types: { name: TypeName; score: number; reason: string }[]
   grades: { quiet: GradeValue | null; peer: GradeValue | null; evening: GradeValue | null }
   hourly: Record<DayGroup, HourlyDay>

@@ -4,7 +4,7 @@ import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 
 type Props = { types: DongDetail['types'] }
 
-/** ② 유형 막대 4개 (Figma 436:10461). 응답 순서 = 점수 높은 순, 첫째가 1위 */
+/** ② 유형 막대 3개 (Figma 436:10461). 응답 순서 = 점수 높은 순, 첫째가 1위 */
 export default function TypeBars({ types }: Props) {
   return (
     <section

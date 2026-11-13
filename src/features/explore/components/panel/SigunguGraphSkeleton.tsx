@@ -1,16 +1,15 @@
 import Block from '@/features/explore/components/Skeleton'
 import { EXPLORE_COPY } from '@/features/explore/copy'
-import { DONG_R } from '@/features/explore/forceLayout'
-import { seedPosition } from '@/features/explore/sigunguGraph'
+import { DONG_R, SIGUNGU_R, dongSlot } from '@/features/explore/radialLayout'
 import { GRAPH_H, GRAPH_W, SIGUNGU_HEADER_H } from '@/features/explore/components/panel/panelLayout'
 
 type Props = { ids: string[] }
 
-const CHIP_W = ['w-15.5', 'w-18', 'w-27', 'w-23', 'w-27']
+const SIZE = { w: GRAPH_W, h: GRAPH_H }
 
 /**
- * ① 로딩 (Figma L2 429:9936). 원은 동 경계 파일의 동 수만큼, 위치는 실제 배치의 씨앗(seedPosition)과 같아
- * 핀 응답이 오면 그 자리에서 퍼진다. 선은 없다 (스펙 §9-1)
+ * ① 로딩 (Figma L2 429:9936, 스펙 2026-11-14 §6). 가운데 원 + 동 경계 파일의 동 수만큼 바깥 링에 회색 원.
+ * 유형은 핀 응답이 와야 알 수 있어 그리지 않는다. 선 없음
  */
 export default function SigunguGraphSkeleton({ ids }: Props) {
   return (
@@ -24,14 +23,16 @@ export default function SigunguGraphSkeleton({ ids }: Props) {
         <Block className="h-6 w-22.5" />
         <Block className="h-3 w-45" />
       </div>
-      <div className="flex shrink-0 flex-wrap gap-1.5">
-        {CHIP_W.map((w, i) => (
-          <Block key={i} shape="pill" className={`h-6.5 ${w}`} />
-        ))}
-      </div>
       <svg aria-hidden viewBox={`0 0 ${GRAPH_W} ${GRAPH_H}`} className="h-100 w-full shrink-0">
-        {ids.map((id) => {
-          const p = seedPosition(id, GRAPH_W, GRAPH_H)
+        <circle
+          data-skeleton-center
+          cx={GRAPH_W / 2}
+          cy={GRAPH_H / 2}
+          r={SIGUNGU_R}
+          className="fill-explore-skeleton-map animate-skeleton-pulse"
+        />
+        {ids.map((id, i) => {
+          const p = dongSlot(i, ids.length, 90, SIZE)
           return (
             <circle
               key={id}

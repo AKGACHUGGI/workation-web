@@ -1,115 +1,99 @@
 import { describe, expect, it } from 'vitest'
 import {
-  DEFAULT_RELATIONS,
-  RELATIONS,
+  SIGUNGU_NODE,
   buildSigunguGraph,
-  factDongs,
-  seedPosition,
+  pinFacts,
   sharedFacts,
+  typeDongs,
+  typeNodeId,
 } from '@/features/explore/sigunguGraph'
-import type { RelationKey } from '@/features/explore/sigunguGraph'
-import { pinsMock } from '@/mocks/explore/pins'
+import type { PinDong } from '@/features/explore/types'
+import { GANGNEUNG_PINS, JUMUNJIN_ID, WANGSAN_ID, YEONGOK_ID } from '@/test/fixtures/explore'
 
-const pins = pinsMock('51150')!.dongs
-const YEONGOK = '5115037000'
-const name = (id: string) => pins.find((p) => p.id === id)!.name
+const byId = (id: string) => GANGNEUNG_PINS.find((p) => p.id === id)!
+const NONE = ['강동면', '사천면', '성산면', '옥계면', '왕산면']
 
-describe('RELATIONS', () => {
-  it('이름은 사실 노드에 맞춘다, 토글은 조용함·저녁 활기 등급 2개뿐', () => {
-    expect(RELATIONS.map((r) => r.label)).toEqual([
-      '워케이션 유형',
-      '바닷가',
-      '생활권/관광지',
-      '조용함 등급',
-      '저녁 활기 등급',
+describe('buildSigunguGraph', () => {
+  const g = buildSigunguGraph('강릉시', GANGNEUNG_PINS)
+
+  it('노드: 시군구 1 → 유형 3 (몰입 → 네트워킹 → 로컬) → 동 21, 등급·생활 노드 없음', () => {
+    expect(g.nodes[0]).toEqual({ id: SIGUNGU_NODE, kind: 'sigungu', label: '강릉시' })
+    expect(g.nodes.filter((n) => n.kind === 'type').map((n) => n.id)).toEqual([
+      'type:몰입형',
+      'type:네트워킹형',
+      'type:로컬살이형',
     ])
-    expect(RELATIONS.filter((r) => r.toggle).map((r) => r.key)).toEqual(['quiet', 'evening'])
+    expect(g.nodes.filter((n) => n.kind === 'dong')).toHaveLength(21)
+    expect(g.nodes).toHaveLength(25)
+    expect(g.nodes.find((n) => n.id === JUMUNJIN_ID)).toEqual({
+      id: JUMUNJIN_ID,
+      kind: 'dong',
+      label: '주문진읍',
+      type: '로컬살이형',
+    })
   })
-  it('기본 켬 = 항상 켜진 세 관계 (토글 칩은 꺼짐)', () => {
-    expect([...DEFAULT_RELATIONS]).toEqual(['type', 'coast', 'life'])
+
+  it('선: 시군구─유형 3 · 유형─동 16 (실선), 시군구─유형 없는 동 5 (점선)', () => {
+    expect(g.links).toHaveLength(24)
+    expect(g.links.filter((l) => l.source === SIGUNGU_NODE && !l.dashed)).toHaveLength(3)
+    expect(g.links.filter((l) => l.source.startsWith('type:'))).toHaveLength(16)
+    const dashed = g.links.filter((l) => l.dashed)
+    expect(dashed.every((l) => l.source === SIGUNGU_NODE)).toBe(true)
+    expect(dashed.map((l) => byId(l.target).name).sort()).toEqual(NONE)
+    expect(g.links).toContainEqual({
+      source: typeNodeId('몰입형'),
+      target: YEONGOK_ID,
+      dashed: false,
+    })
+  })
+
+  it('이어진 동이 없는 유형은 노드도 선도 없다', () => {
+    const local = GANGNEUNG_PINS.filter((p) => p.topType === '로컬살이형')
+    const only = buildSigunguGraph('강릉시', local)
+    expect(only.nodes.filter((n) => n.kind === 'type').map((n) => n.label)).toEqual(['로컬살이형'])
+    expect(only.links.some((l) => l.target === typeNodeId('몰입형'))).toBe(false)
   })
 })
 
-describe('buildSigunguGraph', () => {
-  it('강릉 기본 관계: 동 21 + 사실 7(유형 4·바닷가·생활권·관광지), 선 52, 시군구 노드 없음', () => {
-    const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
-    expect(g.nodes.filter((n) => n.kind === 'dong')).toHaveLength(21)
-    expect(g.nodes.filter((n) => n.kind !== 'dong').map((n) => n.id)).toEqual([
-      'type:네트워킹형',
-      'type:로컬살이형',
-      'type:몰입형',
-      'type:장기체류형',
-      'coast',
-      'life:관광지',
-      'life:생활권',
-    ])
-    expect(g.links).toHaveLength(21 + 10 + 21)
-    expect(g.nodes.some((n) => n.id === '51150' || n.label === '강릉시')).toBe(false)
-  })
-  it('동 노드: 라벨 = 이름, score = 가장 맞는 유형 점수', () => {
-    const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
-    expect(g.nodes.find((n) => n.id === '5115025000')).toEqual({
-      id: '5115025000',
-      kind: 'dong',
-      label: '주문진읍',
-      score: 61,
-    })
-  })
-  it('관계를 끄면 그 선과 사실 노드가 빠진다', () => {
-    const g = buildSigunguGraph(pins, new Set<RelationKey>(['type', 'life']))
-    expect(g.nodes.some((n) => n.id === 'coast')).toBe(false)
-    expect(g.links.some((l) => l.rel === 'coast')).toBe(false)
-    expect(g.links).toHaveLength(42)
-  })
-  it('이어진 동이 없는 사실 노드는 만들지 않는다', () => {
-    const two = pins.filter((p) => p.id === '5115025000' || p.id === YEONGOK)
-    const g = buildSigunguGraph(two, new Set<RelationKey>(['type', 'quiet', 'evening']))
-    expect(g.nodes.filter((n) => n.kind !== 'dong').map((n) => n.label)).toEqual([
-      '장기체류형',
+describe('pinFacts', () => {
+  it('대표 유형 · 바닷가 · 생활권/관광지 · 조용함 · 저녁 활기 순, 없는 것은 뺀다', () => {
+    expect(pinFacts(byId(YEONGOK_ID))).toEqual([
+      '몰입형',
+      '바닷가',
+      '관광지',
       '조용함 A',
-      '조용함 B',
-      '저녁 활기 A',
       '저녁 활기 B',
     ])
+    expect(pinFacts(byId(WANGSAN_ID))).toEqual(['관광지', '조용함 C', '저녁 활기 C'])
   })
 })
 
 describe('sharedFacts', () => {
-  it('연곡면 → 강동면·사천면·옥계면 공통 3 (강릉 실측)', () => {
-    const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
-    const top = sharedFacts(g, YEONGOK).slice(0, 3)
+  it('연곡면 → 공통 3: 강동면 · 사천면 · 송정동 (핀 데이터, 같으면 이름 순)', () => {
+    const top = sharedFacts(GANGNEUNG_PINS, YEONGOK_ID).slice(0, 3)
     expect(top.map((s) => [s.name, s.common.length])).toEqual([
       ['강동면', 3],
       ['사천면', 3],
-      ['옥계면', 3],
+      ['송정동', 3],
     ])
-    expect(top[0].common).toEqual(['장기체류형', '바닷가', '관광지'])
+    expect(top[0].common).toEqual(['바닷가', '관광지', '저녁 활기 B'])
+    expect(top[2].common).toEqual(['몰입형', '바닷가', '조용함 A'])
   })
-  it('공통 0개 동은 빼고, 자기 자신은 없다', () => {
-    const g = buildSigunguGraph(pins, new Set<RelationKey>(['coast']))
-    const list = sharedFacts(g, '5115060000') // 내곡동: 바닷가 아님 → 공통 사실 없음
-    expect(list).toEqual([])
-    expect(sharedFacts(g, YEONGOK).every((s) => s.dongId !== YEONGOK)).toBe(true)
-  })
-})
-
-describe('factDongs', () => {
-  it('바닷가와 이어진 동 10곳', () => {
-    const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
-    const ids = factDongs(g, 'coast')
-    expect(ids).toHaveLength(10)
-    expect(ids.map(name)).toContain('주문진읍')
+  it('공통 0개 동은 빼고, 자기 자신은 없고, 없는 동이면 빈 목록', () => {
+    const odd: PinDong = {
+      ...byId('5115060000'), // 내곡동: 로컬살이형 · 내륙 · 생활권
+      grades: { quiet: 'S', evening: 'S' },
+    }
+    expect(sharedFacts([byId(YEONGOK_ID), odd], YEONGOK_ID)).toEqual([])
+    expect(sharedFacts(GANGNEUNG_PINS, YEONGOK_ID).every((s) => s.dongId !== YEONGOK_ID)).toBe(true)
+    expect(sharedFacts(GANGNEUNG_PINS, '0000000000')).toEqual([])
   })
 })
 
-describe('seedPosition', () => {
-  it('id 로 정해지는 고정 위치, 범위 안', () => {
-    const a = seedPosition('5115025000', 400, 300)
-    expect(seedPosition('5115025000', 400, 300)).toEqual(a)
-    expect(a.x).toBeGreaterThanOrEqual(0)
-    expect(a.x).toBeLessThan(400)
-    expect(a.y).toBeGreaterThanOrEqual(0)
-    expect(a.y).toBeLessThan(300)
-    expect(seedPosition(YEONGOK, 400, 300)).not.toEqual(a)
+describe('typeDongs', () => {
+  it('로컬살이형 동 10곳 (핀 순서)', () => {
+    const dongs = typeDongs(GANGNEUNG_PINS, '로컬살이형')
+    expect(dongs).toHaveLength(10)
+    expect(dongs.map((p) => p.name)).toContain('주문진읍')
   })
 })
