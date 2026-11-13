@@ -150,7 +150,9 @@
   /* explore/skeleton/* (스펙 §9-1) — 패널 / 지도 위(땅 색 위에서 보이게 진하게) / 반짝임 */
   --color-explore-skeleton-base: var(--color-gray-100);
   --color-explore-skeleton-map: var(--color-gray-300);
-  --color-explore-skeleton-shine: var(--color-gray-50);
+  --color-explore-skeleton-shine: var(
+    --color-white
+  ); /* gray/50 은 gray/100 바탕과 거의 같아 안 보여 흰색 */
   /* explore/fact/* — ① 시군구 지식그래프 사실 노드 (스펙 §3-2 표) */
   --color-explore-fact-type: var(--color-arches-500);
   --color-explore-fact-coast: var(--color-babu-600);
@@ -289,6 +291,13 @@
       transform: translateX(100%);
     }
   }
+  /* SVG 원(① 그래프 스켈레톤)은 ::after 띠를 못 붙여 깜빡임으로 진행을 보인다 */
+  --animate-skeleton-pulse: skeleton-pulse 1.5s ease-in-out infinite;
+  @keyframes skeleton-pulse {
+    50% {
+      opacity: 0.4;
+    }
+  }
 
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
@@ -340,7 +349,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-explore-fade {
+  .animate-explore-fade,
+  .animate-skeleton-pulse {
     animation: none;
   }
 }

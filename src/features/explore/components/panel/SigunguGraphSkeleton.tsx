@@ -38,7 +38,7 @@ export default function SigunguGraphSkeleton({ ids }: Props) {
               cx={p.x}
               cy={p.y}
               r={8}
-              className="fill-explore-skeleton-base"
+              className="fill-explore-skeleton-map animate-skeleton-pulse"
             />
           )
         })}
