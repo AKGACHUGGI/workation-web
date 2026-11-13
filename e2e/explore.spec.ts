@@ -6,7 +6,7 @@ const YEONGOK = '5115037000'
 const NOHAK = '5121057000'
 
 test.describe('W-09 지도 탐색 v6', () => {
-  test('강릉시 지식그래프 → 연곡면 카드 공통 2 → 동 패널, 주문진읍 동 패널 1위 로컬살이형 60', async ({
+  test('강릉시 지식그래프(유형 3) → 연곡면 카드 몰입형 50 · 공통 3 → 동 패널, 주문진읍 1위 로컬살이형 60', async ({
     page,
   }) => {
     await page.goto('/explore')
@@ -16,9 +16,12 @@ test.describe('W-09 지도 탐색 v6', () => {
     await page.goto(`/explore?sgg=${GANGNEUNG}`)
     const graph = page.getByRole('group', { name: '강릉시 지식그래프' })
     await expect(graph.locator('[data-kind="dong"]')).toHaveCount(21)
+    await expect(graph.locator('[data-kind="type"]')).toHaveCount(3)
 
     await graph.getByRole('button', { name: '연곡면', exact: true }).click()
-    await expect(page.getByRole('region', { name: '연곡면' })).toContainText('공통 2')
+    const yeongok = page.getByRole('region', { name: '연곡면' })
+    await expect(yeongok).toContainText('몰입형 50')
+    await expect(yeongok).toContainText('공통 3')
     await expect(page).not.toHaveURL(/dong=/)
 
     await page.getByRole('button', { name: '동네 자세히 보기' }).click()
@@ -38,23 +41,30 @@ test.describe('W-09 지도 탐색 v6', () => {
     await expect(top).toContainText('60')
   })
 
-  test('① 관계 줄: 유형·바닷가·생활권/관광지는 고정, 조용함 등급 칩을 켜고 끄면 사실 노드가 생기고 빠진다', async ({
+  test('① 방사형: 바닷가 🌊 10 · 점선 5 · 안내 문구, 유형 노드 → 동 10곳, 왕산면 → 유형 없음 → ② 막대 3개', async ({
     page,
   }) => {
     await page.goto(`/explore?sgg=${GANGNEUNG}`)
     const graph = page.getByRole('group', { name: '강릉시 지식그래프' })
     await expect(graph.locator('[data-kind="dong"]')).toHaveCount(21)
-    const row = page.getByRole('group', { name: '관계' })
-    await expect(row.getByRole('button')).toHaveText(['조용함 등급', '저녁 활기 등급'])
-    await expect(row).toContainText('워케이션 유형')
-    await expect(page.getByText(/1위 유형|가까움/)).toHaveCount(0)
+    await expect(graph.locator('[data-coast]')).toHaveCount(10)
+    await expect(graph.locator('line[data-dashed]')).toHaveCount(5)
+    await expect(page.getByRole('group', { name: '관계' })).toHaveCount(0)
+    await expect(page.getByText('뚜렷한 유형이 없는 동네예요. 눌러서 자세히 보세요.')).toBeVisible()
 
-    const quiet = graph.getByRole('button', { name: /^사실 조용함/ })
-    await expect(quiet).toHaveCount(0)
-    await row.getByRole('button', { name: '조용함 등급' }).click()
-    await expect(quiet.first()).toBeVisible()
-    await row.getByRole('button', { name: '조용함 등급' }).click()
-    await expect(quiet).toHaveCount(0)
+    await graph.getByRole('button', { name: '로컬살이형', exact: true }).click()
+    await expect(page.getByRole('region', { name: '로컬살이형' })).toContainText(
+      '로컬살이형 · 동 10곳',
+    )
+
+    await graph.getByRole('button', { name: '왕산면', exact: true }).click()
+    const card = page.getByRole('region', { name: '왕산면' })
+    await expect(card).toContainText('뚜렷한 유형 없음')
+    await card.getByRole('button', { name: '동네 자세히 보기' }).click()
+    await expect(page.getByRole('heading', { level: 2, name: '왕산면' })).toBeVisible()
+    await expect(
+      page.getByRole('region', { name: '워케이션 유형' }).getByRole('listitem'),
+    ).toHaveCount(3)
   })
 
   test('주말 토글 → 시간대 칩 주말, 한산한 달 → 강릉시 기준 막대, 브리핑 위치 그대로', async ({
