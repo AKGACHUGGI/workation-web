@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FACT_R, createLayout, nodeRadius } from '@/features/explore/forceLayout'
+import { DONG_R, FACT_R, createLayout, nodeRadius } from '@/features/explore/forceLayout'
 import { DEFAULT_RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
 import { GANGNEUNG_PINS } from '@/test/fixtures/explore'
 
@@ -9,10 +9,9 @@ const on = new Set(DEFAULT_RELATIONS)
 const graph = buildSigunguGraph(GANGNEUNG_PINS, on)
 
 describe('nodeRadius', () => {
-  it('동은 1위 점수에 비례(Figma: 61 → 지름 14, 97 → 22), 사실은 고정 26', () => {
-    expect(nodeRadius({ id: 'a', kind: 'dong', label: 'a', score: 61 })).toBeCloseTo(6.95, 1)
-    expect(nodeRadius({ id: 'a', kind: 'dong', label: 'a', score: 97 })).toBeCloseTo(11.06, 1)
-    expect(nodeRadius({ id: 'a', kind: 'dong', label: 'a', score: 10 })).toBe(6)
+  it('동은 점수와 상관없이 같은 크기, 사실은 고정 26', () => {
+    expect(nodeRadius({ id: 'a', kind: 'dong', label: 'a', score: 61 })).toBe(DONG_R)
+    expect(nodeRadius({ id: 'a', kind: 'dong', label: 'a', score: 97 })).toBe(DONG_R)
     expect(nodeRadius({ id: 'coast', kind: 'coast', label: '바닷가' })).toBe(FACT_R)
   })
 })

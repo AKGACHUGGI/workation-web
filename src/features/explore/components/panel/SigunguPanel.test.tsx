@@ -96,13 +96,13 @@ describe('SigunguPanel', () => {
     onHoverDong: vi.fn(),
     onOpenDong: vi.fn(),
   }
-  it('헤더 · 관계 칩 · 그래프 · 범례 · 출처, 선택 없으면 카드 없음', () => {
+  it('헤더 · 관계 칩 · 그래프 · 출처, 아래 범례 없음, 선택 없으면 카드 없음', () => {
     render(<SigunguPanel {...base} />)
     expect(screen.getByRole('heading', { level: 2, name: '강릉시' })).toBeInTheDocument()
     expect(screen.getByText('강원특별자치도 · 행정동 21곳')).toBeInTheDocument()
     expect(screen.getByRole('group', { name: '관계' })).toBeInTheDocument()
     expect(screen.getByRole('group', { name: '강릉시 지식그래프' })).toBeInTheDocument()
-    expect(screen.getByText('동 (원 크기 = 가장 맞는 유형 점수)')).toBeInTheDocument()
+    expect(screen.queryByText(/원 크기/)).not.toBeInTheDocument()
     expect(screen.queryByText(/1위 유형|가까움/)).not.toBeInTheDocument()
     expect(screen.getByText(/생활권 = 생활권 지수 0.7 이상/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '동네 자세히 보기' })).not.toBeInTheDocument()

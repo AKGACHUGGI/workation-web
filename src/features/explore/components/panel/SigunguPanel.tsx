@@ -3,7 +3,6 @@ import { EXPLORE_COPY } from '@/features/explore/copy'
 import { buildSigunguGraph } from '@/features/explore/sigunguGraph'
 import type { RelationKey } from '@/features/explore/sigunguGraph'
 import type { PinDong } from '@/features/explore/types'
-import GraphLegend from '@/features/explore/components/panel/GraphLegend'
 import RelationChips from '@/features/explore/components/panel/RelationChips'
 import SelectionCard from '@/features/explore/components/panel/SelectionCard'
 import SigunguGraph from '@/features/explore/components/panel/SigunguGraph'
@@ -56,7 +55,6 @@ export default function SigunguPanel({
         onHoverDong={onHoverDong}
       />
       {pick && <SelectionCard graph={graph} pins={pins} pick={pick} onOpenDong={onOpenDong} />}
-      <GraphLegend on={relsOn} />
       <SourceLine>{EXPLORE_COPY.sigunguSource}</SourceLine>
     </div>
   )

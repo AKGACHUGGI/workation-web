@@ -1,5 +1,6 @@
 import Block from '@/features/explore/components/Skeleton'
 import { EXPLORE_COPY } from '@/features/explore/copy'
+import { DONG_R } from '@/features/explore/forceLayout'
 import { seedPosition } from '@/features/explore/sigunguGraph'
 import { GRAPH_H, GRAPH_W, SIGUNGU_HEADER_H } from '@/features/explore/components/panel/panelLayout'
 
@@ -37,7 +38,7 @@ export default function SigunguGraphSkeleton({ ids }: Props) {
               data-skeleton-node
               cx={p.x}
               cy={p.y}
-              r={8}
+              r={DONG_R}
               className="fill-explore-skeleton-map animate-skeleton-pulse"
             />
           )

@@ -10,10 +10,12 @@ export const FACT_R = 26
 const LABEL_SPACE = 14
 const TICKS = 300
 
-/** 동: 1위 유형 점수 × 0.114 (Figma 61 → 지름 14, 97 → 22), 6~12 로 자름. 사실: 고정 */
+/** 동 노드 반지름. 점수 비례 크기는 뜻이 잘 안 읽혀 모두 같게 둔다 (2026-11-13 사용자 결정) */
+export const DONG_R = 9
+
+/** 동: 고정 DONG_R. 사실: 고정 FACT_R */
 export function nodeRadius(n: GraphNode): number {
-  if (n.kind !== 'dong') return FACT_R
-  return Math.min(12, Math.max(6, (n.score ?? 50) * 0.114))
+  return n.kind === 'dong' ? DONG_R : FACT_R
 }
 
 export type LayoutNode = SimulationNodeDatum & { id: string; r: number; x: number; y: number }

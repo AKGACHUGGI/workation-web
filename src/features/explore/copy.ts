@@ -129,11 +129,6 @@ export const EXPLORE_COPY = {
   cardCommon: (n: number) => `공통 ${n}`,
   cardFactTitle: (label: string, n: number) => `${label} · 이어진 동 ${n}곳`,
   openDong: '동네 자세히 보기',
-  legendDong: '동 (원 크기 = 가장 맞는 유형 점수)',
-  legendType: '워케이션 유형',
-  legendCoast: '바닷가',
-  legendLife: '생활권/관광지',
-  legendGrade: '등급',
   sigunguSource:
     '데이터: LG U+ 유동인구 2025 · 생활권 = 생활권 지수 0.7 이상 · 바닷가 = 해안선 1km 이내',
   backToGraph: (sigungu: string) => `${sigungu} 그래프로`,
