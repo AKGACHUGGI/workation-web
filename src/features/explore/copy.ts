@@ -127,7 +127,6 @@ export const EXPLORE_COPY = {
   sigunguSub: (province: string, n: number) => `${province} · 행정동 ${n}곳`,
   graphLabel: (name: string) => `${name} 지식그래프`,
   noType: '뚜렷한 유형 없음',
-  noTypeHint: '뚜렷한 유형이 없는 동네예요. 눌러서 자세히 보세요.',
   cardTypeTitle: (type: string, n: number) => `${type} · 동 ${n}곳`,
   cardCommon: (n: number) => `공통 ${n}`,
   openDong: '동네 자세히 보기',

@@ -20,7 +20,7 @@ type Props = {
   onOpenDong: (dongId: string) => void
 }
 
-/** ① 패널 (Figma 432:9976, 스펙 2026-11-14 §3). 헤더 · 방사형 그래프 · 유형 없음 안내 · 카드 · 출처 */
+/** ① 패널 (Figma 432:9976, 스펙 2026-11-14 §3). 헤더 · 방사형 그래프 · 카드 · 출처 */
 export default function SigunguPanel({
   name,
   province,
@@ -33,7 +33,6 @@ export default function SigunguPanel({
 }: Props) {
   const graph = useMemo(() => buildSigunguGraph(name, pins), [name, pins])
   const layout = useMemo(() => radialLayout(pins, { w: GRAPH_W, h: GRAPH_H }), [pins])
-  const hasNoType = pins.some((p) => p.topType === null)
   return (
     <div className="flex flex-1 flex-col gap-3.5 pt-5">
       <header className={`flex shrink-0 flex-col gap-1 ${SIGUNGU_HEADER_H}`}>
@@ -51,11 +50,6 @@ export default function SigunguPanel({
         hoveredDong={hoveredDong}
         onHoverDong={onHoverDong}
       />
-      {hasNoType && (
-        <p className="text-explore-2xs text-text-tertiary shrink-0 text-center">
-          {EXPLORE_COPY.noTypeHint}
-        </p>
-      )}
       {pick && <SelectionCard pins={pins} pick={pick} onOpenDong={onOpenDong} />}
       <SourceLine>{EXPLORE_COPY.sigunguSource}</SourceLine>
     </div>

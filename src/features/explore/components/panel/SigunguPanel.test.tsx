@@ -7,8 +7,6 @@ import SigunguGraphSkeleton from '@/features/explore/components/panel/SigunguGra
 import SigunguPanel from '@/features/explore/components/panel/SigunguPanel'
 import { GANGNEUNG_PINS, WANGSAN_ID, YEONGOK_ID } from '@/test/fixtures/explore'
 
-const HINT = '뚜렷한 유형이 없는 동네예요. 눌러서 자세히 보세요.'
-
 describe('GuidePanel', () => {
   it('⓪ 제목 + 안내', () => {
     render(<GuidePanel />)
@@ -77,20 +75,16 @@ describe('SigunguPanel', () => {
     onHoverDong: vi.fn(),
     onOpenDong: vi.fn(),
   }
-  it('헤더 · 그래프 · 유형 없음 안내 · 출처, 범례·관계 칩 없음, 선택 없으면 카드 없음', () => {
+  it('헤더 · 그래프 · 출처, 범례·관계 칩·유형 없음 안내 없음, 선택 없으면 카드 없음', () => {
     render(<SigunguPanel {...base} />)
     expect(screen.getByRole('heading', { level: 2, name: '강릉시' })).toBeInTheDocument()
     expect(screen.getByText('강원특별자치도 · 행정동 21곳')).toBeInTheDocument()
     expect(screen.queryByText('워케이션 유형')).not.toBeInTheDocument()
     expect(screen.queryByRole('group', { name: '관계' })).not.toBeInTheDocument()
     expect(screen.getByRole('group', { name: '강릉시 지식그래프' })).toBeInTheDocument()
-    expect(screen.getByText(HINT)).toBeInTheDocument()
+    expect(screen.queryByText(/뚜렷한 유형이 없는 동네예요/)).not.toBeInTheDocument()
     expect(screen.getByText(/생활권 = 생활권 지수 0.7 이상/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '동네 자세히 보기' })).not.toBeInTheDocument()
-  })
-  it('유형 없는 동이 없으면 안내 문구도 없다', () => {
-    render(<SigunguPanel {...base} pins={GANGNEUNG_PINS.filter((p) => p.topType !== null)} />)
-    expect(screen.queryByText(HINT)).not.toBeInTheDocument()
   })
   it('pick 이 있으면 카드', () => {
     render(<SigunguPanel {...base} pick={{ kind: 'dong', id: YEONGOK_ID }} />)
