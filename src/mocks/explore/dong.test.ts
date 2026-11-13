@@ -7,7 +7,6 @@ describe('dongMock', () => {
     const d = dongMock('5115025000')!
     expect(d).toBe(JUMUNJIN_DETAIL)
     expect(d.types.map((t) => [t.name, t.score])).toEqual([
-      ['장기체류형', 61],
       ['로컬살이형', 60],
       ['네트워킹형', 50],
       ['몰입형', 36],
@@ -37,7 +36,7 @@ describe('dongMock', () => {
     expect(d.types.map((t) => t.score)).toEqual(
       [...d.types.map((t) => t.score)].sort((a, b) => b - a),
     )
-    expect(d.types).toHaveLength(4)
+    expect(d.types).toHaveLength(3)
     expect(d.grades.quiet?.grade).toBe(pin.grades.quiet)
     for (const day of ['weekday', 'weekend'] as const) expect(d.hourly[day].driv).toHaveLength(24)
     expect(d.hourly.weekday.quietHour).toBeGreaterThanOrEqual(9)
@@ -47,6 +46,12 @@ describe('dongMock', () => {
     expect(d.briefing).toHaveLength(3)
     expect(d.similar).toHaveLength(3)
     for (const s of d.similar) expect(allPins().get(s.id)!.coastal).toBe(pin.coastal)
+  })
+  it('대표 유형 없는 동(왕산면): 막대 3개, 1위도 40 미만, 브리핑에 유형 이름 없음', () => {
+    const d = dongMock('5115032000')!
+    expect(d.types).toHaveLength(3)
+    expect(d.types[0].score).toBeLessThan(40)
+    expect(d.briefing[2]).toMatch(/가장 큰 특징이에요\.$/)
   })
   it('없는 동 → null', () => {
     expect(dongMock('0000000000')).toBeNull()

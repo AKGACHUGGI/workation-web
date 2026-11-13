@@ -1,4 +1,5 @@
-import type { AskResponse, DongDetail } from '@/features/explore/types'
+import { TYPE_MIN, TYPE_NAMES } from '@/features/explore/types'
+import type { AskResponse, DongDetail, TypeName } from '@/features/explore/types'
 import { dongMock, topicOf } from '@/mocks/explore/dong'
 import { allPins } from '@/mocks/explore/pins'
 
@@ -72,6 +73,10 @@ function ruleSentence(intent: Intent, d: DongDetail): string {
     }
     case 'type': {
       const [a, b] = d.types
+      if (a.score < TYPE_MIN) {
+        const score = (t: TypeName) => d.types.find((x) => x.name === t)?.score
+        return `뚜렷하게 맞는 유형은 없어요. ${TYPE_NAMES.map((t) => `${t} ${score(t)}점`).join(' · ')}이에요.`
+      }
       return `${a.name} ${a.score}점으로 가장 잘 맞고, 다음은 ${b.name} ${b.score}점이에요.`
     }
     case 'coast':

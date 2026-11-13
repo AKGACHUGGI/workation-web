@@ -31,19 +31,18 @@ describe('RELATIONS', () => {
 })
 
 describe('buildSigunguGraph', () => {
-  it('강릉 기본 관계: 동 21 + 사실 7(유형 4·바닷가·생활권·관광지), 선 52, 시군구 노드 없음', () => {
+  it('강릉 기본 관계: 동 21 + 사실 6(유형 3·바닷가·생활권·관광지), 선 47, 시군구 노드 없음', () => {
     const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
     expect(g.nodes.filter((n) => n.kind === 'dong')).toHaveLength(21)
     expect(g.nodes.filter((n) => n.kind !== 'dong').map((n) => n.id)).toEqual([
       'type:네트워킹형',
       'type:로컬살이형',
       'type:몰입형',
-      'type:장기체류형',
       'coast',
       'life:관광지',
       'life:생활권',
     ])
-    expect(g.links).toHaveLength(21 + 10 + 21)
+    expect(g.links).toHaveLength(16 + 10 + 21)
     expect(g.nodes.some((n) => n.id === '51150' || n.label === '강릉시')).toBe(false)
   })
   it('동 노드: 라벨 = 이름, score = 가장 맞는 유형 점수', () => {
@@ -52,20 +51,21 @@ describe('buildSigunguGraph', () => {
       id: '5115025000',
       kind: 'dong',
       label: '주문진읍',
-      score: 61,
+      score: 60,
     })
   })
   it('관계를 끄면 그 선과 사실 노드가 빠진다', () => {
     const g = buildSigunguGraph(pins, new Set<RelationKey>(['type', 'life']))
     expect(g.nodes.some((n) => n.id === 'coast')).toBe(false)
     expect(g.links.some((l) => l.rel === 'coast')).toBe(false)
-    expect(g.links).toHaveLength(42)
+    expect(g.links).toHaveLength(37)
   })
   it('이어진 동이 없는 사실 노드는 만들지 않는다', () => {
     const two = pins.filter((p) => p.id === '5115025000' || p.id === YEONGOK)
     const g = buildSigunguGraph(two, new Set<RelationKey>(['type', 'quiet', 'evening']))
     expect(g.nodes.filter((n) => n.kind !== 'dong').map((n) => n.label)).toEqual([
-      '장기체류형',
+      '로컬살이형',
+      '몰입형',
       '조용함 A',
       '조용함 B',
       '저녁 활기 A',
@@ -75,15 +75,15 @@ describe('buildSigunguGraph', () => {
 })
 
 describe('sharedFacts', () => {
-  it('연곡면 → 강동면·사천면·옥계면 공통 3 (강릉 실측)', () => {
+  it('연곡면 → 강동면·경포동·사천면 공통 2 (강릉 실측)', () => {
     const g = buildSigunguGraph(pins, DEFAULT_RELATIONS)
     const top = sharedFacts(g, YEONGOK).slice(0, 3)
     expect(top.map((s) => [s.name, s.common.length])).toEqual([
-      ['강동면', 3],
-      ['사천면', 3],
-      ['옥계면', 3],
+      ['강동면', 2],
+      ['경포동', 2],
+      ['사천면', 2],
     ])
-    expect(top[0].common).toEqual(['장기체류형', '바닷가', '관광지'])
+    expect(top[0].common).toEqual(['바닷가', '관광지'])
   })
   it('공통 0개 동은 빼고, 자기 자신은 없다', () => {
     const g = buildSigunguGraph(pins, new Set<RelationKey>(['coast']))

@@ -21,7 +21,7 @@ describe('ExplorePage', () => {
     expect(screen.getByText('강원특별자치도 · 행정동 21곳')).toBeInTheDocument()
 
     await user.click(within(graph).getByRole('button', { name: '연곡면' }))
-    expect(screen.getByRole('region', { name: '연곡면' })).toHaveTextContent('공통 3')
+    expect(screen.getByRole('region', { name: '연곡면' })).toHaveTextContent('공통 2')
     expect(location()).toBe('/explore?sgg=51150')
 
     await user.click(screen.getByRole('button', { name: '동네 자세히 보기' }))
@@ -32,7 +32,7 @@ describe('ExplorePage', () => {
 
     await user.click(screen.getByRole('button', { name: '강릉시 그래프로' }))
     expect(location()).toBe('/explore?sgg=51150')
-    expect(await screen.findByRole('region', { name: '연곡면' })).toHaveTextContent('공통 3')
+    expect(await screen.findByRole('region', { name: '연곡면' })).toHaveTextContent('공통 2')
   })
 
   it('①: 조용함 등급 칩을 켜면 조용함 사실 노드가 생기고, 끄면 빠진다', async () => {

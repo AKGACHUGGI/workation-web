@@ -21,7 +21,7 @@ describe('GuidePanel', () => {
 })
 
 describe('SelectionCard', () => {
-  it('동: 이름 · 가장 맞는 유형 점수 · 이어진 사실 · 공통 3 (강동면·사천면·옥계면) · [동네 자세히 보기]', async () => {
+  it('동: 이름 · 가장 맞는 유형 점수 · 이어진 사실 · 공통 2 (강동면·경포동·사천면) · [동네 자세히 보기]', async () => {
     const onOpenDong = vi.fn()
     render(
       <SelectionCard
@@ -32,16 +32,16 @@ describe('SelectionCard', () => {
       />,
     )
     const card = screen.getByRole('region', { name: '연곡면' })
-    expect(card).toHaveTextContent('장기체류형 61')
+    expect(card).toHaveTextContent('몰입형 50')
     // 순서는 파트 A 의 링크 생성 순서를 따르므로 집합으로 비교
     expect(
       within(card)
         .getAllByRole('listitem')
         .map((li) => li.textContent)
         .sort(),
-    ).toEqual(['관광지', '바닷가', '장기체류형'])
-    expect(card).toHaveTextContent('공통 3')
-    expect(card).toHaveTextContent('강동면 · 사천면 · 옥계면')
+    ).toEqual(['관광지', '몰입형', '바닷가'])
+    expect(card).toHaveTextContent('공통 2')
+    expect(card).toHaveTextContent('강동면 · 경포동 · 사천면')
     await userEvent.click(within(card).getByRole('button', { name: '동네 자세히 보기' }))
     expect(onOpenDong).toHaveBeenCalledWith(YEONGOK_ID)
   })

@@ -6,7 +6,7 @@ const YEONGOK = '5115037000'
 const NOHAK = '5121057000'
 
 test.describe('W-09 지도 탐색 v6', () => {
-  test('강릉시 지식그래프 → 연곡면 카드 공통 3 → 동 패널, 주문진읍 동 패널 1위 장기체류형 61', async ({
+  test('강릉시 지식그래프 → 연곡면 카드 공통 2 → 동 패널, 주문진읍 동 패널 1위 로컬살이형 60', async ({
     page,
   }) => {
     await page.goto('/explore')
@@ -18,7 +18,7 @@ test.describe('W-09 지도 탐색 v6', () => {
     await expect(graph.locator('[data-kind="dong"]')).toHaveCount(21)
 
     await graph.getByRole('button', { name: '연곡면', exact: true }).click()
-    await expect(page.getByRole('region', { name: '연곡면' })).toContainText('공통 3')
+    await expect(page.getByRole('region', { name: '연곡면' })).toContainText('공통 2')
     await expect(page).not.toHaveURL(/dong=/)
 
     await page.getByRole('button', { name: '동네 자세히 보기' }).click()
@@ -34,8 +34,8 @@ test.describe('W-09 지도 탐색 v6', () => {
     await page.goto(`/explore?sgg=${GANGNEUNG}&dong=${JUMUNJIN}`)
     await expect(page.getByRole('heading', { level: 2, name: '주문진읍' })).toBeVisible()
     const top = page.getByRole('region', { name: '워케이션 유형' }).getByRole('listitem').first()
-    await expect(top).toContainText('장기체류형')
-    await expect(top).toContainText('61')
+    await expect(top).toContainText('로컬살이형')
+    await expect(top).toContainText('60')
   })
 
   test('① 관계 줄: 유형·바닷가·생활권/관광지는 고정, 조용함 등급 칩을 켜고 끄면 사실 노드가 생기고 빠진다', async ({

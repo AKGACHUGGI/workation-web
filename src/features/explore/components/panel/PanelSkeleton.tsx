@@ -2,7 +2,7 @@ import Block from '@/features/explore/components/Skeleton'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 
-const TYPE_BARS = ['w-62.5', 'w-50', 'w-42.5', 'w-35']
+const TYPE_BARS = ['w-62.5', 'w-50', 'w-42.5']
 const BRIEF_LINES = ['w-full', 'w-75', 'w-55']
 // DongFactGraph 칩 자리 (Figma 436:10491 의 y 22·88·154 / 52·124)
 const GRADE_TOPS = ['top-5.5', 'top-22', 'top-38.5']

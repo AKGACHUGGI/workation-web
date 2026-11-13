@@ -24,20 +24,19 @@ describe('PanelHeader', () => {
 })
 
 describe('TypeBars', () => {
-  it('점수 높은 순 4행, 1위 강조, 막대 폭 = 점수 %, 이유 한 줄', () => {
+  it('점수 높은 순 3행, 1위 강조, 막대 폭 = 점수 %, 이유 한 줄', () => {
     render(<TypeBars types={JUMUNJIN.types} />)
     const region = screen.getByRole('region', { name: '워케이션 유형' })
     const rows = within(region).getAllByRole('listitem')
     expect(rows.map((r) => r.querySelector('[data-name]')?.textContent)).toEqual([
-      '장기체류형',
       '로컬살이형',
       '네트워킹형',
       '몰입형',
     ])
     expect(rows[0]).toHaveAttribute('data-top', 'true')
     expect(rows[1]).not.toHaveAttribute('data-top')
-    expect(rows[0].querySelector('[data-fill]')).toHaveStyle({ width: '61%' })
-    expect(rows[0]).toHaveTextContent('숙박 성향 64 · 한산한 달 7개(성수기보다 20% 이상 적은 달)')
+    expect(rows[0].querySelector('[data-fill]')).toHaveStyle({ width: '60%' })
+    expect(rows[0]).toHaveTextContent('생활권 지수 0.74')
   })
 })
 

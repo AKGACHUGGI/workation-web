@@ -12,8 +12,8 @@ describe('pinsMock', () => {
       name: '주문진읍',
       center: { lat: 37.88818, lng: 128.75354 },
       tags: ['coast', 'cafe', 'long_stay', 'beach', 'market'],
-      topType: '장기체류형',
-      topScore: 61,
+      topType: '로컬살이형',
+      topScore: 60,
       coastal: true,
       life: '생활권',
       grades: { quiet: 'B', evening: 'A' },
@@ -22,6 +22,14 @@ describe('pinsMock', () => {
   it('강릉 바닷가 동 10곳', () => {
     expect(pinsMock('51150')!.dongs.filter((d) => d.coastal)).toHaveLength(10)
   })
+  it('강릉 유형 실측: 로컬 10 · 네트워킹 4 · 몰입 2 · 유형 없음 5 (topScore 도 null)', () => {
+    const dongs = pinsMock('51150')!.dongs
+    const count = (t: string | null) => dongs.filter((d) => d.topType === t).length
+    expect([count('로컬살이형'), count('네트워킹형'), count('몰입형'), count(null)]).toEqual([
+      10, 4, 2, 5,
+    ])
+    expect(dongs.filter((d) => d.topType === null).every((d) => d.topScore === null)).toBe(true)
+  })
   it('다른 시군구는 같은 입력이면 같은 값, 태그는 TAG_TABLE 키', () => {
     const a = pinsMock('51210')!
     expect(pinsMock('51210')).toEqual(a)
@@ -29,8 +37,11 @@ describe('pinsMock', () => {
     const yeongrang = a.dongs.find((d) => d.id === '5121051000')!
     expect(yeongrang.tags).toEqual(['cafe', 'long_stay', 'beach', 'park'])
     for (const d of a.dongs) {
-      expect(d.topScore).toBeGreaterThanOrEqual(40)
-      expect(d.topScore).toBeLessThanOrEqual(94)
+      expect(d.topType === null).toBe(d.topScore === null)
+      if (d.topScore !== null) {
+        expect(d.topScore).toBeGreaterThanOrEqual(40)
+        expect(d.topScore).toBeLessThanOrEqual(94)
+      }
     }
   })
   it('없는 시군구 → null', () => {

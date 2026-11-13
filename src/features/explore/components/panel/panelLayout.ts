@@ -4,7 +4,7 @@
  */
 export const DONG_SECTION_H = {
   header: 'h-15.5',
-  types: 'h-41.5',
+  types: 'h-32',
   graph: 'h-53',
   detail: 'h-28',
   briefing: 'min-h-25',

@@ -23,7 +23,7 @@ describe('askMock', () => {
     expect(ask('또래 사람들이 많아?')).toBe('또래 밀도는 B등급(39점)이에요.')
     expect(ask('저녁에 활기 있어?')).toBe('저녁 활기는 A등급(62점)이에요.')
     expect(ask('어떤 워케이션에 잘 맞아?')).toBe(
-      '장기체류형 61점으로 가장 잘 맞고, 다음은 로컬살이형 60점이에요.',
+      '로컬살이형 60점으로 가장 잘 맞고, 다음은 네트워킹형 50점이에요.',
     )
     expect(ask('바다가 가까워?')).toBe('해안선까지 0.0km인 바닷가 동네예요.')
     expect(ask('생활권이야, 관광지야?')).toBe('생활권 성격이 강한 동네예요.')
@@ -70,6 +70,12 @@ describe('askMock', () => {
     const res = askMock(JUMUNJIN, '날씨 어때?')!
     expect(res.source).toBe('guide')
     expect(res.answer[0]).toMatch(/그 질문엔 아직 답하기 어려워요/)
+  })
+
+  it('대표 유형 없는 동은 유형을 지어내지 않는다 (왕산면)', () => {
+    expect(askMock('5115032000', '어떤 워케이션에 잘 맞아?')!.answer[0]).toMatch(
+      /^뚜렷하게 맞는 유형은 없어요\. 몰입형 \d+점 · 네트워킹형 \d+점 · 로컬살이형 \d+점이에요\.$/,
+    )
   })
 
   it('그 밖의 동도 결정적으로 답한다, 없는 동은 null', () => {
