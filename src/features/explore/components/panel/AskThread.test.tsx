@@ -25,6 +25,7 @@ const reply = (answer: string, source: AskResponse['source'] = 'rule'): AskRespo
   examples: NEXT,
 })
 const chips = () => within(screen.getByRole('group', { name: '예시 질문' })).getAllByRole('button')
+const noChips = () => screen.queryByRole('group', { name: '예시 질문' }) === null
 const log = () => screen.getByRole('log', { name: '물어본 대화' })
 const input = () => screen.getByRole('textbox', { name: '이 동네에 물어보기' })
 
@@ -56,7 +57,7 @@ afterEach(() => {
 })
 
 describe('AskThread', () => {
-  it('처음: 브리핑 + 빈 대화 + 첫 칩 3개 + 입력', () => {
+  it('처음: 브리핑 + 빈 대화 + 입력 (칩 없음)', () => {
     renderWithRouter(<AskThread dong={JUMUNJIN} />)
     expect(screen.getByRole('heading', { name: '이 동네에서 일하는 하루' })).toBeInTheDocument()
     expect(screen.getByText(JUMUNJIN.briefing.join(' '))).toBeInTheDocument()
@@ -65,30 +66,26 @@ describe('AskThread', () => {
     // 대화가 길어져도 칸이 끝없이 늘지 않고 대화 목록 안에서 스크롤된다 (2026-11-13 사용자 결정)
     expect(log()).toHaveClass('max-h-72', 'overflow-y-auto')
     expect(log()).toHaveAttribute('tabindex', '0')
-    expect(chips().map((c) => c.textContent)).toEqual([
-      '이 동네 조용해?',
-      '평일엔 몇 시가 붐비고 몇 시가 한산해?',
-      '비슷한 동네는 어디야?',
-    ])
+    // 예시 칩은 '답하기 어려워요'(guide) 뒤에만 보인다 (2026-11-13 사용자 결정)
+    expect(noChips()).toBe(true)
     expect(screen.getByRole('button', { name: '보내기' })).toBeDisabled()
   })
 
-  it('칩 → 질문·대기(칩·입력 비활성) → 답, 칩이 응답 examples 로 바뀌고 말풍선으로 내린다', async () => {
+  it('입력 → 질문·대기(입력 비활성) → 답, 일반 답 뒤에는 칩이 없고 말풍선으로 내린다', async () => {
     let resolve!: (r: AskResponse) => void
     mocked.mockReturnValue(new Promise((r) => (resolve = r)))
     renderWithRouter(<AskThread dong={JUMUNJIN} />)
-    await userEvent.click(screen.getByRole('button', { name: '이 동네 조용해?' }))
+    await userEvent.type(input(), '이 동네 조용해?{Enter}')
     expect(mocked).toHaveBeenCalledWith(JUMUNJIN.id, '이 동네 조용해?')
     expect(await within(log()).findByText('답을 기다리는 중')).toHaveClass('sr-only')
     expect(within(log()).getByText('이 동네 조용해?')).toBeInTheDocument()
-    for (const c of chips()) expect(c).toBeDisabled()
     expect(input()).toBeDisabled()
 
     resolve(reply('조용함은 B등급(31점)이에요.'))
     expect(await within(log()).findByText('조용함은 B등급(31점)이에요.')).toHaveClass(
       'text-text-primary',
     )
-    expect(chips().map((c) => c.textContent)).toEqual(NEXT)
+    expect(noChips()).toBe(true)
     expect(input()).toBeEnabled()
     expect(scrollSpy).toHaveBeenCalledWith({ block: 'nearest', behavior: 'smooth' })
   })
@@ -122,13 +119,21 @@ describe('AskThread', () => {
     expect(screen.getByText('100/100')).toBeInTheDocument()
   })
 
-  it('guide → 안내 문구는 text-secondary', async () => {
-    mocked.mockResolvedValue(reply('이 지도는 … 식당·카페는 아직 몰라요.', 'guide'))
+  it('guide → 안내 문구(text-secondary) 아래에 예시 칩, 칩을 누르면 보내고 일반 답이면 칩이 사라진다', async () => {
+    mocked
+      .mockResolvedValueOnce(reply('이 지도는 … 식당·카페는 아직 몰라요.', 'guide'))
+      .mockResolvedValueOnce(reply('평일 차량은 12시에 가장 많아요.'))
     renderWithRouter(<AskThread dong={JUMUNJIN} />)
     await userEvent.type(input(), '맛집 있어?{Enter}')
     expect(await within(log()).findByText('이 지도는 … 식당·카페는 아직 몰라요.')).toHaveClass(
       'text-text-secondary',
     )
+    expect(chips().map((c) => c.textContent)).toEqual(NEXT)
+
+    await userEvent.click(screen.getByRole('button', { name: NEXT[0] }))
+    expect(mocked).toHaveBeenLastCalledWith(JUMUNJIN.id, NEXT[0])
+    await within(log()).findByText('평일 차량은 12시에 가장 많아요.')
+    expect(noChips()).toBe(true)
   })
 
   it('503 → 다시 시도 → 성공', async () => {
@@ -136,7 +141,7 @@ describe('AskThread', () => {
       .mockRejectedValueOnce(new Error('API 503 Service Unavailable: /x'))
       .mockResolvedValueOnce(reply('조용함은 B등급(31점)이에요.'))
     renderWithRouter(<AskThread dong={JUMUNJIN} />)
-    await userEvent.click(screen.getByRole('button', { name: '이 동네 조용해?' }))
+    await userEvent.type(input(), '이 동네 조용해?{Enter}')
     expect(await within(log()).findByText('지금은 답을 가져오지 못했어요.')).toBeInTheDocument()
     await userEvent.click(within(log()).getByRole('button', { name: '다시 시도' }))
     expect(await within(log()).findByText('조용함은 B등급(31점)이에요.')).toBeInTheDocument()
@@ -147,7 +152,7 @@ describe('AskThread', () => {
   it('429 → 잠시 후 문구, 다시 시도 없음', async () => {
     mocked.mockRejectedValue(new Error('API 429 Too Many Requests: /x'))
     renderWithRouter(<AskThread dong={JUMUNJIN} />)
-    await userEvent.click(screen.getByRole('button', { name: '이 동네 조용해?' }))
+    await userEvent.type(input(), '이 동네 조용해?{Enter}')
     expect(await within(log()).findByText('잠시 후 다시 물어봐 주세요.')).toBeInTheDocument()
     expect(within(log()).queryByRole('button', { name: '다시 시도' })).not.toBeInTheDocument()
   })
@@ -155,7 +160,7 @@ describe('AskThread', () => {
   it('동 A → B → A: 기록이 남고, 돌아올 때는 내리지 않는다', async () => {
     mocked.mockResolvedValue(reply('주문진 답'))
     renderWithRouter(<DongSwitch />)
-    await userEvent.click(screen.getByRole('button', { name: '이 동네 조용해?' }))
+    await userEvent.type(input(), '이 동네 조용해?{Enter}')
     await within(log()).findByText('주문진 답')
     scrollSpy.mockReset()
 

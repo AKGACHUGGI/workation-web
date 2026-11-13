@@ -19,6 +19,8 @@ const CHIP =
 export default function AskThread({ dong }: Props) {
   const { thread, pending, ask, retry } = useAskThread(dong.id)
   const last = thread.turns.at(-1)
+  // 예시 칩은 '답하기 어려워요'(guide) 바로 뒤에만 (2026-11-13 사용자 결정)
+  const showExamples = last?.status === 'done' && last.source === 'guide'
   const lastRef = useRef<HTMLDivElement>(null)
   const seen = useRef(last)
   useEffect(() => {
@@ -46,17 +48,25 @@ export default function AskThread({ dong }: Props) {
           />
         ))}
       </div>
-      <div
-        role="group"
-        aria-label={EXPLORE_COPY.askExamplesLabel}
-        className="flex flex-wrap gap-1.5"
-      >
-        {thread.examples.map((q) => (
-          <button key={q} type="button" disabled={pending} onClick={() => ask(q)} className={CHIP}>
-            {q}
-          </button>
-        ))}
-      </div>
+      {showExamples && (
+        <div
+          role="group"
+          aria-label={EXPLORE_COPY.askExamplesLabel}
+          className="flex flex-wrap gap-1.5"
+        >
+          {thread.examples.map((q) => (
+            <button
+              key={q}
+              type="button"
+              disabled={pending}
+              onClick={() => ask(q)}
+              className={CHIP}
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
       <AskInput disabled={pending} onSend={ask} />
     </Briefing>
   )
