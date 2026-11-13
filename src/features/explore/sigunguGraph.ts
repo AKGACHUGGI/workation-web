@@ -3,17 +3,20 @@ import type { PinDong } from '@/features/explore/types'
 
 export type RelationKey = 'type' | 'coast' | 'life' | 'quiet' | 'evening'
 
-/** ① 관계 칩 (스펙 §3-2 표). 순서 = 칩 순서 = 사실 노드 순서 */
-export const RELATIONS: { key: RelationKey; label: string; defaultOn: boolean }[] = [
-  { key: 'type', label: '1위 유형', defaultOn: true },
-  { key: 'coast', label: '가까움', defaultOn: true },
-  { key: 'life', label: '생활', defaultOn: true },
-  { key: 'quiet', label: '조용함', defaultOn: false },
-  { key: 'evening', label: '저녁 활기', defaultOn: false },
+/**
+ * ① 관계 (스펙 §3-2 표). 순서 = 칩 줄 순서 = 사실 노드 순서. 이름은 사실 노드에 맞춘다.
+ * toggle = 켜기·끄기 칩 (기본 꺼짐). 나머지는 항상 켜 두고 칩 줄 앞에 색 점과 이름만 보인다
+ */
+export const RELATIONS: { key: RelationKey; label: string; toggle: boolean }[] = [
+  { key: 'type', label: '워케이션 유형', toggle: false },
+  { key: 'coast', label: '바닷가', toggle: false },
+  { key: 'life', label: '생활권/관광지', toggle: false },
+  { key: 'quiet', label: '조용함 등급', toggle: true },
+  { key: 'evening', label: '저녁 활기 등급', toggle: true },
 ]
 
 export const DEFAULT_RELATIONS: ReadonlySet<RelationKey> = new Set(
-  RELATIONS.filter((r) => r.defaultOn).map((r) => r.key),
+  RELATIONS.filter((r) => !r.toggle).map((r) => r.key),
 )
 
 export type GraphNode = { id: string; kind: 'dong' | RelationKey; label: string; score?: number }

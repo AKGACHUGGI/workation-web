@@ -5,11 +5,11 @@ import GuidePanel from '@/features/explore/components/panel/GuidePanel'
 import SelectionCard from '@/features/explore/components/panel/SelectionCard'
 import SigunguGraphSkeleton from '@/features/explore/components/panel/SigunguGraphSkeleton'
 import SigunguPanel from '@/features/explore/components/panel/SigunguPanel'
-import { RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
+import { DEFAULT_RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
 import type { RelationKey } from '@/features/explore/sigunguGraph'
 import { GANGNEUNG_PINS, YEONGOK_ID } from '@/test/fixtures/explore'
 
-const on = new Set<RelationKey>(RELATIONS.filter((r) => r.defaultOn).map((r) => r.key))
+const on = new Set<RelationKey>(DEFAULT_RELATIONS)
 const graph = buildSigunguGraph(GANGNEUNG_PINS, on)
 
 describe('GuidePanel', () => {
@@ -21,7 +21,7 @@ describe('GuidePanel', () => {
 })
 
 describe('SelectionCard', () => {
-  it('동: 이름 · 1위 유형 점수 · 이어진 사실 · 공통 3 (강동면·사천면·옥계면) · [동네 자세히 보기]', async () => {
+  it('동: 이름 · 가장 맞는 유형 점수 · 이어진 사실 · 공통 3 (강동면·사천면·옥계면) · [동네 자세히 보기]', async () => {
     const onOpenDong = vi.fn()
     render(
       <SelectionCard
@@ -102,7 +102,8 @@ describe('SigunguPanel', () => {
     expect(screen.getByText('강원특별자치도 · 행정동 21곳')).toBeInTheDocument()
     expect(screen.getByRole('group', { name: '관계' })).toBeInTheDocument()
     expect(screen.getByRole('group', { name: '강릉시 지식그래프' })).toBeInTheDocument()
-    expect(screen.getByText('동 (원 크기 = 1위 유형 점수)')).toBeInTheDocument()
+    expect(screen.getByText('동 (원 크기 = 가장 맞는 유형 점수)')).toBeInTheDocument()
+    expect(screen.queryByText(/1위 유형|가까움/)).not.toBeInTheDocument()
     expect(screen.getByText(/생활권 = 생활권 지수 0.7 이상/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '동네 자세히 보기' })).not.toBeInTheDocument()
   })

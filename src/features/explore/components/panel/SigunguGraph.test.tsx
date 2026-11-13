@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event'
 import RelationChips from '@/features/explore/components/panel/RelationChips'
 import SigunguGraph from '@/features/explore/components/panel/SigunguGraph'
 import type { GraphPick } from '@/features/explore/components/panel/SigunguGraph'
-import { RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
+import { DEFAULT_RELATIONS, buildSigunguGraph } from '@/features/explore/sigunguGraph'
 import { GANGNEUNG_PINS, JUMUNJIN_ID, YEONGOK_ID } from '@/test/fixtures/explore'
 
-const on = new Set(RELATIONS.filter((r) => r.defaultOn).map((r) => r.key))
+const on = new Set(DEFAULT_RELATIONS)
 const graph = buildSigunguGraph(GANGNEUNG_PINS, on)
 
 const setup = (over: { pick?: GraphPick | null; hoveredDong?: string | null } = {}) => {
@@ -25,16 +25,19 @@ const setup = (over: { pick?: GraphPick | null; hoveredDong?: string | null } = 
 }
 
 describe('RelationChips', () => {
-  it('관계 5개, 기본 켬 3개(1위 유형·가까움·생활), 누르면 onToggle', async () => {
+  it('항상 켜진 세 관계는 색 점과 이름만, 토글 칩은 조용함·저녁 활기 등급 2개 (기본 꺼짐)', async () => {
     const onToggle = vi.fn()
     render(<RelationChips on={on} onToggle={onToggle} />)
-    const chips = within(screen.getByRole('group', { name: '관계' })).getAllByRole('button')
-    expect(chips).toHaveLength(5)
-    expect(chips.map((c) => c.getAttribute('aria-pressed'))).toEqual(
-      RELATIONS.map((r) => String(r.defaultOn)),
-    )
-    await userEvent.click(chips[3])
-    expect(onToggle).toHaveBeenCalledWith(RELATIONS[3].key)
+    const row = screen.getByRole('group', { name: '관계' })
+    for (const label of ['워케이션 유형', '바닷가', '생활권/관광지']) {
+      expect(within(row).getByText(label)).toBeInTheDocument()
+      expect(within(row).queryByRole('button', { name: label })).not.toBeInTheDocument()
+    }
+    const chips = within(row).getAllByRole('button')
+    expect(chips.map((c) => c.textContent)).toEqual(['조용함 등급', '저녁 활기 등급'])
+    expect(chips.map((c) => c.getAttribute('aria-pressed'))).toEqual(['false', 'false'])
+    await userEvent.click(chips[0])
+    expect(onToggle).toHaveBeenCalledWith('quiet')
   })
 })
 

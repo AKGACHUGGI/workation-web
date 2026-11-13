@@ -14,7 +14,7 @@ import type { GraphPick } from '@/features/explore/components/panel/SigunguGraph
 import SigunguGraphSkeleton from '@/features/explore/components/panel/SigunguGraphSkeleton'
 import SigunguPanel from '@/features/explore/components/panel/SigunguPanel'
 import { EXPLORE_COPY } from '@/features/explore/copy'
-import { RELATIONS } from '@/features/explore/sigunguGraph'
+import { DEFAULT_RELATIONS } from '@/features/explore/sigunguGraph'
 import type { RelationKey } from '@/features/explore/sigunguGraph'
 import type { SimilarDong } from '@/features/explore/types'
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
@@ -22,10 +22,6 @@ import { useExploreCamera } from '@/features/explore/useExploreCamera'
 import { useExploreState } from '@/features/explore/useExploreState'
 import { usePinsQuery } from '@/features/explore/usePinsQuery'
 import { useSigunguMeta } from '@/features/explore/useSigunguMeta'
-
-const DEFAULT_RELS: ReadonlySet<RelationKey> = new Set(
-  RELATIONS.filter((r) => r.defaultOn).map((r) => r.key),
-)
 
 /** W-09 지도 탐색 v6 (/explore). ⓪ 안내 → ① 시군구 지식그래프 → ② 동 패널 */
 export default function ExplorePage() {
@@ -40,7 +36,7 @@ export default function ExplorePage() {
   const [collapsed, setCollapsed] = useState(false)
   /** 지도 핀 ↔ 그래프 동 노드 미리 강조 (URL 에 넣지 않음) */
   const [hoveredDong, setHoveredDong] = useState<string | null>(null)
-  const [relsOn, setRelsOn] = useState<ReadonlySet<RelationKey>>(DEFAULT_RELS)
+  const [relsOn, setRelsOn] = useState<ReadonlySet<RelationKey>>(DEFAULT_RELATIONS)
   const [pick, setPick] = useState<GraphPick | null>(null)
 
   // 시군구가 바뀌면 그래프 선택·미리 강조를 지운다 (렌더 중 상태 맞추기)
