@@ -1,60 +1,48 @@
 import { describe, expect, it } from 'vitest'
 import {
-  GROUP_META,
+  EXPLORE_COPY,
+  GROUP_COLOR,
+  TAG_GROUP,
   TAG_ICON,
   TAG_ORDER,
   TAG_SHORT,
-  gradeLabel,
-  gradeParts,
-  sharedTags,
+  legendTags,
+  pinTags,
 } from '@/features/explore/copy'
-import type { ExploreDong } from '@/features/explore/types'
-
-const dong = (id: string, tagIds: string[]): ExploreDong => ({
-  id,
-  name: id,
-  sigunguId: '51150',
-  center: { lat: 37.8, lng: 128.8 },
-  bbox: [128.7, 37.7, 128.9, 37.9],
-  grades: null,
-  tags: tagIds.map((tagId) => ({ tagId, placeCount: 1 })),
-  coastKm: null,
-  similar: [],
-})
 
 describe('태그 상수', () => {
-  it('12개, food 없음, 아이콘·짧은 이름이 모두 있다', () => {
+  it('12개, food 없음, 아이콘·짧은 이름·묶음이 모두 있다', () => {
     expect(TAG_ORDER).toHaveLength(12)
     expect(TAG_ORDER).not.toContain('food')
     for (const id of TAG_ORDER) {
       expect(TAG_ICON[id]).toBeDefined()
       expect(TAG_SHORT[id]).toBeTruthy()
+      expect(GROUP_COLOR[TAG_GROUP[id]]).toMatch(/^var\(--color-explore-group-/)
     }
   })
-  it('묶음 색은 explore 토큰 변수', () => {
-    expect(GROUP_META.work.color).toBe('var(--color-explore-group-work)')
-    expect(GROUP_META.trait.label).toBe('동네 성격')
+})
+
+describe('pinTags', () => {
+  it('아이콘이 있는 태그 중 앞 2개', () => {
+    expect(pinTags(['coast', 'cafe', 'beach'])).toEqual(['coast', 'cafe'])
+    expect(pinTags(['unknown', 'beach'])).toEqual(['beach'])
+    expect(pinTags([])).toEqual([])
   })
 })
 
-describe('gradeLabel', () => {
-  it('세 지표 등급을 · 로 잇는다', () => {
-    expect(gradeLabel({ quiet: 'S', peer: 'A', evening: 'B' })).toBe(
-      '동네 조용함 S · 또래 밀도 A · 저녁 활기 B',
-    )
-  })
-  it('null 지표는 빼고, 모두 없으면 null', () => {
-    expect(gradeLabel({ quiet: null, peer: 'A', evening: null })).toBe('또래 밀도 A')
-    expect(gradeLabel({ quiet: null, peer: null, evening: null })).toBeNull()
-    expect(gradeLabel(null)).toBeNull()
-    expect(gradeParts(null)).toEqual([])
+describe('legendTags', () => {
+  it('핀에 그려진 태그만, TAG_ORDER 순, 중복 없이', () => {
+    expect(legendTags([{ tags: ['beach', 'cafe', 'park'] }, { tags: ['cafe', 'coast'] }])).toEqual([
+      'coast',
+      'cafe',
+      'beach',
+    ])
   })
 })
 
-describe('sharedTags', () => {
-  it('a 의 태그 순서대로 b 에도 있는 태그', () => {
-    expect(
-      sharedTags(dong('a', ['coast', 'cafe', 'beach']), dong('b', ['beach', 'coast'])),
-    ).toEqual(['coast', 'beach'])
+describe('EXPLORE_COPY', () => {
+  it('지도 문구', () => {
+    expect(EXPLORE_COPY.sigunguTip('강릉시')).toBe('강릉시 · 눌러서 확대')
+    expect(EXPLORE_COPY.pinsError).toBe('동네 목록을 불러오지 못했어요.')
   })
 })

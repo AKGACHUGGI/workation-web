@@ -1,9 +1,6 @@
-import type { DongGrades } from '@/features/explore/types'
-
 /**
- * 동별 태그. 숫자 = 그 태그 장소 수(branch), true = badge 태그.
- * 시안 기대값(스펙 §10): 카페 많음 + 해수욕장 → 강원 동해안 any 14 · all 5, 화면 밖 전북 8 · 전남 5 · 제주 4.
- * 카페 많음은 장소 3곳 이상일 때만 붙인다(백엔드 판정 기준).
+ * 동별 관광공사 태그 (핀 아이콘 mock). 숫자 = v5 장소 수, true = badge 태그. v6 는 키(태그 id)만 쓴다.
+ * 표에 없는 동은 태그 없음([]).
  */
 export const TAG_TABLE: Record<string, Record<string, number | true>> = {
   // 고성군
@@ -66,48 +63,3 @@ export const TAG_TABLE: Record<string, Record<string, number | true>> = {
   '5011025600': { coast: true, beach: 2, surf: 2 }, // 구좌읍
   '5013061000': { coast: true, resort: 3, beach: 1 }, // 중문동
 }
-
-/** `${dongId}:${tagId}` → 장소 이름 (시안용 예시). 없으면 `{동} {명사} {n}` */
-export const PLACE_NAMES: Record<string, string[]> = {
-  '5115025000:cafe': [
-    '주문진항 로스터리',
-    '해변 카페 거리',
-    '소돌 카페',
-    '향호 카페',
-    '교항리 카페',
-    '주문진 등대 카페',
-    '영진 카페',
-  ],
-  '5115025000:beach': ['주문진해수욕장', '소돌해변', '향호해변'],
-  '5115025000:market': ['주문진 수산시장'],
-}
-
-export const PLACE_NOUN: Record<string, string> = {
-  cafe: '카페',
-  library: '도서관',
-  long_stay: '스테이',
-  resort: '리조트',
-  beach: '해변',
-  park: '공원',
-  island: '섬',
-  surf: '서핑 스팟',
-  market: '시장',
-}
-
-export const GRADE_OVERRIDE: Record<string, DongGrades | null> = {
-  '5115025000': { quiet: 'S', peer: 'A', evening: 'B' }, // 주문진읍 (시안)
-  '5115031000': null, // 성산면: 등급 없는 동 (패널 줄 숨김 확인용)
-}
-
-export const COAST_KM_OVERRIDE: Record<string, number> = { '5115025000': 0.4 }
-
-export const SIMILAR_OVERRIDE: Record<string, string[]> = {
-  '5115025000': ['5182025300', '5121051000', '5011025000', '5115066500', '5117059000'],
-}
-
-export const PROVINCES = [
-  { id: '46', name: '전라남도', center: { lat: 34.86, lng: 127.2 } },
-  { id: '50', name: '제주특별자치도', center: { lat: 33.38, lng: 126.55 } },
-  { id: '51', name: '강원특별자치도', center: { lat: 37.75, lng: 128.3 } },
-  { id: '52', name: '전북특별자치도', center: { lat: 35.72, lng: 127.15 } },
-]

@@ -145,7 +145,6 @@
   --color-explore-group-life-bg: var(--color-arches-50);
   --color-explore-map-boundary: var(--color-gray-500);
   --color-explore-map-excluded: var(--color-gray-300);
-  --color-explore-map-spotlight: var(--color-black);
 
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
@@ -248,7 +247,6 @@
 
   /* ---------- 불투명도 ---------- */
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
-  --opacity-faded: 0.4; /* W-09 고르지 않은 장소 핀·가지 */
 }
 
 /* 간격은 Tailwind 기본 --spacing(0.25rem = 4px) 이 Figma space/1~16 과 동일하므로 그대로 사용 */
