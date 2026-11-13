@@ -14,7 +14,7 @@ describe('PanelHeader', () => {
     expect(screen.getByRole('heading', { level: 2, name: '주문진읍' })).toBeInTheDocument()
     expect(screen.getByText('바닷가 0.0km')).toBeInTheDocument()
     expect(screen.getByText('강원특별자치도 · 강릉시')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: '← 강릉시 그래프' }))
+    await userEvent.click(screen.getByRole('button', { name: '강릉시 그래프로' }))
     expect(onBack).toHaveBeenCalledOnce()
   })
   it('내륙 동(coastKm null)은 바닷가 칩이 없다', () => {

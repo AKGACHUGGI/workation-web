@@ -25,6 +25,11 @@ test.describe('W-09 지도 탐색 v6', () => {
     await expect(page).toHaveURL(new RegExp(`dong=${YEONGOK}`))
     await expect(page.getByRole('heading', { level: 2, name: '연곡면' })).toBeVisible()
 
+    await page.getByRole('button', { name: '강릉시 그래프로' }).click()
+    await expect(page).toHaveURL(new RegExp(`sgg=${GANGNEUNG}$`))
+    await page.getByRole('button', { name: '전체 지도로' }).click()
+    await expect(page.getByRole('heading', { name: '지역을 골라 보세요' })).toBeVisible()
+
     // 지도 핀 클릭 대신 같은 URL 로 바로 ② (핀 클릭 = openDong 은 단위 테스트)
     await page.goto(`/explore?sgg=${GANGNEUNG}&dong=${JUMUNJIN}`)
     await expect(page.getByRole('heading', { level: 2, name: '주문진읍' })).toBeVisible()

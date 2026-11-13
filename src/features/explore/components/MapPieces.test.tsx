@@ -127,6 +127,12 @@ describe('오버레이', () => {
     await userEvent.click(screen.getByRole('button', { name: '전체 지도로' }))
     expect(onClick).toHaveBeenCalled()
   })
+  it('전체 지도로: 화살표 아이콘만, 글자는 툴팁으로', () => {
+    render(<BackToAllButton onClick={() => {}} />)
+    const btn = screen.getByRole('button', { name: '전체 지도로' })
+    expect(btn).toHaveAttribute('title', '전체 지도로')
+    expect(btn).toHaveTextContent(/^$/)
+  })
   it('핀 오류 카드: 문구 + 다시 시도', async () => {
     const onRetry = vi.fn()
     render(<PinsErrorCard onRetry={onRetry} />)

@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 
 /** ① → ⓪ (Figma BackToSigungu 388:9127). 지도 키가 없어도 보이도록 페이지가 지도 왼쪽 위에 놓는다 */
@@ -7,10 +7,11 @@ export default function BackToAllButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="bg-bg-surface border-border-default text-caption-xs text-text-primary inline-flex items-center gap-0.5 rounded-full border px-3 py-1.5 font-bold"
+      aria-label={EXPLORE_COPY.backToAll}
+      title={EXPLORE_COPY.backToAll}
+      className="bg-bg-surface border-border-default text-text-primary hover:bg-bg-subtle inline-flex size-8 items-center justify-center rounded-full border"
     >
-      <ChevronLeft size={14} aria-hidden />
-      {EXPLORE_COPY.backToAll}
+      <ArrowLeft size={16} aria-hidden />
     </button>
   )
 }

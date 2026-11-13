@@ -30,7 +30,7 @@ describe('ExplorePage', () => {
       await screen.findByRole('heading', { level: 2, name: '연곡면' }, { timeout: 3000 }),
     ).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: '← 강릉시 그래프' }))
+    await user.click(screen.getByRole('button', { name: '강릉시 그래프로' }))
     expect(location()).toBe('/explore?sgg=51150')
     expect(await screen.findByRole('region', { name: '연곡면' })).toHaveTextContent('공통 3')
   })

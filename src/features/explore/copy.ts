@@ -135,7 +135,7 @@ export const EXPLORE_COPY = {
   legendGrade: '등급',
   sigunguSource:
     '데이터: LG U+ 유동인구 2025 · 생활권 = 생활권 지수 0.7 이상 · 바닷가 = 해안선 1km 이내',
-  backToGraph: (sigungu: string) => `← ${sigungu} 그래프`,
+  backToGraph: (sigungu: string) => `${sigungu} 그래프로`,
   dongSub: (sido: string, sigungu: string) => `${sido} · ${sigungu}`,
   coastChip: (km: number) => `바닷가 ${km.toFixed(1)}km`,
   typesTitle: '워케이션 유형',
