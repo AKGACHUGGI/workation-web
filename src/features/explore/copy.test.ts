@@ -46,3 +46,21 @@ describe('EXPLORE_COPY', () => {
     expect(EXPLORE_COPY.pinsError).toBe('동네 목록을 불러오지 못했어요.')
   })
 })
+
+describe('EXPLORE_COPY 패널 문구', () => {
+  it('시간대 막대 요약은 천 단위 쉼표', () => {
+    expect(EXPLORE_COPY.hourBarsSummary(9, 12, 2064)).toBe(
+      '9시 가장 한산 · 12시 가장 많음 (2,064명)',
+    )
+  })
+  it('바닷가 칩은 소수 1자리', () => {
+    expect(EXPLORE_COPY.coastChip(0)).toBe('바닷가 0.0km')
+  })
+  it('헤더·출처', () => {
+    expect(EXPLORE_COPY.sigunguSub('강원특별자치도', 21)).toBe('강원특별자치도 · 행정동 21곳')
+    expect(EXPLORE_COPY.backToGraph('강릉시')).toBe('← 강릉시 그래프')
+    expect(EXPLORE_COPY.dongSource('2026-11-13')).toBe(
+      '데이터: LG U+ 유동인구 2025 · 갱신 2026-11-13',
+    )
+  })
+})
