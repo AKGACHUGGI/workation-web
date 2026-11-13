@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import type { DayGroup, DongDetail } from '@/features/explore/types'
 
-type Props = { hourly: DongDetail['hourly']; day: DayGroup }
+type Props = { hourly: DongDetail['hourly']; day: DayGroup; lead?: ReactNode }
 
 const LABEL_HOURS = new Set([0, 6, 12, 18, 23])
 const TONE_CLASS = {
@@ -12,7 +13,7 @@ const TONE_CLASS = {
 } as const
 
 /** 상세 칸 · 24시간 차량 막대 (Figma 436:10556). 높이는 그 요일 최대값 기준 */
-export default function HourBars({ hourly, day }: Props) {
+export default function HourBars({ hourly, day, lead }: Props) {
   const { driv, peakHour, quietHour } = hourly[day]
   const max = Math.max(1, ...driv.map((v) => v ?? 0))
   const peak = peakHour === null ? null : (driv[peakHour] ?? null)
@@ -21,6 +22,7 @@ export default function HourBars({ hourly, day }: Props) {
     <div className="flex flex-col gap-1.5">
       <div className="flex items-start justify-between">
         <span className="text-caption-xs text-text-primary font-bold">
+          {lead}
           {EXPLORE_COPY.hourBarsTitle(dayLabel)}
         </span>
         {quietHour !== null && peakHour !== null && peak !== null && (

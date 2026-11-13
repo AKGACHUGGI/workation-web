@@ -1,3 +1,4 @@
+import { ChevronRight } from 'lucide-react'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import { gradeChipLabel, hourChipLabel, monthChipLabel } from '@/features/explore/labels'
 import type { DayGroup, DetailKind, DongDetail } from '@/features/explore/types'
@@ -46,6 +47,7 @@ function ChipText({ label, sep }: { label: string; sep: string }) {
 }
 
 /**
+ * 눌리는 칩(시간대·한산한 달)만 상자와 › 아이콘을 두고, 등급 칩은 글자만 둔다 (눌림 구분, 2026-11-13).
  * ② 동 근거 그래프 (Figma 436:10491 배치): 가운데 동 원 + 등급·시간대·한산한 달 칩 + 평일·주말 토글.
  * Figma·스펙 §3-3 의 24시간 링은 상세 칸 막대와 같은 정보라 빼고 원만 둔다 (2026-11-13 사용자 결정)
  */
@@ -111,7 +113,7 @@ export default function DongFactGraph({ dong, day, onDay, detail, onDetail }: Pr
           key={g.key}
           data-chip="grade"
           aria-label={g.label}
-          className={`${CHIP} bg-bg-surface border-border-default left-0 cursor-default border`}
+          className={`${CHIP} left-0 cursor-default`}
           style={{ top: g.top }}
         >
           <ChipText label={g.label} sep=" / " />
@@ -127,10 +129,16 @@ export default function DongFactGraph({ dong, day, onDay, detail, onDetail }: Pr
             aria-pressed={on}
             aria-label={c.label}
             onClick={() => onDetail(c.kind)}
-            className={`${CHIP} right-0 ${on ? 'bg-bg-subtle border-text-primary border-2' : 'bg-bg-surface border-border-default border'}`}
+            className={`${CHIP} right-0 cursor-pointer pr-7 transition-colors ${on ? 'bg-bg-subtle border-text-primary border-2' : 'bg-bg-surface border-border-default hover:border-text-primary border'}`}
             style={{ top: c.top }}
           >
             <ChipText label={c.label} sep=" · " />
+            {/* 눌러서 아래 상세 칸을 바꾸는 칩이라는 표시 (등급 칩에는 없음) */}
+            <ChevronRight
+              data-chevron
+              aria-hidden
+              className="text-text-secondary absolute top-1/2 right-2 size-3.5 -translate-y-1/2"
+            />
           </button>
         )
       })}

@@ -68,3 +68,12 @@ describe('DetailSlot', () => {
     expect(screen.queryByText('평일 시간대별 차량 이동')).not.toBeInTheDocument()
   })
 })
+
+describe('DetailSlot 연결 표시', () => {
+  it('제목 앞에 지금 고른 칩 이름을 붙인다', () => {
+    const { rerender } = render(<DetailSlot detail="hour" day="weekday" dong={JUMUNJIN} />)
+    expect(screen.getByTestId('detail-from')).toHaveTextContent('도로 한산')
+    rerender(<DetailSlot detail="month" day="weekday" dong={JUMUNJIN} />)
+    expect(screen.getByTestId('detail-from')).toHaveTextContent('한산한 달')
+  })
+})

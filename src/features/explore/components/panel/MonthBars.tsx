@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import type { DongDetail } from '@/features/explore/types'
 
-type Props = { months: DongDetail['months'] }
+type Props = { months: DongDetail['months']; lead?: ReactNode }
 
 const TONE_CLASS = {
   quiet: 'bg-brand-primary',
@@ -10,12 +11,13 @@ const TONE_CLASS = {
 } as const
 
 /** 상세 칸 · 12개월 막대 (months.raw = 시군구 ease 원값 0~100). 한산한 3개월 강조, null 달은 빈 막대 (스펙 §3-3) */
-export default function MonthBars({ months }: Props) {
+export default function MonthBars({ months, lead }: Props) {
   const quiet = new Set(months.quiet)
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-start justify-between">
         <span className="text-caption-xs text-text-primary font-bold">
+          {lead}
           {EXPLORE_COPY.monthBarsTitle}
         </span>
         <span className="text-explore-2xs text-text-secondary">

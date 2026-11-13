@@ -70,4 +70,14 @@ describe('DongFactGraph', () => {
     expect(container.querySelectorAll('[data-hour]')).toHaveLength(0)
     expect(screen.queryByText('이 동 하루 기준')).not.toBeInTheDocument()
   })
+
+  it('눌리는 칩만 상자 + › 아이콘, 등급은 상자 없는 글자', () => {
+    const { container } = setup()
+    for (const g of container.querySelectorAll('[data-chip="grade"]')) {
+      expect(g).not.toHaveClass('border')
+    }
+    for (const b of screen.getAllByRole('button', { name: /^(도로 한산|한산한 달)/ })) {
+      expect(b.querySelector('[data-chevron]')).not.toBeNull()
+    }
+  })
 })
