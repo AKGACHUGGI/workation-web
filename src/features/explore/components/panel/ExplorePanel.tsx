@@ -20,7 +20,7 @@ export default function ExplorePanel({ collapsed, onToggleCollapsed, children }:
       {!collapsed && (
         <aside
           aria-label={EXPLORE_COPY.pageTitle}
-          className="w-explore-panel border-border-default bg-bg-surface flex h-full flex-col overflow-y-auto border-l px-6 pt-6"
+          className="w-explore-panel border-border-default bg-bg-surface flex h-full flex-col overflow-y-auto border-l px-5"
         >
           {children}
         </aside>
