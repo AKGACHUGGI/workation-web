@@ -40,7 +40,7 @@ export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: 
   const entries = useMemo<HeatEntry[]>(() => {
     const all = query.data?.items ?? []
     const items = scope === 'dong' ? all.filter((i) => i.sigungu?.id === sgg) : all
-    const values = items.map((i) => Math.round(heatValue(i, metric, weights)))
+    const raw = items.map((i) => heatValue(i, metric, weights))
     // 관심 가산점은 종합에만. 지표 하나 보기는 기본 점수·등급 그대로
     const boosts =
       metric === 'value'
@@ -48,8 +48,13 @@ export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: 
             boost({ id: i.id, sigunguId: i.sigungu?.id, scores: i.scores, terrain: i.terrain }),
           )
         : undefined
-    const grades = heatGrades(values, boosts)
-    const shown = boosts ? values.map((v, i) => Math.round(v + boosts[i])) : values
+    // 등급 입력은 기존처럼 반올림한 기본 점수 (기록이 없을 때 등급이 지금과 같게).
+    // 보이는 점수·색은 티어·상세처럼 반올림 전 기본 점수 + 가산점을 마지막에 한 번만 반올림한다
+    const grades = heatGrades(
+      raw.map((v) => Math.round(v)),
+      boosts,
+    )
+    const shown = raw.map((v, i) => Math.round(v + (boosts?.[i] ?? 0)))
     const current = new URLSearchParams(search)
     return items.map((item, i) => ({
       id: item.id,

@@ -35,7 +35,7 @@ export function sortPopular(
   const byFav = (a: PopularRegion, b: PopularRegion) => b.favoriteCount - a.favoriteCount
   const cmp: Record<PopularSort, (a: PopularRegion, b: PopularRegion) => number> = {
     favorites: (a, b) => byFav(a, b) || byScore(a, b),
-    views: (a, b) => b.viewCount - a.viewCount || byFav(a, b) || byScore(a, b),
+    views: (a, b) => b.viewCount - a.viewCount || byFav(a, b),
     score: (a, b) => byScore(a, b) || byFav(a, b),
   }
   return [...items].sort(cmp[sort])
