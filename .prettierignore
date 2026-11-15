@@ -5,3 +5,5 @@ playwright-report
 src/mocks/tier/generated
 public/mock-pdf
 public/geo
+# 실측 근거 스냅숏 (백엔드 응답·결과를 그대로 보존)
+docs/superpowers/evidence
