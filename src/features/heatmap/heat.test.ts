@@ -28,3 +28,13 @@ describe('heatGrades', () => {
     expect(heatGrades([4, 3, 2, 1])).toEqual(['S', 'A', 'B', 'C'])
   })
 })
+
+describe('heatGrades 관심 가산점', () => {
+  it('heatGrades with boosts lifts at most one grade', () => {
+    expect(heatGrades([90, 80, 70, 60, 50, 40, 30, 20], [0, 0, 0, 0, 0, 0, 0, 100])[7]).toBe('B')
+  })
+  it('heatGrades without boosts equals previous result', () => {
+    const v = [90, 80, 70, 60, 50, 40, 30, 20]
+    expect(heatGrades(v, [0, 0, 0, 0, 0, 0, 0, 0])).toEqual(heatGrades(v))
+  })
+})

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { colorScale } from '@/features/heatmap/colorScale'
 import type { HeatStep } from '@/features/heatmap/colorScale'
 import { heatGrades, heatValue } from '@/features/heatmap/heat'
+import { personalize, useBoost } from '@/features/interest'
 import type { HeatMetric } from '@/features/heatmap/types'
 import type { MonthParam } from '@/features/metric/month'
 import type { Grade, Weights } from '@/features/metric/types'
@@ -35,21 +36,38 @@ type Args = {
 export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: Args) {
   const query = useTierQuery(month, scope)
   const { search } = useLocation()
+  const boost = useBoost()
   const entries = useMemo<HeatEntry[]>(() => {
     const all = query.data?.items ?? []
     const items = scope === 'dong' ? all.filter((i) => i.sigungu?.id === sgg) : all
-    const values = items.map((i) => Math.round(heatValue(i, metric, weights)))
-    const grades = heatGrades(values)
+    const raw = items.map((i) => heatValue(i, metric, weights))
+    // 관심 가산점은 종합에만. 지표 하나 보기는 기본 점수·등급 그대로
+    const boosts =
+      metric === 'value'
+        ? items.map((i) =>
+            boost({ id: i.id, sigunguId: i.sigungu?.id, scores: i.scores, terrain: i.terrain }),
+          )
+        : undefined
+    // 등급 입력은 기존처럼 반올림한 기본 점수 (기록이 없을 때 등급이 지금과 같게).
+    // 보이는 점수·색은 티어·상세처럼 반올림 전 기본 점수의 personalize 결과를 마지막에 한 번만
+    // 반올림한다. 지표 하나 보기(boosts 없음)는 기본 점수를 반올림한 값 그대로
+    const grades = heatGrades(
+      raw.map((v) => Math.round(v)),
+      boosts,
+    )
+    const shown = boosts
+      ? personalize(raw, boosts).map((p) => Math.round(p.score))
+      : raw.map((v) => Math.round(v))
     const current = new URLSearchParams(search)
     return items.map((item, i) => ({
       id: item.id,
       name: item.name,
-      score: values[i],
+      score: shown[i],
       grade: grades[i],
-      step: colorScale(values[i]),
+      step: colorScale(shown[i]),
       dimmed: scope === 'sigungu' && !terrainMatch(item, terrain),
       href: carryQuery(scope === 'dong' ? `/dongs/${item.id}` : `/regions/${item.id}`, current),
     }))
-  }, [query.data, scope, sgg, metric, weights, terrain, search])
+  }, [query.data, scope, sgg, metric, weights, terrain, search, boost])
   return { entries, isPending: query.isPending, isError: query.isError, refetch: query.refetch }
 }

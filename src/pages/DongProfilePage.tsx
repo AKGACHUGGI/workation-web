@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
@@ -18,6 +18,7 @@ import { useDongNotesQuery } from '@/features/dong/useDongNotesQuery'
 import { useDongPollQuery } from '@/features/dong/useDongPollQuery'
 import { useDongQuery } from '@/features/dong/useDongQuery'
 import { useGeoQuery } from '@/features/dong/useGeoQuery'
+import { recordInterest, useBoost } from '@/features/interest'
 import { metricGrade } from '@/features/metric/score'
 import type { Grade } from '@/features/metric/types'
 import NoteSection from '@/features/region/components/NoteSection'
@@ -47,6 +48,8 @@ export default function DongProfilePage() {
   const poll = useDongPollQuery(dongId, month)
   const geo = useGeoQuery(dong.data?.sigungu.id)
   const compareLink = useCarryLink(`/compare?dongs=${dongId}`)
+  // 들어온 순간의 기록으로 고정해 자기 조회 기록 때문에 보는 도중 순위가 바뀌지 않게 한다
+  const boost = useBoost({ live: false, freezeKey: dongId })
 
   const gradeOf = useCallback(
     (id: string): Grade | null => {
@@ -55,6 +58,25 @@ export default function DongProfilePage() {
     },
     [tierDong.data],
   )
+
+  // 행정동마다 한 번, tier dong 응답이 끝난 뒤(성공이든 실패든) 관심 기록한다. 소속 시군구도 함께 친다
+  const recordedDong = useRef<string | null>(null)
+  useEffect(() => {
+    const detail = dong.data
+    // 다른 동의 이전 응답(placeholder)을 보여 주는 동안에는 기다린다
+    if (!detail || detail.id !== dongId || recordedDong.current === dongId) return
+    if (tierDong.isPending || tierDong.isPlaceholderData) return
+    const it = tierDong.data?.items.find((i) => i.id === dongId)
+    recordedDong.current = dongId
+    recordInterest({
+      kind: 'dong_view',
+      target: dongId,
+      payload: {
+        sigunguId: detail.sigungu.id,
+        snapshot: it ? { month, scores: it.scores, terrain: it.terrain } : null,
+      },
+    })
+  }, [dongId, month, dong.data, tierDong.isPending, tierDong.isPlaceholderData, tierDong.data])
 
   if (dong.isError && dong.error instanceof NotFoundError) throw dong.error
 
@@ -98,7 +120,9 @@ export default function DongProfilePage() {
   })
   const excluded = detail.special ? 1 : 0
 
-  const sggRank = tierSgg.data ? rankIn(tierSgg.data.items, detail.sigungu.id, presetMode) : null
+  const sggRank = tierSgg.data
+    ? rankIn(tierSgg.data.items, detail.sigungu.id, presetMode, boost)
+    : null
   const sgg = sggRank ? { score: sggRank.score, rank: sggRank.rank } : null
 
   return (
