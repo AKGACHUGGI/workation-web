@@ -86,7 +86,7 @@ describe('sortPopular 관심 가산점', () => {
     ).toEqual(['c', 'b', 'a'])
   })
   it('score sort keeps grade order when boost is clamped', () => {
-    // a 는 개인 점수 135 로 가장 높지만 등급은 B 에서 한 단계 위 A 까지라 S 인 b 뒤에 온다
+    // a 는 개인 점수 135 지만 등급은 B 에서 한 단계 위 A 까지라 S 인 b 뒤에 온다
     expect(
       sortPopular(items, 'score', PRESET_WEIGHTS.quiet, (u) => (u.id === 'a' ? 100 : 0)).map(
         (i) => i.id,
@@ -108,7 +108,8 @@ describe('sortPopular 관심 가산점', () => {
   })
   it('personalPopular gives personal score and clamped grade per id', () => {
     const m = personalPopular(items, PRESET_WEIGHTS.quiet, (u) => (u.id === 'a' ? 100 : 0))
-    expect(m.get('a')).toEqual({ score: 135, grade: 'A' })
+    // 개인 점수 135 는 위 등급(S) 최저점 b(65) 이하로 눌려 "S 65" 아래 "A 135" 역전이 없다
+    expect(m.get('a')).toEqual({ score: 65, grade: 'A' })
     expect(m.get('b')?.grade).toBe('S')
   })
 })
