@@ -80,11 +80,24 @@ function onStorage(e: StorageEvent) {
   if (e.key === STORAGE_KEY || e.key === null) notify()
 }
 
+/**
+ * 새 v4 UUID (소문자). crypto.randomUUID 는 보안 컨텍스트(HTTPS·localhost)에만 있어,
+ * LAN http 주소로 열었을 때는 crypto.getRandomValues 로 같은 형식을 만든다.
+ */
+export function newAnonId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  const b = crypto.getRandomValues(new Uint8Array(16))
+  b[6] = (b[6] & 0x0f) | 0x40 // 버전 4
+  b[8] = (b[8] & 0x3f) | 0x80 // variant 10xx
+  const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
 /** 브라우저 익명 ID. 없으면 만들어 저장하고, 저장에 실패하면 이 탭의 메모리 값을 쓴다 */
 export function getAnonId(): string {
   const stored = read()
   if (stored?.anonId) return stored.anonId
-  const id = memoryAnonId ?? crypto.randomUUID()
+  const id = memoryAnonId ?? newAnonId()
   memoryAnonId = id
   write({ anonId: id, events: stored?.events ?? [] })
   return id
@@ -98,11 +111,13 @@ export function getEvents(): InterestEvent[] {
   return stored.events.filter(isEvent).filter((e) => e.at >= since)
 }
 
-/** 기록 한 건을 덧붙이고 마지막 MAX_EVENTS 건만 남긴다. 실패는 무시한다 */
-export function appendEvent(e: InterestEvent): void {
+/** 기록 한 건을 덧붙이고 마지막 MAX_EVENTS 건만 남긴다. 저장에 성공하면 true, 실패하면 false */
+export function appendEvent(e: InterestEvent): boolean {
   const anonId = getAnonId()
   const events = [...getEvents(), e].slice(-MAX_EVENTS)
-  if (write({ anonId, events })) notify()
+  const ok = write({ anonId, events })
+  if (ok) notify()
+  return ok
 }
 
 /** 같은 탭의 appendEvent 와 다른 탭의 storage 이벤트를 모두 알린다 */

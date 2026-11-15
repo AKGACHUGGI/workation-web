@@ -30,6 +30,10 @@ afterEach(() => {
 })
 
 test('storage failure yields no events and no throw', () => {
+  // 저장이 막히면 서버 전송도 건너뛴다 (새로고침마다 새 메모리 anonId 로 viewCount 가 부풀지 않게)
+  m.isMock = false
+  const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
   vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
     throw new Error('blocked')
   })
@@ -38,6 +42,7 @@ test('storage failure yields no events and no throw', () => {
   })
   expect(() => recordInterest(regionViewInput)).not.toThrow()
   expect(getEvents()).toEqual([])
+  expect(fetchMock).not.toHaveBeenCalled()
 })
 
 test('dedups same target within 30 minutes', () => {
@@ -87,4 +92,41 @@ test('skips server in mock mode', () => {
   recordInterest(regionViewInput)
   expect(fetchMock).not.toHaveBeenCalled()
   expect(getEvents()).toHaveLength(1)
+})
+
+test('snapshot view is not deduped by earlier view without snapshot', () => {
+  m.isMock = false
+  const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }))
+  vi.stubGlobal('fetch', fetchMock)
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(NOW)
+  const pick: InterestInput = {
+    kind: 'dong_view',
+    target: '5115037000',
+    payload: { sigunguId: '51150', snapshot: null },
+  }
+  const withSnapshot: InterestInput = {
+    kind: 'dong_view',
+    target: '5115037000',
+    payload: {
+      sigunguId: '51150',
+      snapshot: {
+        month: '2025-10',
+        scores: { quiet: 80, crowd: 70, peer: 40, overnight: 50, vibe: 20 },
+        terrain: ['coast'],
+      },
+    },
+  }
+  // 지도 탐색(스냅숏 없음) 뒤 10분 안에 같은 동 상세(스냅숏 있음)를 연다
+  recordInterest(pick)
+  vi.setSystemTime(NOW + 10 * MIN)
+  recordInterest(withSnapshot)
+  expect(getEvents()).toHaveLength(2)
+  expect(fetchMock).toHaveBeenCalledTimes(2)
+  // 스냅숏 있는 기록 뒤의 반복(스냅숏 유무와 무관)은 그대로 중복으로 걸러진다
+  vi.setSystemTime(NOW + 20 * MIN)
+  recordInterest(withSnapshot)
+  recordInterest(pick)
+  expect(getEvents()).toHaveLength(2)
+  expect(fetchMock).toHaveBeenCalledTimes(2)
 })

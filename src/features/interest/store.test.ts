@@ -45,3 +45,21 @@ test('drops events older than 60 days', () => {
   appendEvent(view(recent))
   expect(getEvents().map((e) => e.at)).toEqual([recent])
 })
+
+const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+
+test('anon id falls back to getRandomValues without randomUUID', async () => {
+  // http LAN 주소처럼 보안 컨텍스트가 아니면 crypto.randomUUID 가 없다
+  const real = globalThis.crypto
+  vi.stubGlobal('crypto', { getRandomValues: real.getRandomValues.bind(real) })
+  try {
+    vi.resetModules()
+    const fresh = await import('@/features/interest/store')
+    const id = fresh.getAnonId()
+    expect(id).toMatch(UUID_V4)
+    expect(fresh.getAnonId()).toBe(id)
+    for (let i = 0; i < 50; i++) expect(fresh.newAnonId()).toMatch(UUID_V4)
+  } finally {
+    vi.unstubAllGlobals()
+  }
+})
