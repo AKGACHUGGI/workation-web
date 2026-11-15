@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { colorScale } from '@/features/heatmap/colorScale'
 import type { HeatStep } from '@/features/heatmap/colorScale'
 import { heatGrades, heatValue } from '@/features/heatmap/heat'
-import { useBoost } from '@/features/interest'
+import { personalize, useBoost } from '@/features/interest'
 import type { HeatMetric } from '@/features/heatmap/types'
 import type { MonthParam } from '@/features/metric/month'
 import type { Grade, Weights } from '@/features/metric/types'
@@ -49,12 +49,15 @@ export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: 
           )
         : undefined
     // 등급 입력은 기존처럼 반올림한 기본 점수 (기록이 없을 때 등급이 지금과 같게).
-    // 보이는 점수·색은 티어·상세처럼 반올림 전 기본 점수 + 가산점을 마지막에 한 번만 반올림한다
+    // 보이는 점수·색은 티어·상세처럼 반올림 전 기본 점수의 personalize 결과를 마지막에 한 번만
+    // 반올림한다. 지표 하나 보기(boosts 없음)는 기본 점수를 반올림한 값 그대로
     const grades = heatGrades(
       raw.map((v) => Math.round(v)),
       boosts,
     )
-    const shown = raw.map((v, i) => Math.round(v + (boosts?.[i] ?? 0)))
+    const shown = boosts
+      ? personalize(raw, boosts).map((p) => Math.round(p.score))
+      : raw.map((v) => Math.round(v))
     const current = new URLSearchParams(search)
     return items.map((item, i) => ({
       id: item.id,

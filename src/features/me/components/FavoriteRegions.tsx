@@ -33,11 +33,12 @@ export default function FavoriteRegions({ regions, month, preset, metrics }: Pro
     boost({ id: r.id, scores: r.scores, terrain: terrainOf.get(r.id) }),
   )
   // 등급은 기존처럼 반올림한 기본 점수로 매겨 기록이 없을 때 지금과 같게 하고,
-  // 보이는 점수는 티어·상세처럼 반올림 전 기본 점수 + 가산점을 마지막에 한 번만 반올림한다
+  // 보이는 점수는 티어·상세처럼 반올림 전 기본 점수의 personalize 결과를 마지막에 한 번만 반올림한다
   const grades = personalize(
     raw.map((v) => Math.round(v)),
     boosts,
   ).map((p) => p.grade)
+  const scores = personalize(raw, boosts).map((p) => Math.round(p.score))
   const base = useCarryLink('/regions')
 
   return (
@@ -51,7 +52,7 @@ export default function FavoriteRegions({ regions, month, preset, metrics }: Pro
             key={r.id}
             photoUrl={r.photoUrl}
             title={`${r.name}, ${r.province}`}
-            score={Math.round(raw[i] + boosts[i])}
+            score={scores[i]}
             scoreGrade={grades[i]}
             meta1={r.tags.join(' · ')}
             meta2={favoriteMeta2(r, month)}
