@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { recordInterest } from '@/features/interest'
 import { applyIntentToParams, removeIntentAxis } from '@/features/search/applyIntent'
 import type { IntentAxis, SearchIntent } from '@/features/search/types'
 import { useSearchParse } from '@/features/search/useSearchParse'
@@ -28,6 +29,19 @@ export function useSearchIntent() {
           next.set('q', text)
           return next
         })
+        // 사용자가 직접 실행한 검색만 관심으로 친다. 공유 링크의 URL q 자동 파싱은 남의 검색이라 뺀다 (설계 8절)
+        if (override) {
+          recordInterest({
+            kind: 'search',
+            target: null,
+            payload: {
+              q: text,
+              preset: result.preset ?? null,
+              terrain: result.terrain ?? [],
+              month: result.month ?? null,
+            },
+          })
+        }
       },
     })
   }

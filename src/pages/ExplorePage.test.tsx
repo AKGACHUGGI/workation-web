@@ -1,11 +1,21 @@
-import { describe, expect, it } from 'vitest'
-import { screen, within } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { recordInterest } from '@/features/interest'
 import ExplorePage from '@/pages/ExplorePage'
 import renderWithRouter from '@/test/renderWithRouter'
 import { YEONGOK_ID } from '@/test/fixtures/explore'
 
+vi.mock('@/features/interest', async (orig) => ({
+  ...(await orig<typeof import('@/features/interest')>()),
+  recordInterest: vi.fn(),
+}))
+
 const location = () => screen.getByTestId('location').textContent
+
+beforeEach(() => {
+  vi.mocked(recordInterest).mockClear()
+})
 
 describe('ExplorePage', () => {
   it('⓪: 안내 패널', () => {
@@ -58,5 +68,23 @@ describe('ExplorePage', () => {
     )
     await user.unhover(within(graph).getByRole('button', { name: '주문진읍' }))
     expect(within(graph).getByRole('button', { name: '강남동' })).not.toHaveAttribute('data-dim')
+  })
+
+  it('explore records dong pick', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(<ExplorePage />, { route: '/explore?sgg=51150' })
+    const graph = await screen.findByRole('group', { name: '강릉시 지식그래프' }, { timeout: 3000 })
+    await user.click(within(graph).getByRole('button', { name: '연곡면' }))
+    // 카드만 열린 상태는 기록하지 않는다
+    expect(recordInterest).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: '동네 자세히 보기' }))
+    expect(location()).toContain(`dong=${YEONGOK_ID}`)
+    await waitFor(() => expect(recordInterest).toHaveBeenCalledTimes(1))
+    expect(recordInterest).toHaveBeenCalledWith({
+      kind: 'dong_view',
+      target: YEONGOK_ID,
+      payload: { sigunguId: '51150', snapshot: null },
+    })
   })
 })
