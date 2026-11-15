@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
-import { useBoost } from '@/features/interest'
+import { recordInterest, useBoost } from '@/features/interest'
 import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL, METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { METRIC_KEYS } from '@/features/metric/types'
@@ -26,7 +26,6 @@ import { formatMonths } from '@/features/region/format'
 import { usePresetMode } from '@/features/region/presetMode'
 import { rankIn } from '@/features/region/rank'
 import { buildReason } from '@/features/region/reason'
-import { recordRegionView } from '@/features/region/recordView'
 import { useRegionNotesQuery } from '@/features/region/useRegionNotesQuery'
 import { useRegionPollQuery } from '@/features/region/useRegionPollQuery'
 import { useRegionQuery } from '@/features/region/useRegionQuery'
@@ -57,9 +56,20 @@ export default function RegionDetailPage() {
   const notes = useRegionNotesQuery(sggId)
   const poll = useRegionPollQuery(sggId, month === 'annual' ? DEFAULT_MONTH : month, preset)
 
+  // 지역마다 한 번, 그 순간 화면이 가진 점수·지형을 스냅숏으로 관심 기록한다 (설계 8절)
+  const recordedSgg = useRef<string | null>(null)
   useEffect(() => {
-    recordRegionView(sggId)
-  }, [sggId])
+    // 이전 달 응답을 잠시 보여 주는 동안에는 달과 점수가 어긋나므로 기다린다
+    if (recordedSgg.current === sggId || tier.isPlaceholderData) return
+    const it = tier.data?.items.find((i) => i.id === sggId)
+    if (!it) return
+    recordedSgg.current = sggId
+    recordInterest({
+      kind: 'region_view',
+      target: sggId,
+      payload: { sigunguId: null, snapshot: { month, scores: it.scores, terrain: it.terrain } },
+    })
+  }, [sggId, month, tier.data, tier.isPlaceholderData])
 
   // 404 는 라우트 errorElement(NotFoundPage)가 그린다 — pages 끼리 import 하지 않는다
   if (region.isError && region.error instanceof NotFoundError) throw region.error

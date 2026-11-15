@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import GoogleMapProvider from '@/components/map/GoogleMapProvider'
 import MapPlaceholder from '@/components/map/MapPlaceholder'
 import { useGeoQuery } from '@/features/dong/useGeoQuery'
+import { recordInterest } from '@/features/interest'
 import BackToAllButton from '@/features/explore/components/BackToAllButton'
 import ExploreMap from '@/features/explore/components/ExploreMap'
 import DongPanel from '@/features/explore/components/panel/DongPanel'
@@ -43,6 +44,19 @@ export default function ExplorePage() {
     setPick(null)
     setHoveredDong(null)
   }
+
+  // 동 패널(②)이 새 동으로 열릴 때마다 관심 기록한다. 점수 스냅숏은 이 화면에 없어 null
+  const recordedDong = useRef<string | null>(null)
+  useEffect(() => {
+    if (s.dong === recordedDong.current) return
+    recordedDong.current = s.dong
+    if (!s.dong) return
+    recordInterest({
+      kind: 'dong_view',
+      target: s.dong,
+      payload: { sigunguId: s.sgg, snapshot: null },
+    })
+  }, [s.dong, s.sgg])
 
   // ② [← 그래프]: ① 로, 그 동 선택 상태 유지 (스펙 §5)
   const backFromDong = (dongId: string) => {
