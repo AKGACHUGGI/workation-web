@@ -71,3 +71,9 @@ test('no inversion and never below base on random data', () => {
     })
   }
 })
+
+test('clamps displayed score at 100', () => {
+  const r = personalize([95, 50, 40, 30], [15, 0, 0, 0])
+  expect(r[0].score).toBe(100)
+  expect(r[0].grade).toBe('S')
+})

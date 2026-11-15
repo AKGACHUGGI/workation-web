@@ -6,6 +6,7 @@ import type { Grade } from '@/features/metric/types'
  * 개인 점수 = base + boost. 등급은 toGrades(개인 점수) 를 기본 등급과 그 한 단계 위 사이로 묶는다.
  * 그래서 관심 없는 지역이 남에게 밀려 기본 등급 아래로 내려가지 않는다 (설계 8절).
  * 점수는 위 등급 항목들의 최솟값 이하로 눌러, 등급 순서(S→C)로 세우면 숫자가 내림차순이 되게 한다.
+ * 등급과 누르기를 다 계산한 뒤 표시 점수만 100 으로 자른다. 자르기는 단조라 정렬·등급 순서가 유지된다.
  */
 export function personalize(base: number[], boost: number[]): { score: number; grade: Grade }[] {
   const personal = base.map((b, i) => b + (boost[i] ?? 0))
@@ -25,7 +26,7 @@ export function personalize(base: number[], boost: number[]): { score: number; g
   })
   const ceiling = GRADES.map((_, g) => Math.min(Infinity, ...minAt.slice(0, g)))
   return personal.map((score, i) => ({
-    score: Math.min(score, ceiling[gradeIdx[i]]),
+    score: Math.min(100, score, ceiling[gradeIdx[i]]),
     grade: GRADES[gradeIdx[i]],
   }))
 }

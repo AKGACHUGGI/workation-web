@@ -2,6 +2,7 @@ import {
   BOOST_CAP,
   HALF_LIFE_DAYS,
   MIX,
+  PLACE_SAT,
   SIGUNGU_SHARE,
   VIEW_SIGNAL,
 } from '@/features/interest/constants'
@@ -67,17 +68,25 @@ export function buildProfile(events: InterestEvent[], now: number): InterestProf
   return { metric, terrain, place, strength }
 }
 
-/** 프로필에 비춘 그 지역의 가산점 (0 ~ BOOST_CAP) (설계 5-4) */
+/**
+ * 프로필에 비춘 그 지역의 가산점 (0 ~ BOOST_CAP) (설계 5-4).
+ * 지표·지형 일치도는 그 갈래가 전체 세기에서 차지하는 몫을 곱해, 다른 기록이 세기를 키우면
+ * 옛 관심이 함께 묽어지게 한다.
+ */
 export function boostFor(p: InterestProfile, u: BoostUnit): number {
   if (p.strength === 0) return 0
-  const s = 1 - Math.exp(-p.strength / 2) // 기록 1건 0.39, 3건 0.78: 한 번 본 것으로 상한까지 가지 않게
+  // 세기 반영도. 기록 1건 0.39, 3건 0.78: 한 번 본 것으로 상한까지 가지 않게
+  const s = 1 - Math.exp(-p.strength / 2)
   const metricSum = METRIC_KEYS.reduce((a, k) => a + p.metric[k], 0)
-  const metricMatch = metricSum > 0 ? composite(u.scores, p.metric) / 100 : 0
-  const tMax = Math.max(...Object.values(p.terrain))
-  const terrainMatch =
-    tMax > 0 && u.terrain?.length ? Math.max(...u.terrain.map((t) => p.terrain[t] / tMax)) : 0
+  const metricMatch =
+    metricSum > 0 ? (composite(u.scores, p.metric) / 100) * Math.min(1, metricSum / p.strength) : 0
+  const terrainMatch = u.terrain?.length
+    ? Math.min(1, Math.max(...u.terrain.map((t) => p.terrain[t])) / p.strength)
+    : 0
+  // 행정동 조회는 기록 때 시군구에 절반, 여기서 다시 절반이 곱해져
+  // 같은 시군구의 다른 행정동에는 1/4 이 간다
   const pw = (p.place[u.id] ?? 0) + (u.sigunguId ? (p.place[u.sigunguId] ?? 0) * SIGUNGU_SHARE : 0)
-  const placeMatch = 1 - Math.exp(-pw)
+  const placeMatch = 1 - Math.exp(-pw / PLACE_SAT) // 조회 1건(pw 1)에 1 - e^-0.5 ≈ 0.39
   return (
     BOOST_CAP *
     (MIX.metric * s * metricMatch + MIX.terrain * s * terrainMatch + MIX.place * placeMatch)

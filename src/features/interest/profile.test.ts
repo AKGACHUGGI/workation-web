@@ -46,7 +46,8 @@ test('boost never exceeds cap', () => {
   ]
   const b = boostFor(buildProfile(events, NOW), { id: '51150', scores: HIGH, terrain: ['coast'] })
   expect(b).toBeLessThanOrEqual(15)
-  expect(b).toBeGreaterThan(14)
+  // s ≈ 1, 지표·지형 일치도는 갈래 몫 37.5/50 = 0.75, 장소 일치도 ≈ 1 이라 15 × (0.2·0.75 + 0.1·0.75 + 0.7) = 13.875
+  expect(b).toBeCloseTo(13.875, 4)
 })
 
 test('weight halves after half life', () => {
@@ -75,4 +76,27 @@ test('view without snapshot adds place only', () => {
   const p = buildProfile([regionView('51150', null, NOW)], NOW)
   expect(Object.values(p.metric).every((v) => v === 0)).toBe(true)
   expect(p.place['51150']).toBeCloseTo(1, 6)
+})
+
+test('old interest does not revive after unrelated record', () => {
+  const old = search({ preset: 'quiet', terrain: ['coast'] }, NOW - 30 * DAY)
+  const today = search({ preset: 'lively', terrain: [] }, NOW)
+  const coast = { id: 'a', scores: QUIET, terrain: ['coast'] as Terrain[] }
+  const bare = { id: 'a', scores: QUIET, terrain: [] as Terrain[] }
+  // 지형 갈래의 기여만 떼어 본다: 같은 점수에서 coast 가 있을 때와 없을 때의 차
+  const terrainPart = (events: InterestEvent[]) => {
+    const p = buildProfile(events, NOW)
+    return boostFor(p, coast) - boostFor(p, bare)
+  }
+  const alone = terrainPart([old])
+  const after = terrainPart([old, today])
+  expect(alone).toBeGreaterThan(0)
+  // 오늘의 무관한 기록이 세기를 키워도 30일 전 coast 관심이 원래 크기로 되살아나지 않는다
+  expect(after).toBeLessThanOrEqual(alone * 1.5)
+})
+
+test('single view stays well below cap', () => {
+  const p = buildProfile([regionView('51150', null, NOW)], NOW)
+  const b = boostFor(p, { id: '51150', scores: QUIET, terrain: ['coast'] })
+  expect(b).toBeLessThanOrEqual(0.35 * 15)
 })
