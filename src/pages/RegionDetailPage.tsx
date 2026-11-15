@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
+import { useBoost } from '@/features/interest'
 import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL, METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { METRIC_KEYS } from '@/features/metric/types'
@@ -48,6 +49,8 @@ export default function RegionDetailPage() {
   const { isFavorite, toggle } = useFavorites()
   const saved = isFavorite('regions', sggId)
   const share = useShareUrl()
+  // 들어온 순간의 기록으로 고정해 자기 조회 기록 때문에 보는 도중 순위가 바뀌지 않게 한다
+  const boost = useBoost({ live: false, freezeKey: sggId })
 
   const tier = useTierQuery(month, 'sigungu')
   const region = useRegionQuery(sggId, month)
@@ -85,7 +88,7 @@ export default function RegionDetailPage() {
   }
 
   const d = region.data
-  const rank = rankIn(tier.data.items, sggId, mode)
+  const rank = rankIn(tier.data.items, sggId, mode, boost)
   if (!rank) throw new NotFoundError(`region ${sggId}`)
   const scores = rank.item.scores
   const score = Math.round(rank.score)

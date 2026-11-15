@@ -1,4 +1,5 @@
 import ListingCard from '@/components/ui/ListingCard'
+import { personalize, useBoost } from '@/features/interest'
 import { favoriteMeta2, weightsFor } from '@/features/me/favoriteMeta'
 import MePanel from '@/features/me/components/MePanel'
 import type { FavoriteRegion } from '@/features/me/types'
@@ -6,7 +7,7 @@ import { useRemoveFavoriteWithUndo } from '@/features/me/useRemoveFavoriteWithUn
 import { METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
-import { composite, metricGrade, toGrades } from '@/features/metric/score'
+import { composite, metricGrade } from '@/features/metric/score'
 import type { MetricKey, PresetKey } from '@/features/metric/types'
 import { useCarryLink } from '@/hooks/useCarryLink'
 
@@ -21,9 +22,13 @@ const CHIP_KEYS: MetricKey[] = ['quiet', 'peer', 'overnight']
 
 export default function FavoriteRegions({ regions, month, preset, metrics }: Props) {
   const remove = useRemoveFavoriteWithUndo()
+  const boost = useBoost()
   const weights = weightsFor(preset, metrics)
-  const scores = regions.map((r) => Math.round(composite(r.scores, weights)))
-  const grades = toGrades(scores)
+  // 종합 점수에 관심 가산점을 더한 개인 점수·등급 (기록이 없으면 기본 값과 같다)
+  const personal = personalize(
+    regions.map((r) => Math.round(composite(r.scores, weights))),
+    regions.map((r) => boost({ id: r.id, scores: r.scores })),
+  )
   const base = useCarryLink('/regions')
 
   return (
@@ -37,8 +42,8 @@ export default function FavoriteRegions({ regions, month, preset, metrics }: Pro
             key={r.id}
             photoUrl={r.photoUrl}
             title={`${r.name}, ${r.province}`}
-            score={scores[i]}
-            scoreGrade={grades[i]}
+            score={Math.round(personal[i].score)}
+            scoreGrade={personal[i].grade}
             meta1={r.tags.join(' · ')}
             meta2={favoriteMeta2(r, month)}
             chips={CHIP_KEYS.map((k) => ({
