@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useBoost } from '@/features/interest'
 import { monthLabel } from '@/features/metric/month'
 import { buildTiers, filterTiers } from '@/features/tier/buildTiers'
 import CustomMetricToggles from '@/features/tier/components/CustomMetricToggles'
@@ -19,6 +20,7 @@ export default function TierPage() {
   const query = useTierQuery(p.month, p.scope)
   const { data } = query
   const { scope, sgg, setSgg } = p
+  const boost = useBoost()
 
   // 응답에 없는 시군구 필터는 전체로 (replace)
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function TierPage() {
 
   const mode = toTierMode(p.tab, p.preset, p.metrics, p.metric)
   const groups = data
-    ? filterTiers(buildTiers(data.items, mode), scope === 'dong' ? sgg : 'all')
+    ? filterTiers(buildTiers(data.items, mode, boost), scope === 'dong' ? sgg : 'all')
     : null
   const selected = p.tab === 'value' && p.preset === 'custom' ? p.metrics : null
   const copy = { tab: p.tab, preset: p.preset, metrics: p.metrics, metric: p.metric }

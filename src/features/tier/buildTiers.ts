@@ -1,3 +1,5 @@
+import { NO_BOOST, personalize } from '@/features/interest'
+import type { BoostFn } from '@/features/interest'
 import { composite, toGrades } from '@/features/metric/score'
 import { GRADES, METRIC_KEYS } from '@/features/metric/types'
 import type { MetricKey, Weights } from '@/features/metric/types'
@@ -16,15 +18,27 @@ function compareEntries(a: TierEntry, b: TierEntry): number {
   return b.score - a.score || a.item.name.localeCompare(b.item.name, 'ko')
 }
 
-/** 점수 → 사분위 등급 → S·A·B·C 4개 그룹(빈 그룹 포함) */
-export function buildTiers(items: TierItem[], mode: TierMode): TierGroup[] {
-  const scores = items.map((item) => scoreOf(item, mode))
-  const grades = toGrades(scores)
-  const entries: TierEntry[] = items.map((item, i) => ({
-    item,
-    score: scores[i],
-    grade: grades[i],
-  }))
+/** 종합(value)은 관심 가산점을 더한 개인 점수·등급, 지표 하나 보기(metric)는 기본 점수·등급 */
+function scoreAndGrade(items: TierItem[], mode: TierMode, boost: BoostFn) {
+  const base = items.map((item) => scoreOf(item, mode))
+  if (mode.tab === 'metric') {
+    const grades = toGrades(base)
+    return base.map((score, i) => ({ score, grade: grades[i] }))
+  }
+  const boosts = items.map((i) =>
+    boost({ id: i.id, sigunguId: i.sigungu?.id, scores: i.scores, terrain: i.terrain }),
+  )
+  return personalize(base, boosts)
+}
+
+/** 점수 → 사분위 등급 → S·A·B·C 4개 그룹(빈 그룹 포함). 종합 점수에만 관심 가산점을 더한다 */
+export function buildTiers(
+  items: TierItem[],
+  mode: TierMode,
+  boost: BoostFn = NO_BOOST,
+): TierGroup[] {
+  const scored = scoreAndGrade(items, mode, boost)
+  const entries: TierEntry[] = items.map((item, i) => ({ item, ...scored[i] }))
   return GRADES.map((grade) => ({
     grade,
     entries: entries.filter((e) => e.grade === grade).sort(compareEntries),

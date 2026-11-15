@@ -2,18 +2,19 @@ import { useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import ListingCard from '@/components/ui/ListingCard'
+import { useBoost } from '@/features/interest'
 import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
-import { composite, metricGrade, toGrades } from '@/features/metric/score'
+import { metricGrade } from '@/features/metric/score'
 import type { MetricKey } from '@/features/metric/types'
 import PopularEmpty from '@/features/popular/components/PopularEmpty'
 import PopularHeader from '@/features/popular/components/PopularHeader'
 import { POPULAR_NOTE } from '@/features/popular/copy'
 import { formatCount } from '@/features/popular/format'
 import { DEFAULT_SORT, parseSort } from '@/features/popular/params'
-import { rankBadge, sortPopular, terrainMatch } from '@/features/popular/sort'
+import { personalPopular, rankBadge, sortPopular, terrainMatch } from '@/features/popular/sort'
 import type { PopularRegion, PopularSort } from '@/features/popular/types'
 import { useTerrainParam } from '@/features/popular/useTerrainParam'
 import { useWeights } from '@/features/popular/useWeights'
@@ -37,15 +38,17 @@ export default function PopularRegions({ items, month, hoverId, onHover, conditi
   const [terrain, setTerrain] = useTerrainParam()
   const { preset, setPreset, selected, setSelected, weights } = useWeights()
   const { isFavorite, toggle } = useFavorites()
+  const boost = useBoost()
   const { search } = useLocation()
   const current = useMemo(() => new URLSearchParams(search), [search])
 
+  // 카드 점수·등급과 정렬이 같은 개인 점수(관심 가산점 포함)를 쓰게 목록 전체로 한 번 계산
   const list = useMemo(() => {
-    const sorted = sortPopular(items, sort, weights)
-    const grades = toGrades(sorted.map((i) => composite(i.scores, weights)))
-    const withGrade = sorted.map((item, i) => ({ item, grade: grades[i] }))
-    return withGrade.filter(({ item }) => terrainMatch(item, terrain))
-  }, [items, sort, weights, terrain])
+    const personal = personalPopular(items, weights, boost)
+    return sortPopular(items, sort, weights, boost)
+      .map((item) => ({ item, ...personal.get(item.id)! }))
+      .filter(({ item }) => terrainMatch(item, terrain))
+  }, [items, sort, weights, terrain, boost])
 
   return (
     <section className="flex flex-col gap-6">
@@ -63,12 +66,12 @@ export default function PopularRegions({ items, month, hoverId, onHover, conditi
         <PopularEmpty onClearFilter={() => setTerrain([])} />
       ) : (
         <div data-testid="popular-grid" className="grid grid-cols-3 gap-6">
-          {list.map(({ item, grade }, index) => (
+          {list.map(({ item, score, grade }, index) => (
             <ListingCard
               key={item.id}
               photoUrl={item.photoUrl}
               title={`${item.name}, ${item.province}`}
-              score={composite(item.scores, weights)}
+              score={score}
               scoreGrade={grade}
               badge={rankBadge(sort, index)}
               meta1={item.tags.join(' · ')}

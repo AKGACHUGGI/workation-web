@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { colorScale } from '@/features/heatmap/colorScale'
 import type { HeatStep } from '@/features/heatmap/colorScale'
 import { heatGrades, heatValue } from '@/features/heatmap/heat'
+import { useBoost } from '@/features/interest'
 import type { HeatMetric } from '@/features/heatmap/types'
 import type { MonthParam } from '@/features/metric/month'
 import type { Grade, Weights } from '@/features/metric/types'
@@ -35,21 +36,30 @@ type Args = {
 export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: Args) {
   const query = useTierQuery(month, scope)
   const { search } = useLocation()
+  const boost = useBoost()
   const entries = useMemo<HeatEntry[]>(() => {
     const all = query.data?.items ?? []
     const items = scope === 'dong' ? all.filter((i) => i.sigungu?.id === sgg) : all
     const values = items.map((i) => Math.round(heatValue(i, metric, weights)))
-    const grades = heatGrades(values)
+    // 관심 가산점은 종합에만. 지표 하나 보기는 기본 점수·등급 그대로
+    const boosts =
+      metric === 'value'
+        ? items.map((i) =>
+            boost({ id: i.id, sigunguId: i.sigungu?.id, scores: i.scores, terrain: i.terrain }),
+          )
+        : undefined
+    const grades = heatGrades(values, boosts)
+    const shown = boosts ? values.map((v, i) => Math.round(v + boosts[i])) : values
     const current = new URLSearchParams(search)
     return items.map((item, i) => ({
       id: item.id,
       name: item.name,
-      score: values[i],
+      score: shown[i],
       grade: grades[i],
-      step: colorScale(values[i]),
+      step: colorScale(shown[i]),
       dimmed: scope === 'sigungu' && !terrainMatch(item, terrain),
       href: carryQuery(scope === 'dong' ? `/dongs/${item.id}` : `/regions/${item.id}`, current),
     }))
-  }, [query.data, scope, sgg, metric, weights, terrain, search])
+  }, [query.data, scope, sgg, metric, weights, terrain, search, boost])
   return { entries, isPending: query.isPending, isError: query.isError, refetch: query.refetch }
 }

@@ -18,6 +18,7 @@ import { useDongNotesQuery } from '@/features/dong/useDongNotesQuery'
 import { useDongPollQuery } from '@/features/dong/useDongPollQuery'
 import { useDongQuery } from '@/features/dong/useDongQuery'
 import { useGeoQuery } from '@/features/dong/useGeoQuery'
+import { useBoost } from '@/features/interest'
 import { metricGrade } from '@/features/metric/score'
 import type { Grade } from '@/features/metric/types'
 import NoteSection from '@/features/region/components/NoteSection'
@@ -47,6 +48,8 @@ export default function DongProfilePage() {
   const poll = useDongPollQuery(dongId, month)
   const geo = useGeoQuery(dong.data?.sigungu.id)
   const compareLink = useCarryLink(`/compare?dongs=${dongId}`)
+  // 들어온 순간의 기록으로 고정해 자기 조회 기록 때문에 보는 도중 순위가 바뀌지 않게 한다
+  const boost = useBoost({ live: false, freezeKey: dongId })
 
   const gradeOf = useCallback(
     (id: string): Grade | null => {
@@ -98,7 +101,9 @@ export default function DongProfilePage() {
   })
   const excluded = detail.special ? 1 : 0
 
-  const sggRank = tierSgg.data ? rankIn(tierSgg.data.items, detail.sigungu.id, presetMode) : null
+  const sggRank = tierSgg.data
+    ? rankIn(tierSgg.data.items, detail.sigungu.id, presetMode, boost)
+    : null
   const sgg = sggRank ? { score: sggRank.score, rank: sggRank.rank } : null
 
   return (

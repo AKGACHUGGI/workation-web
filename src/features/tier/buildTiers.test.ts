@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { NO_BOOST } from '@/features/interest'
 import { PRESET_WEIGHTS } from '@/features/metric/constants'
 import { buildTiers, customWeights, filterTiers } from '@/features/tier/buildTiers'
 import type { TierItem } from '@/features/tier/types'
@@ -100,5 +101,42 @@ describe('filterTiers', () => {
     expect(filtered[1].entries).toEqual([])
     expect(filtered[2].entries.map((e) => e.item.id)).toEqual(['c'])
     expect(filterTiers(groups, 'all')).toBe(groups)
+  })
+})
+
+describe('buildTiers 관심 가산점', () => {
+  const VALUE_MODE = { tab: 'value', weights: PRESET_WEIGHTS.quiet } as const
+  it('value tab applies boost and may lift one grade', () => {
+    const lowest = '46770' // 고흥군: 조용한 곳 10월 C (같은 파일 기존 단언)
+    const groups = buildTiers(SIGUNGU_ITEMS_2025_10, VALUE_MODE, (u) => (u.id === lowest ? 100 : 0))
+    const grade = groups.find((g) => g.entries.some((e) => e.item.id === lowest))!.grade
+    expect(grade).toBe('B')
+  })
+  it('metric tab ignores boost', () => {
+    expect(buildTiers(SIGUNGU_ITEMS_2025_10, { tab: 'metric', metric: 'quiet' }, () => 50)).toEqual(
+      buildTiers(SIGUNGU_ITEMS_2025_10, { tab: 'metric', metric: 'quiet' }),
+    )
+  })
+  it('no boost equals previous result', () => {
+    expect(buildTiers(SIGUNGU_ITEMS_2025_10, VALUE_MODE, NO_BOOST)).toEqual(
+      buildTiers(SIGUNGU_ITEMS_2025_10, VALUE_MODE),
+    )
+  })
+  it('entry score is the personal score', () => {
+    const groups = buildTiers(SIGUNGU_ITEMS_2025_10, VALUE_MODE, (u) => (u.id === '46770' ? 7 : 0))
+    const base = buildTiers(SIGUNGU_ITEMS_2025_10, VALUE_MODE)
+    const scoreOf = (gs: typeof groups) =>
+      gs.flatMap((g) => g.entries).find((e) => e.item.id === '46770')!.score
+    expect(scoreOf(groups)).toBeCloseTo(scoreOf(base) + 7)
+  })
+  it('passes sigunguId and terrain to boost', () => {
+    const seen: unknown[] = []
+    buildTiers([item('d1', '동', 50, '51820')], VALUE_MODE, (u) => {
+      seen.push(u)
+      return 0
+    })
+    expect(seen).toEqual([
+      expect.objectContaining({ id: 'd1', sigunguId: '51820', terrain: expect.any(Array) }),
+    ])
   })
 })

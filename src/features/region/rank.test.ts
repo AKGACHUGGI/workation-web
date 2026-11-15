@@ -81,3 +81,21 @@ describe('rankIn — 고성군 10월 실데이터', () => {
     expect(r).toMatchObject({ rank: 7, total: 12, grade: 'B' })
   })
 })
+
+describe('rankIn 관심 가산점', () => {
+  const QUIET_VALUE = { tab: 'value', weights: PRESET_WEIGHTS.quiet } as const
+  it('rankIn passes boost through', () => {
+    // 51820 고성군은 기본 3위 S (e2e/region.spec.ts 와 같은 목 데이터)
+    const r = rankIn(SIGUNGU_ITEMS_2025_10, '51820', QUIET_VALUE, (u) =>
+      u.id === '51820' ? 100 : 0,
+    )
+    expect(r?.rank).toBe(1)
+    expect(r?.grade).toBe('S')
+  })
+  it('rankIn lifts lowest by one grade only', () => {
+    expect(
+      rankIn(SIGUNGU_ITEMS_2025_10, '46770', QUIET_VALUE, (u) => (u.id === '46770' ? 100 : 0))
+        ?.grade,
+    ).toBe('B')
+  })
+})
