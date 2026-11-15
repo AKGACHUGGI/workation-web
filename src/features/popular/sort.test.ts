@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { NO_BOOST } from '@/features/interest'
 import { PRESET_WEIGHTS } from '@/features/metric/constants'
 import { personalPopular, rankBadge, sortPopular, terrainMatch } from '@/features/popular/sort'
 import type { PopularRegion } from '@/features/popular/types'
@@ -109,5 +110,16 @@ describe('sortPopular 관심 가산점', () => {
     const m = personalPopular(items, PRESET_WEIGHTS.quiet, (u) => (u.id === 'a' ? 100 : 0))
     expect(m.get('a')).toEqual({ score: 135, grade: 'A' })
     expect(m.get('b')?.grade).toBe('S')
+  })
+})
+
+describe('sortPopular 조회순 동점', () => {
+  it('views tie keeps input order without records', () => {
+    // 조회수·즐겨찾기 수가 같으면 점수와 상관없이 입력 순서 그대로 (기록 없으면 기존과 같다)
+    const tied = [mk('low', 100, 500, 10), mk('high', 100, 500, 90)]
+    expect(sortPopular(tied, 'views', PRESET_WEIGHTS.quiet, NO_BOOST).map((i) => i.id)).toEqual([
+      'low',
+      'high',
+    ])
   })
 })
