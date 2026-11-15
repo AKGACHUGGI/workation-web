@@ -24,7 +24,12 @@ describe('Navbar (Figma Web/NavbarV2)', () => {
     renderWithRouter(<Navbar />, { route: '/tier' })
     const nav = screen.getByRole('navigation', { name: '주 메뉴' })
     const tabs = within(nav).getAllByRole('link')
-    expect(tabs.map((t) => t.textContent)).toEqual(['지역 찾기', '랭킹', '동네 고르기', '지도 탐색'])
+    expect(tabs.map((t) => t.textContent)).toEqual([
+      '지역 찾기',
+      '랭킹',
+      '동네 고르기',
+      '지도 탐색',
+    ])
     expect(screen.queryByRole('link', { name: /워케이션 노트/ })).not.toBeInTheDocument()
     expect(screen.queryByText('NEW')).not.toBeInTheDocument()
   })
