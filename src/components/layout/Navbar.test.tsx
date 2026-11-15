@@ -20,11 +20,16 @@ describe('Navbar (Figma Web/NavbarV2)', () => {
     expect(screen.getByRole('link', { name: '랭킹' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: '지역 찾기' })).not.toHaveAttribute('aria-current')
   })
-  it('제품 탭은 지역 찾기·랭킹·동네 고르기 3개이고 워케이션 노트 탭은 없다', () => {
+  it('제품 탭은 지역 찾기·랭킹·동네 고르기·지도 탐색 4개이고 워케이션 노트 탭은 없다', () => {
     renderWithRouter(<Navbar />, { route: '/tier' })
     const nav = screen.getByRole('navigation', { name: '주 메뉴' })
     const tabs = within(nav).getAllByRole('link')
-    expect(tabs.map((t) => t.textContent)).toEqual(['지역 찾기', '랭킹', '동네 고르기'])
+    expect(tabs.map((t) => t.textContent)).toEqual([
+      '지역 찾기',
+      '랭킹',
+      '동네 고르기',
+      '지도 탐색',
+    ])
     expect(screen.queryByRole('link', { name: /워케이션 노트/ })).not.toBeInTheDocument()
     expect(screen.queryByText('NEW')).not.toBeInTheDocument()
   })
