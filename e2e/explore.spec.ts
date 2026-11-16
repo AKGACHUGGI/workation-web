@@ -94,9 +94,27 @@ test.describe('W-09 지도 탐색 v6', () => {
     await expect(page.getByRole('heading', { level: 2, name: '주문진읍' })).toBeVisible()
   })
 
-  test('동 패널: 브리핑만 보이고 질문 입력칸은 없다', async ({ page }) => {
+  test('동 패널 채팅: 예시 질문 → 답, 경포동 비교 → 문장 2개, 다른 시군구 → 안내', async ({
+    page,
+  }) => {
     await page.goto(`/explore?sgg=${GANGNEUNG}&dong=${JUMUNJIN}`)
-    await expect(page.getByRole('heading', { name: '이 동네에서 일하는 하루' })).toBeVisible()
-    await expect(page.getByRole('textbox')).toHaveCount(0)
+    const chips = page.getByRole('group', { name: '예시 질문' })
+    const input = page.getByRole('textbox', { name: '이 동네에 물어보기' })
+    const log = page.getByRole('log', { name: '물어본 대화' })
+    await expect(chips.getByRole('button')).toHaveCount(3)
+
+    await chips.getByRole('button', { name: '이 동네 조용해?' }).click()
+    await expect(log).toContainText('조용함은 B등급(31점)이에요.')
+
+    await input.fill('경포동이랑 비교하면?')
+    await input.press('Enter')
+    await expect(log).toContainText('조용함은 주문진읍 B등급, 경포동 C등급이에요.')
+    await expect(log).toContainText('저녁 활기는 주문진읍 A등급, 경포동 A등급이에요.')
+    await expect(chips.getByRole('button', { name: '둘이 비슷해?' })).toBeVisible()
+
+    await input.fill('효자2동이랑 비교해 줘')
+    await input.press('Enter')
+    await expect(log).toContainText('지금은 같은 시군구 안의 동네끼리만 비교할 수 있어요.')
+    await expect(log.locator('[data-turn="done"]')).toHaveCount(3)
   })
 })
