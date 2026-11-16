@@ -40,3 +40,11 @@ export type BoostUnit = {
   terrain?: Terrain[]
 }
 export type BoostFn = (unit: BoostUnit) => number
+
+/** 동 패널 채팅 요청의 criteria.interest (탐색 v7 채팅 스펙 §4-2). 0 인 칸은 뺀다 */
+export type ChatInterest = {
+  metric: Partial<Weights>
+  terrain: Partial<Record<Terrain, number>>
+  /** 무게가 큰 순서의 행정동 10자리 코드, 최대 3개 */
+  recent: string[]
+}

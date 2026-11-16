@@ -5,6 +5,7 @@ import renderWithRouter from '@/test/renderWithRouter'
 import { GEUMAM, JUMUNJIN } from '@/test/fixtures/explore'
 
 vi.mock('@/features/explore/api', () => ({
+  postChat: vi.fn(),
   fetchDong: vi.fn(),
   fetchPins: vi.fn(),
 }))
