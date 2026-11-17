@@ -23,11 +23,13 @@ type Props = {
   onMouseLeave?: () => void
   /** 지도 hover 연동 강조 */
   highlighted?: boolean
+  /** 주면 이 지연(ms) 뒤 아래에서 쫀득하게 떠오르며 나타난다 */
+  enterDelay?: number
 }
 
 /**
  * Figma ListingCard 54:129. 4:3 사진(rounded-xl) + 좌상단 FloatBadge + 우상단 저장 원형 버튼 → 메타.
- * 카드 자체는 테두리·그림자 없음(hover·지도 강조 시 card-float). 제목 16 Medium, 점수 sparkles + 14 Bold 잉크,
+ * 카드 자체는 테두리·그림자 없음(hover·지도 강조 시 card-float). 그림자가 생겨도 글이 붙지 않게 메타는 좌우·아래 12 안쪽. 제목 16 Medium, 점수 sparkles + 14 Bold 잉크,
  * 메타 14 보조색, 지표 칩 12 + GradeBadge sm.
  * 본문 전체가 링크, 저장 버튼은 링크의 형제(<a> 안 <button> 금지)
  */
@@ -45,16 +47,20 @@ export default function ListingCard({
   onMouseEnter,
   onMouseLeave,
   highlighted = false,
+  enterDelay,
 }: Props) {
   return (
     <div
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`relative rounded-xl transition-shadow ${highlighted ? 'shadow-float' : 'hover:shadow-float'}`}
+      className={`relative rounded-xl transition-shadow ${highlighted ? 'shadow-float' : 'hover:shadow-float'} ${
+        enterDelay === undefined ? '' : 'motion-safe:animate-card-rise'
+      }`}
+      style={enterDelay === undefined ? undefined : { animationDelay: `${enterDelay}ms` }}
     >
       <Link to={href} className="flex flex-col gap-2.5">
         <PhotoThumb photoUrl={photoUrl} alt={title} label={badge} />
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-0.5 px-3 pb-3">
           <div className="flex items-center justify-between gap-2">
             <span className="text-title-md text-text-primary truncate">{title}</span>
             <span className="text-body-sm text-text-primary inline-flex shrink-0 items-center gap-1 font-bold">

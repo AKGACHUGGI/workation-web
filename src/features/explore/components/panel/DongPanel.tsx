@@ -6,6 +6,7 @@ import { useDongQuery } from '@/features/explore/useDongQuery'
 import { NotFoundError } from '@/lib/errors'
 import ChatThread from '@/features/explore/components/panel/ChatThread'
 import DetailSlot from '@/features/explore/components/panel/DetailSlot'
+import DongPhoto from '@/features/explore/components/panel/DongPhoto'
 import DongFactGraph from '@/features/explore/components/panel/DongFactGraph'
 import PanelHeader from '@/features/explore/components/panel/PanelHeader'
 import PanelMessage from '@/features/explore/components/panel/PanelMessage'
@@ -73,6 +74,7 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
   return (
     <article aria-label={dong.name} className="flex flex-1 flex-col gap-3 pt-4">
       <PanelHeader dong={dong} onBack={onBack} />
+      <DongPhoto dong={dong} />
       <TypeBars types={dong.types} />
       <DongFactGraph dong={dong} day={day} detail={detail} onDetail={setDetail} />
       <DetailSlot dong={dong} day={day} onDay={setDay} detail={detail} />

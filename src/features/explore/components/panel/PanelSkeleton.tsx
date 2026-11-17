@@ -25,6 +25,10 @@ export default function PanelSkeleton() {
         <Block className="h-3.5 w-50" />
       </div>
 
+      <div data-section="photo" className={`shrink-0 ${DONG_SECTION_H.photo}`}>
+        <Block shape="slot" className="size-full" />
+      </div>
+
       <div data-section="types" className={`flex shrink-0 flex-col gap-3 ${DONG_SECTION_H.types}`}>
         <Block className="h-3.5 w-22.5" />
         {TYPE_BARS.map((w) => (

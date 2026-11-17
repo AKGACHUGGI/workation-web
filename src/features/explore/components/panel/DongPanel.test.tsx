@@ -26,7 +26,7 @@ beforeEach(() => {
 })
 
 describe('DongPanel', () => {
-  it('성공: 헤더 → 유형 → 그래프 → 상세 → 브리핑 → 비슷한 동 → 출처', async () => {
+  it('성공: 헤더 → 사진 → 유형 → 그래프 → 상세 → 브리핑 → 비슷한 동 → 출처', async () => {
     mocked.mockResolvedValue(JUMUNJIN)
     const p = props()
     renderWithRouter(<DongPanel dongId={JUMUNJIN.id} {...p} />)
@@ -34,7 +34,7 @@ describe('DongPanel', () => {
     const order = [...document.querySelectorAll('[data-section]')].map((el) =>
       el.getAttribute('data-section'),
     )
-    expect(order).toEqual(['header', 'types', 'graph', 'detail', 'briefing'])
+    expect(order).toEqual(['header', 'photo', 'types', 'graph', 'detail', 'briefing'])
     expect(screen.getByRole('region', { name: '워케이션 유형' })).toBeInTheDocument()
     expect(screen.getByText(JUMUNJIN.briefing.join(' '))).toBeInTheDocument()
     expect(screen.getByRole('list', { name: '비슷한 바닷가 동' })).toBeInTheDocument()
