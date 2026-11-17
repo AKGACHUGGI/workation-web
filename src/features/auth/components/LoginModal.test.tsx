@@ -2,10 +2,13 @@ import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useAuthContext } from '@/features/auth/authContext'
-import { assignLocation } from '@/lib/navigation'
+import { signIn } from '@/features/auth/api'
 import renderWithAuth from '@/test/renderWithAuth'
 
-vi.mock('@/lib/navigation', () => ({ assignLocation: vi.fn() }))
+vi.mock('@/features/auth/api', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/features/auth/api')>()),
+  signIn: vi.fn().mockResolvedValue(undefined),
+}))
 // W-04 이후 vitest.config.ts 의 test.env 가 VITE_USE_MOCK='true' 라 isMock 이 참 → 실제 OAuth 분기를 보려면 끈다
 vi.mock('@/lib/mock', () => ({
   isMock: false,
@@ -32,15 +35,22 @@ describe('LoginModal', () => {
     expect(screen.getByRole('button', { name: '로그인 없이 둘러보기' })).toBeInTheDocument()
   })
 
-  it('카카오 클릭 → start URL 로 이동 (redirect 에 현재 경로+login=1), 버튼 둘 다 비활성', async () => {
+  it('카카오 클릭 → signIn(현재 경로+login=1), 버튼 둘 다 비활성', async () => {
     await openModal()
     await userEvent.click(screen.getByRole('button', { name: '카카오로 시작하기' }))
-    expect(assignLocation).toHaveBeenCalledWith(
-      '/api/auth/kakao/start?redirect=' +
-        encodeURIComponent('/regions/51820?month=2025-10&login=1'),
-    )
+    expect(signIn).toHaveBeenCalledWith('kakao', '/regions/51820?month=2025-10&login=1')
     expect(screen.getByRole('button', { name: '카카오로 시작하기' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Google로 시작하기' })).toBeDisabled()
+  })
+
+  it('signIn 실패 → 토스트, 버튼 다시 활성', async () => {
+    vi.mocked(signIn).mockRejectedValueOnce(new Error('no config'))
+    await openModal()
+    await userEvent.click(screen.getByRole('button', { name: 'Google로 시작하기' }))
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      '로그인에 실패했습니다. 다시 시도해 주세요',
+    )
+    expect(screen.getByRole('button', { name: 'Google로 시작하기' })).toBeEnabled()
   })
 
   it('Esc · 둘러보기 · × 로 닫힌다', async () => {

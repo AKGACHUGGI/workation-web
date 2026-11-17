@@ -3,19 +3,20 @@ import { MapPin, X } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
 import Modal from '@/components/ui/Modal'
-import { mockLogin } from '@/features/auth/api'
+import { useToast } from '@/components/ui/toast/useToast'
+import { mockLogin, signIn } from '@/features/auth/api'
 import SocialLoginButton from '@/features/auth/components/SocialLoginButton'
 import { authKeys } from '@/features/auth/queryKeys'
-import { buildReturnTo, startUrl } from '@/features/auth/startUrl'
+import { buildReturnTo } from '@/features/auth/returnTo'
 import type { AuthProvider } from '@/features/auth/types'
 import { isMock } from '@/lib/mock'
-import { assignLocation } from '@/lib/navigation'
 
 type Props = { open: boolean; onClose: () => void }
 
-/** Figma 263:4425. 카카오·Google 버튼 → 백엔드 OAuth 시작 URL 로 이동 (mock 은 세션만 채움) */
+/** Figma 263:4425. 카카오·Google 버튼 → Supabase OAuth 로 이동 (mock 은 세션만 채움) */
 export default function LoginModal({ open, onClose }: Props) {
   const queryClient = useQueryClient()
+  const { show } = useToast()
   const location = useLocation()
   const [loading, setLoading] = useState<AuthProvider | null>(null)
   const firstButton = useRef<HTMLDivElement>(null)
@@ -35,7 +36,12 @@ export default function LoginModal({ open, onClose }: Props) {
       queryClient.setQueryData(authKeys.me, me) // AuthProvider 가 온보딩 모달을 연다
       return
     }
-    assignLocation(startUrl(provider, buildReturnTo(location.pathname, location.search)))
+    try {
+      await signIn(provider, buildReturnTo(location.pathname, location.search))
+    } catch {
+      setLoading(null)
+      show('로그인에 실패했습니다. 다시 시도해 주세요')
+    }
   }
 
   return (
