@@ -10,6 +10,7 @@ vi.mock('@/features/auth/api', () => ({
   logout: vi.fn(),
   deleteMe: vi.fn(),
   mockLogin: vi.fn(),
+  signIn: vi.fn(),
 }))
 
 describe('useLoginReturn (AuthProvider 안의 LoginReturnWatcher)', () => {
@@ -30,7 +31,21 @@ describe('useLoginReturn (AuthProvider 안의 LoginReturnWatcher)', () => {
       '로그인에 실패했습니다. 다시 시도해 주세요',
     )
     expect(screen.getByRole('dialog', { name: '당신의 장소를 찾으세요' })).toBeInTheDocument()
-    expect(screen.getByTestId('location')).toHaveTextContent('/regions/51820')
-    expect(screen.getByTestId('location')).not.toHaveTextContent('login=')
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/regions/51820'))
+    await waitFor(() => expect(screen.getByTestId('location')).not.toHaveTextContent('login='))
+  })
+
+  it('Supabase 실패 복귀(?error=) → login=error 와 같게 처리하고 쿼리 제거', async () => {
+    renderWithAuth(<div />, {
+      me: null,
+      route: '/me?tab=tips&error=access_denied&error_code=403&error_description=denied',
+    })
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      '로그인에 실패했습니다. 다시 시도해 주세요',
+    )
+    expect(screen.getByRole('dialog', { name: '당신의 장소를 찾으세요' })).toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getByTestId('location')).toHaveTextContent(/^\/me\?tab=tips$/),
+    )
   })
 })
