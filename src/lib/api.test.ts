@@ -1,6 +1,11 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from '@/lib/api'
 import { NotFoundError, UnauthorizedError } from '@/lib/errors'
+import { getAccessToken } from '@/lib/supabase'
+
+vi.mock('@/lib/supabase', () => ({ getAccessToken: vi.fn() }))
+
+beforeEach(() => vi.mocked(getAccessToken).mockResolvedValue(null))
 
 function mockFetch(status: number, body?: unknown) {
   const res = {
@@ -17,19 +22,23 @@ function mockFetch(status: number, body?: unknown) {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('api', () => {
-  it('쿠키 포함 + CSRF 헤더를 항상 보낸다', async () => {
+  it('JSON 헤더를 보내고 쿠키·CSRF 헤더는 없다', async () => {
     const fetchMock = mockFetch(200, { ok: true })
-    await api('/api/auth/me')
+    await api('/api/me')
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
-    expect(init.credentials).toBe('include')
-    expect(init.headers).toMatchObject({
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'workation-web',
-    })
+    expect(init.credentials).toBeUndefined()
+    expect(init.headers).toEqual({ 'Content-Type': 'application/json' })
+  })
+  it('세션이 있으면 Bearer 토큰', async () => {
+    vi.mocked(getAccessToken).mockResolvedValue('tok-123')
+    const fetchMock = mockFetch(200, {})
+    await api('/api/me')
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(init.headers).toMatchObject({ Authorization: 'Bearer tok-123' })
   })
   it('401 은 UnauthorizedError', async () => {
     mockFetch(401)
-    await expect(api('/api/auth/me')).rejects.toBeInstanceOf(UnauthorizedError)
+    await expect(api('/api/me')).rejects.toBeInstanceOf(UnauthorizedError)
   })
   it('404 는 NotFoundError', async () => {
     mockFetch(404)
@@ -37,12 +46,12 @@ describe('api', () => {
   })
   it('204 는 undefined', async () => {
     mockFetch(204)
-    await expect(api('/api/auth/logout', { method: 'POST' })).resolves.toBeUndefined()
+    await expect(api('/api/me', { method: 'DELETE' })).resolves.toBeUndefined()
   })
   it('호출부 헤더는 기본 헤더에 합쳐진다', async () => {
     const fetchMock = mockFetch(200, {})
     await api('/x', { headers: { 'X-Extra': '1' } })
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
-    expect(init.headers).toMatchObject({ 'X-Requested-With': 'workation-web', 'X-Extra': '1' })
+    expect(init.headers).toEqual({ 'Content-Type': 'application/json', 'X-Extra': '1' })
   })
 })
