@@ -38,7 +38,8 @@ export async function patchMe(body: PatchMeBody): Promise<Me> {
 
 /** Supabase OAuth 로 이동한다. 돌아올 곳은 returnTo(path+query, login=1 포함) */
 export async function signIn(provider: AuthProvider, returnTo: string): Promise<void> {
-  if (!supabase) throw new Error('Supabase 설정이 없습니다 (VITE_SUPABASE_URL · VITE_SUPABASE_ANON_KEY)')
+  if (!supabase)
+    throw new Error('Supabase 설정이 없습니다 (VITE_SUPABASE_URL · VITE_SUPABASE_ANON_KEY)')
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: { redirectTo: `${window.location.origin}${returnTo}` },

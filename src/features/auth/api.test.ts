@@ -11,7 +11,7 @@ const auth = vi.hoisted(() => ({
 vi.mock('@/lib/supabase', () => ({ supabase: { auth }, getAccessToken: vi.fn() }))
 vi.mock('@/lib/api', () => ({ api: vi.fn() }))
 // vitest test.env 가 VITE_USE_MOCK='true' 라 실제 분기를 보려면 끈다
-vi.mock('@/lib/mock', () => ({ isMock: false, mockDelay: <T,>(d: T) => Promise.resolve(d) }))
+vi.mock('@/lib/mock', () => ({ isMock: false, mockDelay: <T>(d: T) => Promise.resolve(d) }))
 
 beforeEach(() => {
   vi.mocked(api).mockReset()
