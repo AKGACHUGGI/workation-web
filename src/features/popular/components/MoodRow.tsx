@@ -7,18 +7,23 @@ import { useWeights } from '@/features/popular/useWeights'
 import CustomMetricToggles from '@/features/tier/components/CustomMetricToggles'
 
 /**
- * 카테고리로 거른 지역 안에서 분위기(프리셋) 고르기. 항상 하나가 선택돼 있다.
- * 고르면 정렬도 종합 점수순으로 바꿔 순서 변화가 바로 보이게 한다.
+ * 카테고리로 거른 지역 안에서 분위기(프리셋) 고르기. 기본은 아무것도 안 고른 상태(태그로만 보기).
+ * 고르면 정렬도 종합 점수순으로 바꿔 순서 변화가 바로 보이게 하고, 고른 칩을 다시 누르면 해제한다.
  */
 export default function MoodRow() {
-  const { preset, selected, setSelected } = useWeights()
+  const { mood, selected, setSelected } = useWeights()
   const [, setSearchParams] = useSearchParams()
 
   const choose = (p: PresetKey) =>
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
-      next.set('preset', p)
-      next.set('sort', 'score')
+      if (mood === p) {
+        next.delete('preset')
+        next.delete('metrics')
+      } else {
+        next.set('preset', p)
+        next.set('sort', 'score')
+      }
       return next
     })
 
@@ -27,12 +32,12 @@ export default function MoodRow() {
       <div role="group" aria-label="분위기" className="flex items-center gap-2">
         <span className="text-body-sm text-text-secondary mr-1">이 중에서 분위기</span>
         {PRESET_KEYS.map((p) => (
-          <Chip key={p} size="md" selected={preset === p} onClick={() => choose(p)}>
+          <Chip key={p} size="md" selected={mood === p} onClick={() => choose(p)}>
             {PRESET_LABEL[p]}
           </Chip>
         ))}
       </div>
-      {preset === 'custom' && <CustomMetricToggles selected={selected} onChange={setSelected} />}
+      {mood === 'custom' && <CustomMetricToggles selected={selected} onChange={setSelected} />}
     </div>
   )
 }

@@ -14,7 +14,7 @@ vi.mock('@/features/tier/api', () => ({
 describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
   it('시군구 12개를 점수와 함께 나열하고 양양군 54 가 보인다', async () => {
     renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
-      route: '/?month=2025-10',
+      route: '/?month=2025-10&preset=quiet',
     })
     expect(await screen.findByRole('link', { name: '양양군 54' })).toBeInTheDocument()
     expect(screen.getAllByRole('link')).toHaveLength(12)
@@ -22,7 +22,7 @@ describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
 
   it('지표 칩 클릭 → URL metric=quiet', async () => {
     renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
-      route: '/?month=2025-10',
+      route: '/?month=2025-10&preset=quiet',
     })
     await screen.findByRole('link', { name: '양양군 54' })
     await userEvent.click(screen.getByRole('button', { name: '동네 조용함' }))
@@ -41,7 +41,7 @@ describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
 
   it('행정동 모드 + sgg 없음: 시군구 칩 클릭 → sgg 설정 (이동하지 않음)', async () => {
     renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
-      route: '/?scope=dong&month=2025-10',
+      route: '/?scope=dong&month=2025-10&preset=quiet',
     })
     await userEvent.click(await screen.findByRole('button', { name: '양양군 54' }))
     expect(screen.getByTestId('location')).toHaveTextContent('sgg=51830')
@@ -65,7 +65,7 @@ describe('HeatmapRail (키 없음 → 플레이스홀더)', () => {
 
   it('시군구 범위에서는 선택 칩이 없다', async () => {
     renderWithRouter(<HeatmapRail hoverId={null} onHover={() => {}} />, {
-      route: '/?month=2025-10',
+      route: '/?month=2025-10&preset=quiet',
     })
     await screen.findByRole('link', { name: '양양군 54' })
     expect(screen.queryByRole('group', { name: '시군구 선택' })).not.toBeInTheDocument()

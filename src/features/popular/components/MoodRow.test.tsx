@@ -5,12 +5,20 @@ import renderWithRouter from '@/test/renderWithRouter'
 import MoodRow from '@/features/popular/components/MoodRow'
 
 describe('MoodRow', () => {
-  it('기본은 조용한 곳 선택', () => {
+  it('기본은 아무것도 선택 안 됨', () => {
     renderWithRouter(<MoodRow />)
-    expect(screen.getByRole('button', { name: '조용한 곳' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    for (const name of ['조용한 곳', '활기 있는 한 달', '직접 설정']) {
+      expect(screen.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false')
+    }
+  })
+  it('고른 칩을 다시 누르면 해제 (preset · metrics 삭제)', async () => {
+    renderWithRouter(<MoodRow />, { route: '/?preset=custom&metrics=quiet&terrain=coast' })
+    await userEvent.click(screen.getByRole('button', { name: '직접 설정' }))
+    const loc = screen.getByTestId('location')
+    expect(loc).not.toHaveTextContent('preset=')
+    expect(loc).not.toHaveTextContent('metrics=')
+    expect(loc).toHaveTextContent('terrain=coast')
+    expect(screen.queryByRole('group', { name: '포함 지표' })).not.toBeInTheDocument()
   })
   it('고르면 preset 과 함께 정렬이 종합 점수순으로', async () => {
     renderWithRouter(<MoodRow />, { route: '/?terrain=coast' })
