@@ -4,6 +4,8 @@
  */
 export const DONG_SECTION_H = {
   header: 'h-15.5',
+  /** 대표 사진 (홈 카드와 같은 시군구 사진, 패널 폭에 맞춘 띠) */
+  photo: 'h-40',
   types: 'h-32',
   graph: 'h-53',
   detail: 'h-28',
