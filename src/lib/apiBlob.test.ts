@@ -1,6 +1,11 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { apiBlob } from '@/lib/api'
 import { NotFoundError, UnauthorizedError } from '@/lib/errors'
+import { getAccessToken } from '@/lib/supabase'
+
+vi.mock('@/lib/supabase', () => ({ getAccessToken: vi.fn() }))
+
+beforeEach(() => vi.mocked(getAccessToken).mockResolvedValue(null))
 
 function mockFetch(status: number) {
   const blob = new Blob(['%PDF'], { type: 'application/pdf' })
@@ -18,12 +23,13 @@ function mockFetch(status: number) {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('apiBlob', () => {
-  it('쿠키 포함 + CSRF 헤더, Content-Type 없음, blob 반환', async () => {
+  it('Content-Type 없음, 세션 있으면 Bearer, blob 반환', async () => {
+    vi.mocked(getAccessToken).mockResolvedValue('tok-123')
     const { fn, blob } = mockFetch(200)
     await expect(apiBlob('/api/reports/51820/pdf')).resolves.toBe(blob)
     const [, init] = fn.mock.calls[0] as [string, RequestInit]
-    expect(init.credentials).toBe('include')
-    expect(init.headers).toEqual({ 'X-Requested-With': 'workation-web' })
+    expect(init.credentials).toBeUndefined()
+    expect(init.headers).toEqual({ Authorization: 'Bearer tok-123' })
   })
   it('signal 을 그대로 넘긴다', async () => {
     const { fn } = mockFetch(200)

@@ -10,6 +10,7 @@ import OnboardingModal from '@/features/auth/components/OnboardingModal'
 import { authKeys } from '@/features/auth/queryKeys'
 import { useAuth } from '@/features/auth/useAuth'
 import { UnauthorizedError } from '@/lib/errors'
+import { supabase } from '@/lib/supabase'
 
 /**
  * 로그인 모달 열림 상태와 보류 동작(pendingAction)을 관리한다. RootLayout(ToastProvider 안쪽)에서 한 번 감싼다.
@@ -17,6 +18,7 @@ import { UnauthorizedError } from '@/lib/errors'
  * - 사용자가 닫음(closeLogin) → 보류 동작 버림, onDismiss 호출
  * - me.needsOnboarding → OnboardingModal
  * - 조회·뮤테이션이 401 → 세션 만료로 보고 me 를 null 로, 모달 열기 (['auth','me'] 조회는 fetchMe 가 401 을 null 로 바꾸므로 제외)
+ * - Supabase SIGNED_OUT(다른 탭 로그아웃·refresh 실패) → me 를 null 로
  */
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
@@ -88,6 +90,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       unsubQueries()
       unsubMutations()
     }
+  }, [queryClient])
+
+  // Supabase 세션이 끝남(다른 탭 로그아웃 · refresh token 만료) → 비로그인으로
+  useEffect(() => {
+    if (!supabase) return
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') queryClient.setQueryData(authKeys.me, null)
+    })
+    return () => data.subscription.unsubscribe()
   }, [queryClient])
 
   const value = useMemo<AuthContextValue>(
