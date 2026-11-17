@@ -15,10 +15,14 @@ describe('carryQuery', () => {
     )
   })
   it('metrics 는 preset=custom 일 때만', () => {
-    expect(carryQuery('/', sp('preset=custom&metrics=quiet,vibe'))).toBe(
-      '/?preset=custom&metrics=quiet%2Cvibe',
+    expect(carryQuery('/tier', sp('preset=custom&metrics=quiet,vibe'))).toBe(
+      '/tier?preset=custom&metrics=quiet%2Cvibe',
     )
-    expect(carryQuery('/', sp('preset=quiet&metrics=quiet,vibe'))).toBe('/?preset=quiet')
+    expect(carryQuery('/tier', sp('preset=quiet&metrics=quiet,vibe'))).toBe('/tier?preset=quiet')
+  })
+  it('홈은 분위기를 비운 채로: month 만 붙이고 preset·metrics 는 버린다', () => {
+    expect(carryQuery('/', sp('month=2025-10&preset=custom&metrics=quiet'))).toBe('/?month=2025-10')
+    expect(carryQuery('/?preset=lively', sp('preset=quiet'))).toBe('/?preset=lively')
   })
   it('to 에 이미 있는 키는 덮어쓰지 않는다', () => {
     expect(carryQuery('/compare?dongs=a,b&month=annual', sp('month=2025-10'))).toBe(
