@@ -12,7 +12,6 @@ import type { MonthParam } from '@/features/metric/month'
 import DetailSection from '@/features/region/components/DetailSection'
 
 type Props = {
-  id: string
   hourly: DongDetailResponse['hourly']
   peaks: DongDetailResponse['peaks']
   month: MonthParam
@@ -35,7 +34,6 @@ const CHART_WIDTH = 956
 const CHART_HEIGHT = 212
 
 export default function HourlyCurveSection({
-  id,
   hourly,
   peaks,
   month,
@@ -61,7 +59,7 @@ export default function HourlyCurveSection({
     <DetailSection
       title={DONG_COPY.curveTitle}
       titleId="curve-title"
-      caption={DONG_COPY.curveCaption(id)}
+      caption={DONG_COPY.curveCaption}
     >
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5">

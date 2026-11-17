@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('W-01 탐색(홈) — mock, 지도 키 없음', () => {
-  test('진입: 인기 지역 12곳, 첫 카드 고성군 즐겨찾기 1위, 히트맵 플레이스홀더에 양양군 54', async ({
+  test('진입: 인기 지역 12곳, 첫 카드 고성군 즐겨찾기 1위, 분위기 없음 → 히트맵 플레이스홀더에 양양군 51', async ({
     page,
   }) => {
     await page.goto('/?month=2025-10')
@@ -10,7 +10,11 @@ test.describe('W-01 탐색(홈) — mock, 지도 키 없음', () => {
     const cards = page.getByTestId('popular-grid').getByRole('link')
     await expect(cards.first()).toContainText('고성군')
     await expect(cards.first()).toContainText('즐겨찾기 1위')
-    await expect(page.getByRole('link', { name: '양양군 54' })).toBeVisible()
+    // 분위기를 안 고르면 지표 5개 같은 가중치 (조용한 곳이면 54)
+    await expect(
+      page.getByRole('group', { name: '분위기' }).getByRole('button', { pressed: true }),
+    ).toHaveCount(0)
+    await expect(page.getByRole('link', { name: '양양군 51' })).toBeVisible()
   })
 
   test('정렬·필터: 조회 많은 순 → 제주시, 도시 필터 → 카드 감소', async ({ page }) => {

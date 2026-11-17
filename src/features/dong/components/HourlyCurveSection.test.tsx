@@ -8,7 +8,6 @@ describe('HourlyCurveSection', () => {
   it('주중 피크·가장 한산·주말 피크 칸', () => {
     render(
       <HourlyCurveSection
-        id="5182025300"
         hourly={GEOJIN_2025_10.hourly}
         peaks={GEOJIN_2025_10.peaks}
         month="2025-10"
@@ -23,7 +22,6 @@ describe('HourlyCurveSection', () => {
   it('주말 토글 시 가장 한산 칸이 주말 값으로 바뀐다', async () => {
     render(
       <HourlyCurveSection
-        id="5182025300"
         hourly={GEOJIN_2025_10.hourly}
         peaks={GEOJIN_2025_10.peaks}
         month="2025-10"
@@ -38,7 +36,6 @@ describe('HourlyCurveSection', () => {
     const onMonthChange = vi.fn()
     render(
       <HourlyCurveSection
-        id="5182025300"
         hourly={GEOJIN_2025_10.hourly}
         peaks={GEOJIN_2025_10.peaks}
         month="2025-10"

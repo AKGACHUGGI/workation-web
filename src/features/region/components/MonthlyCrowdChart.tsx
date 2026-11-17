@@ -42,10 +42,7 @@ export default function MonthlyCrowdChart({
         ? CROWD_COLORS.avoid
         : CROWD_COLORS.muted
   return (
-    <DetailSection
-      title="월별 혼잡 지수"
-      caption="해당 월 방문인구 ÷ 연중 최대 × 100 · GET /regions/{id}/months"
-    >
+    <DetailSection title="월별 혼잡 지수" caption="해당 월 방문인구 ÷ 연중 최대 × 100">
       <div className="flex items-start gap-8">
         <div className="flex shrink-0 flex-col gap-3">
           <ul className="flex items-center gap-4">

@@ -68,17 +68,13 @@ describe('PopularRegions', () => {
     expect(calls.at(-1)).toBeNull()
   })
 
-  it('직접 설정이면 토글이 펼쳐진다', async () => {
+  it('장소 태그 필터 → 해당 태그가 있는 지역만, 제목 개수도 거른 수', () => {
     renderWithRouter(
       <PopularRegions items={items} month="2025-10" hoverId={null} onHover={() => {}} />,
-      {
-        route: '/?preset=custom&metrics=quiet,crowd',
-      },
+      { route: '/?place=surf' },
     )
-    const toggles = screen.getByRole('group', { name: '포함 지표' })
-    expect(within(toggles).getByRole('button', { name: '동네 조용함' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    const grid = screen.getByTestId('popular-grid')
+    expect(within(grid).getAllByRole('link')).toHaveLength(2)
+    expect(screen.getByRole('heading', { name: '인기 지역 2곳' })).toBeInTheDocument()
   })
 })

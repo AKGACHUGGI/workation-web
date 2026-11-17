@@ -1,5 +1,6 @@
 import type { MonthParam } from '@/features/metric/month'
 import type { Grade, MetricKey, MetricScores, Weights } from '@/features/metric/types'
+import type { PlaceTag } from '@/features/popular/types'
 
 export type { MonthParam } from '@/features/metric/month'
 
@@ -23,6 +24,7 @@ export type TierItem = {
   scores: MetricScores // 0~100 정수, 같은 month·scope 안의 백분위
   inherited: MetricKey[] // 상위 단위 값을 물려받은 지표. dong → ['overnight'], sigungu → []
   terrain: Terrain[] // 지형(수동 관리). 행정동은 소속 시군구 값. W-01 지형 필터가 쓴다
+  placeTags?: PlaceTag[] // 지형 외 장소 태그. 행정동은 소속 시군구 값
 }
 
 /** 등급 계산 기준. selected 는 직접 설정에서 고르지 않은 지표를 흐리게 표시할 때만 쓴다 */

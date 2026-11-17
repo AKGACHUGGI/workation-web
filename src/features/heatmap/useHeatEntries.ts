@@ -7,8 +7,8 @@ import { personalize, useBoost } from '@/features/interest'
 import type { HeatMetric } from '@/features/heatmap/types'
 import type { MonthParam } from '@/features/metric/month'
 import type { Grade, Weights } from '@/features/metric/types'
-import { terrainMatch } from '@/features/popular/sort'
-import type { Terrain } from '@/features/popular/types'
+import { tagMatch } from '@/features/popular/sort'
+import type { PlaceTag, Terrain } from '@/features/popular/types'
 import type { TierScope } from '@/features/tier/types'
 import { useTierQuery } from '@/features/tier/useTierQuery'
 import { carryQuery } from '@/hooks/carryQuery'
@@ -30,10 +30,22 @@ type Args = {
   metric: HeatMetric
   weights: Weights
   terrain: Terrain[]
+  /** 장소 태그 필터. 없으면 지형만 */
+  place?: PlaceTag[]
 }
 
+const NO_PLACE: PlaceTag[] = []
+
 /** tier 응답 → 히트맵 항목. 행정동 범위는 선택한 시군구 안의 동만. */
-export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: Args) {
+export function useHeatEntries({
+  month,
+  scope,
+  sgg,
+  metric,
+  weights,
+  terrain,
+  place = NO_PLACE,
+}: Args) {
   const query = useTierQuery(month, scope)
   const { search } = useLocation()
   const boost = useBoost()
@@ -65,9 +77,9 @@ export function useHeatEntries({ month, scope, sgg, metric, weights, terrain }: 
       score: shown[i],
       grade: grades[i],
       step: colorScale(shown[i]),
-      dimmed: scope === 'sigungu' && !terrainMatch(item, terrain),
+      dimmed: scope === 'sigungu' && !tagMatch(item, terrain, place),
       href: carryQuery(scope === 'dong' ? `/dongs/${item.id}` : `/regions/${item.id}`, current),
     }))
-  }, [query.data, scope, sgg, metric, weights, terrain, search, boost])
+  }, [query.data, scope, sgg, metric, weights, terrain, place, search, boost])
   return { entries, isPending: query.isPending, isError: query.isError, refetch: query.refetch }
 }

@@ -1,3 +1,4 @@
+import type { PlaceTag } from '@/features/popular/types'
 import type { Terrain } from '@/features/tier/types'
 
 export type SigunguMeta = {
@@ -6,6 +7,8 @@ export type SigunguMeta = {
   province: string
   photoUrl: string
   terrain: Terrain[]
+  /** 실제 DB region.tags (2026-11-17 조회) 중 지형 외 장소 태그 */
+  placeTags: PlaceTag[]
   tags: string[]
 }
 
@@ -19,6 +22,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '강원특별자치도',
     photoUrl: photo('51820'),
     terrain: ['coast'],
+    placeTags: ['beach', 'cafe', 'food', 'library', 'park', 'market', 'resort', 'long_stay'],
     tags: ['해안', '속초시 인접'],
   },
   {
@@ -27,6 +31,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '강원특별자치도',
     photoUrl: photo('51210'),
     terrain: ['coast', 'city'],
+    placeTags: ['beach', 'cafe', 'food', 'park', 'market', 'resort', 'long_stay'],
     tags: ['해안', '도시'],
   },
   {
@@ -35,6 +40,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '강원특별자치도',
     photoUrl: photo('51830'),
     terrain: ['coast'],
+    placeTags: ['beach', 'surf', 'cafe', 'park', 'market', 'resort', 'long_stay'],
     tags: ['해안', '서핑'],
   },
   {
@@ -43,6 +49,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '강원특별자치도',
     photoUrl: photo('51150'),
     terrain: ['coast', 'city'],
+    placeTags: ['beach', 'cafe', 'food', 'library', 'park', 'market', 'resort', 'long_stay'],
     tags: ['해안', '도시'],
   },
   {
@@ -51,6 +58,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '강원특별자치도',
     photoUrl: photo('51170'),
     terrain: ['coast'],
+    placeTags: ['beach', 'food', 'park', 'market'],
     tags: ['해안'],
   },
   {
@@ -59,6 +67,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '전북특별자치도',
     photoUrl: photo('52110'),
     terrain: ['city'],
+    placeTags: ['cafe', 'food', 'library', 'park', 'market', 'long_stay'],
     tags: ['도시', '한옥마을'],
   },
   {
@@ -67,6 +76,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '전북특별자치도',
     photoUrl: photo('52140'),
     terrain: ['mountain'],
+    placeTags: ['library', 'park', 'market'],
     tags: ['산간', '내장산'],
   },
   {
@@ -75,6 +85,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '전북특별자치도',
     photoUrl: photo('52800'),
     terrain: ['coast'],
+    placeTags: ['beach', 'island', 'food', 'park', 'market', 'resort', 'long_stay'],
     tags: ['해안', '변산반도'],
   },
   {
@@ -83,6 +94,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '전라남도',
     photoUrl: photo('46150'),
     terrain: ['city'],
+    placeTags: ['beach', 'food', 'library', 'park', 'market', 'long_stay'],
     tags: ['도시', '순천만'],
   },
   {
@@ -91,6 +103,7 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '전라남도',
     photoUrl: photo('46770'),
     terrain: ['coast'],
+    placeTags: ['beach', 'island', 'park', 'market', 'long_stay'],
     tags: ['해안', '우주센터'],
   },
   {
@@ -99,6 +112,18 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '제주특별자치도',
     photoUrl: photo('50110'),
     terrain: ['coast', 'city'],
+    placeTags: [
+      'beach',
+      'island',
+      'surf',
+      'cafe',
+      'food',
+      'library',
+      'park',
+      'market',
+      'resort',
+      'long_stay',
+    ],
     tags: ['해안', '도시'],
   },
   {
@@ -107,6 +132,17 @@ export const SIGUNGU: SigunguMeta[] = [
     province: '제주특별자치도',
     photoUrl: photo('50130'),
     terrain: ['coast', 'mountain'],
+    placeTags: [
+      'beach',
+      'island',
+      'cafe',
+      'food',
+      'library',
+      'park',
+      'market',
+      'resort',
+      'long_stay',
+    ],
     tags: ['해안', '한라산 남쪽'],
   },
 ]
