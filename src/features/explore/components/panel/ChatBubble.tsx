@@ -12,7 +12,7 @@ const ERROR_TEXT: Record<ChatErrorKind, string> = {
 
 /**
  * ② 채팅 한 차례: 질문 말풍선(오른쪽, Figma Explore/Chat/QuestionBubble 466:9905, 연분홍) + 답 자리(왼쪽).
- * 답은 브리핑과 같은 글자로 문장마다 한 줄. 안내(guide)는 회색으로 문장 위에(동 4개 이상이면 둘 다 온다).
+ * 답은 브리핑처럼 문장을 이어 한 문단으로(백엔드가 이어지게 쓴다). 안내(guide)는 회색으로 문장 위에(동 4개 이상이면 둘 다 온다).
  * 대기는 점 3개 (Typing 466:9913), 다시 시도는 RetryButton 466:9917. 근거(evidence)는 보이지 않는다
  */
 export default function ChatBubble({ turn, onRetry, ref }: Props) {
@@ -38,11 +38,11 @@ export default function ChatBubble({ turn, onRetry, ref }: Props) {
           {turn.guide && (
             <p className="text-caption-xs text-text-secondary leading-normal">{turn.guide}</p>
           )}
-          {turn.sentences.map((s, i) => (
-            <p key={i} className="text-caption-xs text-text-primary leading-normal">
-              {s.text}
+          {turn.sentences.length > 0 && (
+            <p className="text-caption-xs text-text-primary leading-normal">
+              {turn.sentences.map((s) => s.text).join(' ')}
             </p>
-          ))}
+          )}
         </div>
       )}
       {turn.status === 'error' && (
