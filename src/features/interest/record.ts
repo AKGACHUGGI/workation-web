@@ -42,8 +42,7 @@ export function recordInterest(input: InterestInput): void {
     fetch(`${API_BASE_URL}/api/events`, {
       method: 'POST',
       keepalive: true,
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'workation-web' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ anonId: getAnonId(), kind, target, payload }),
     }).catch(() => {})
   } catch {
