@@ -1,6 +1,12 @@
 import { ChevronRight } from 'lucide-react'
+import GradeBadge from '@/components/ui/GradeBadge'
 import { EXPLORE_COPY } from '@/features/explore/copy'
-import { gradeChipLabel, hourChipLabel, monthChipLabel } from '@/features/explore/labels'
+import {
+  GRADE_LABEL,
+  gradeChipLabel,
+  hourChipLabel,
+  monthChipLabel,
+} from '@/features/explore/labels'
 import type { DayGroup, DetailKind, DongDetail } from '@/features/explore/types'
 import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 
@@ -45,7 +51,8 @@ function ChipText({ label, sep }: { label: string; sep: string }) {
 }
 
 /**
- * 눌리는 칩(시간대·한산한 달)만 상자와 › 아이콘을 두고, 등급 칩은 글자만 둔다 (눌림 구분, 2026-11-13).
+ * 눌리는 칩(시간대·한산한 달)만 테두리와 › 아이콘을 두고, 등급 칩은 테두리 없는 옅은 바탕 + GradeBadge 로
+ * 오른쪽 칩과 크기·모양을 맞추되 눌리지 않는 정보임을 보인다 (눌림 구분 2026-11-13, 바탕 2026-11-17).
  * ② 동 근거 그래프 (Figma 436:10491 배치): 가운데 동 원 + 등급·시간대·한산한 달 칩.
  * 평일·주말 토글은 시간대 막대에만 영향이 있어 상세 칸(DetailSlot)으로 옮겼다. day 는 시간대 칩 글자에만 쓴다.
  * Figma·스펙 §3-3 의 24시간 링은 상세 칸 막대와 같은 정보라 빼고 원만 둔다 (2026-11-13 사용자 결정)
@@ -53,7 +60,7 @@ function ChipText({ label, sep }: { label: string; sep: string }) {
 export default function DongFactGraph({ dong, day, detail, onDetail }: Props) {
   const grades = GRADE_SLOTS.flatMap((slot) => {
     const g = dong.grades[slot.key]
-    return g ? [{ ...slot, label: gradeChipLabel(slot.key, g) }] : []
+    return g ? [{ ...slot, grade: g.grade, label: gradeChipLabel(slot.key, g) }] : []
   })
   // 값이 없으면 문구 함수가 null → 그 칩을 숨긴다
   const selectable = [
@@ -108,10 +115,18 @@ export default function DongFactGraph({ dong, day, detail, onDetail }: Props) {
           key={g.key}
           data-chip="grade"
           aria-label={g.label}
-          className={`${CHIP} left-0 cursor-default`}
+          className={`${CHIP} bg-bg-subtle left-0 cursor-default`}
           style={{ top: g.top }}
         >
-          <ChipText label={g.label} sep=" / " />
+          <span aria-hidden className="flex items-center gap-1">
+            <span className="text-explore-xs text-text-primary font-bold">
+              {GRADE_LABEL[g.key]}
+            </span>
+            <GradeBadge grade={g.grade} size="sm" />
+          </span>
+          <span aria-hidden className="text-explore-2xs text-text-secondary">
+            {splitAt(g.label, ' / ')[1]}
+          </span>
         </div>
       ))}
 

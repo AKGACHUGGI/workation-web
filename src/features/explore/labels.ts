@@ -49,12 +49,21 @@ function signed(n: number): string {
   return n > 0 ? `+${n}` : `−${Math.abs(n)}`
 }
 
+export type DiffPart = { key: GradeKey; label: string; value: string; sign: -1 | 0 | 1 }
+
+/** 점수 차를 지표별로 나눈다 (행에서 이름·값을 따로 꾸밀 때). null 지표는 뺀다 */
+export function diffParts(diff: SimilarDong['diff']): DiffPart[] {
+  return (['quiet', 'peer', 'evening'] as const).flatMap((k) => {
+    const v = diff[k]
+    return v === null
+      ? []
+      : [{ key: k, label: DIFF_LABEL[k], value: signed(v), sign: Math.sign(v) as -1 | 0 | 1 }]
+  })
+}
+
 /** 점수 차 = 상대 − 이 동. null 지표는 뺀다 */
 export function diffLabel(diff: SimilarDong['diff']): string {
-  return (['quiet', 'peer', 'evening'] as const)
-    .flatMap((k) => {
-      const v = diff[k]
-      return v === null ? [] : [`${DIFF_LABEL[k]} ${signed(v)}`]
-    })
+  return diffParts(diff)
+    .map((p) => `${p.label} ${p.value}`)
     .join(' · ')
 }

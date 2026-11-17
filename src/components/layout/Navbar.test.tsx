@@ -33,9 +33,9 @@ describe('Navbar (Figma Web/NavbarV2)', () => {
     expect(screen.queryByRole('link', { name: /워케이션 노트/ })).not.toBeInTheDocument()
     expect(screen.queryByText('NEW')).not.toBeInTheDocument()
   })
-  it('팁 남기기·언어 버튼과 로그인(계정 필) 버튼이 있다', () => {
+  it('언어 버튼과 로그인(계정 필) 버튼이 있고 팁 남기기 버튼은 없다', () => {
     renderWithRouter(<Navbar />)
-    expect(screen.getByRole('button', { name: '팁 남기기' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '팁 남기기' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: '언어' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '로그인' })).toBeInTheDocument()
   })

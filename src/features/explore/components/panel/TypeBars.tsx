@@ -4,7 +4,7 @@ import { DONG_SECTION_H } from '@/features/explore/components/panel/panelLayout'
 
 type Props = { types: DongDetail['types'] }
 
-/** ② 유형 막대 3개 (Figma 436:10461). 응답 순서 = 점수 높은 순, 첫째가 1위 */
+/** ② 유형 막대 3개 (Figma 436:10461). 응답 순서 = 점수 높은 순, 첫째가 1위. 높이는 DONG_SECTION_H.types 고정 */
 export default function TypeBars({ types }: Props) {
   return (
     <section
@@ -27,20 +27,21 @@ export default function TypeBars({ types }: Props) {
                 >
                   {t.name}
                 </span>
-                <span className="bg-chart-bar-muted relative h-2 flex-1 overflow-hidden rounded-sm">
+                <span className="bg-chart-bar-muted relative h-2 flex-1 overflow-hidden rounded-full">
                   <span
                     data-fill
-                    className={`absolute inset-y-0 left-0 rounded-sm ${top ? 'bg-brand-primary' : 'bg-chart-bar'}`}
+                    className={`absolute inset-y-0 left-0 rounded-full ${top ? 'bg-brand-primary' : 'bg-chart-bar'}`}
                     style={{ width: `${t.score}%` }}
                   />
                 </span>
                 <span
-                  className={`text-caption-xs w-11 shrink-0 text-right font-bold ${top ? 'text-text-brand' : 'text-text-primary'}`}
+                  className={`text-caption-xs w-11 shrink-0 text-right font-bold tabular-nums ${top ? 'text-text-brand' : 'text-text-primary'}`}
                 >
                   {t.score}
                 </span>
               </div>
-              <p className="text-explore-2xs text-text-tertiary">{t.reason}</p>
+              {/* 근거는 막대 시작선에 맞춰 이름 칸 아래를 비운다: 이름 > 점수 > 근거 */}
+              <p className="text-explore-2xs text-text-tertiary truncate pr-11 pl-21">{t.reason}</p>
             </li>
           )
         })}

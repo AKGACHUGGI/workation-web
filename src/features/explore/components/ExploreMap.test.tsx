@@ -58,6 +58,7 @@ const base = {
   onPickDong: () => {},
   onHoverDong: () => {},
   camera: null,
+  onZoomOut: () => {},
 }
 
 beforeEach(() => {

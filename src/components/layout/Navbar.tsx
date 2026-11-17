@@ -24,7 +24,7 @@ const TAB = 'flex flex-col items-center gap-1.5 px-1 pt-3'
 
 /**
  * Figma Web/NavbarV2 (54:258). 높이 80 · 좌우 32 · 하단 헤어라인.
- * 좌: 로고(빨간 핀 32 + 워케이션맵) · 중앙: 제품 탭 3개 · 우: 팁 남기기 · 언어 · 계정 필(AuthMenu).
+ * 좌: 로고(빨간 핀 32 + 워케이션맵) · 중앙: 제품 탭 3개 · 우: 언어 · 계정 필(AuthMenu).
  * 메뉴 이동 시 month·preset 쿼리 유지
  */
 export default function Navbar() {
@@ -54,13 +54,7 @@ export default function Navbar() {
           ))}
         </nav>
         <div data-slot="auth-menu" className="flex w-60 items-center justify-end gap-2">
-          {/* 팁 남기기·언어는 아직 기능이 없어 동작을 연결하지 않는다 */}
-          <button
-            type="button"
-            className="text-body-sm text-text-primary hover:bg-bg-subtle rounded-full px-3 py-2.5 font-medium"
-          >
-            팁 남기기
-          </button>
+          {/* 언어는 아직 기능이 없어 동작을 연결하지 않는다 */}
           <button
             type="button"
             aria-label="언어"
