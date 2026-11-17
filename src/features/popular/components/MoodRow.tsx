@@ -30,7 +30,6 @@ export default function MoodRow() {
   return (
     <div className="flex flex-col items-center gap-3 pt-4">
       <div role="group" aria-label="분위기" className="flex items-center gap-2">
-        <span className="text-body-sm text-text-secondary mr-1">이 중에서 분위기</span>
         {PRESET_KEYS.map((p) => (
           <Chip key={p} size="md" selected={mood === p} onClick={() => choose(p)}>
             {PRESET_LABEL[p]}
