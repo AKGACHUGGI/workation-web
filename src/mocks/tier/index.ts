@@ -27,6 +27,7 @@ function fromGenerated(rows: GeneratedRow[], scope: TierScope): TierItem[] {
         sigungu: scope === 'dong' ? { id: sgg.id, name: sgg.name } : undefined,
         photoUrl: sgg.photoUrl,
         terrain: sgg.terrain,
+        placeTags: sgg.placeTags,
         scores: r.scores,
         inherited: scope === 'dong' ? ['overnight' as const] : [],
       },

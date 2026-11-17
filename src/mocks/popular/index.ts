@@ -23,6 +23,7 @@ export function getPopularMock(month: MonthParam): PopularResponse {
       photoUrl: t.photoUrl,
       tags: meta?.tags ?? [],
       terrain: t.terrain,
+      placeTags: t.placeTags,
       scores: t.scores,
       favoriteCount: Math.round(base.favoriteCount * wobble),
       viewCount: Math.round(base.viewCount * wobble),

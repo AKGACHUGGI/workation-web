@@ -18,19 +18,19 @@ describe('CategoryStrip', () => {
     await userEvent.click(screen.getByRole('button', { name: '도시' }))
     expect(screen.getByTestId('location')).toHaveTextContent('terrain=coast%2Ccity')
   })
-  it('조용한 곳 → preset=quiet, 또래 → preset=lively', async () => {
-    renderWithRouter(<CategoryStrip />, { route: '/' })
-    await userEvent.click(screen.getByRole('button', { name: '또래' }))
-    expect(screen.getByTestId('location')).toHaveTextContent('preset=lively')
-    expect(screen.getByRole('button', { name: '또래' })).toHaveAttribute('aria-pressed', 'true')
-    await userEvent.click(screen.getByRole('button', { name: '조용한 곳' }))
-    expect(screen.getByTestId('location')).toHaveTextContent('preset=quiet')
+  it('장소 태그는 place 쿼리로 토글', async () => {
+    renderWithRouter(<CategoryStrip />, { route: '/?terrain=coast' })
+    await userEvent.click(screen.getByRole('button', { name: '카페 많음' }))
+    await userEvent.click(screen.getByRole('button', { name: '해수욕장' }))
+    expect(screen.getByTestId('location')).toHaveTextContent('place=beach%2Ccafe')
+    expect(screen.getByTestId('location')).toHaveTextContent('terrain=coast')
+    await userEvent.click(screen.getByRole('button', { name: '카페 많음' }))
+    expect(screen.getByTestId('location')).toHaveTextContent('place=beach')
+    expect(screen.getByTestId('location')).not.toHaveTextContent('cafe')
   })
-  it('한 달 살기·워케이션은 장식 (aria-disabled)', () => {
+  it('분위기(프리셋) 탭은 없다', () => {
     renderWithRouter(<CategoryStrip />)
-    expect(screen.getByRole('button', { name: '한 달 살기' })).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
+    expect(screen.queryByRole('button', { name: '조용한 곳' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '또래' })).not.toBeInTheDocument()
   })
 })

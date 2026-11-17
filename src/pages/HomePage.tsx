@@ -3,6 +3,7 @@ import HeatmapRail from '@/features/heatmap/components/HeatmapRail'
 import { useMonthParam } from '@/hooks/useQueryState'
 import CategoryStrip from '@/features/popular/components/CategoryStrip'
 import HomeMonthBar from '@/features/popular/components/HomeMonthBar'
+import MoodRow from '@/features/popular/components/MoodRow'
 import PopularRegions from '@/features/popular/components/PopularRegions'
 import PopularSkeleton from '@/features/popular/components/PopularSkeleton'
 import { POPULAR_ERROR } from '@/features/popular/copy'
@@ -37,6 +38,7 @@ export default function HomePage() {
         onSubmit={search.submit}
       />
       <CategoryStrip />
+      <MoodRow />
       <HomeMonthBar />
       <hr className="border-border-default mx-2 mt-5" />
       <div className="flex gap-6 pt-8 pb-10">

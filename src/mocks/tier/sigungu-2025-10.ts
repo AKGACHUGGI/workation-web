@@ -27,6 +27,7 @@ export const SIGUNGU_ITEMS_2025_10: TierItem[] = SIGUNGU.map((s) => ({
   province: s.province,
   photoUrl: s.photoUrl,
   terrain: s.terrain,
+  placeTags: s.placeTags,
   scores: SIGUNGU_SCORES_2025_10[s.id],
   inherited: [],
 }))

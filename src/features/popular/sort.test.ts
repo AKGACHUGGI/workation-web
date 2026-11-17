@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { NO_BOOST } from '@/features/interest'
 import { PRESET_WEIGHTS } from '@/features/metric/constants'
-import { personalPopular, rankBadge, sortPopular, terrainMatch } from '@/features/popular/sort'
+import { personalPopular, rankBadge, sortPopular, tagMatch } from '@/features/popular/sort'
 import type { PopularRegion } from '@/features/popular/types'
 
 const mk = (
@@ -57,13 +57,20 @@ describe('sortPopular', () => {
   })
 })
 
-describe('terrainMatch', () => {
+describe('tagMatch', () => {
   it('빈 필터는 모두 통과', () => {
-    expect(terrainMatch({ terrain: ['coast'] }, [])).toBe(true)
+    expect(tagMatch({ terrain: ['coast'] }, [], [])).toBe(true)
   })
-  it('하나라도 겹치면 통과', () => {
-    expect(terrainMatch({ terrain: ['coast', 'mountain'] }, ['mountain'])).toBe(true)
-    expect(terrainMatch({ terrain: ['coast'] }, ['city'])).toBe(false)
+  it('지형 하나라도 겹치면 통과', () => {
+    expect(tagMatch({ terrain: ['coast', 'mountain'] }, ['mountain'])).toBe(true)
+    expect(tagMatch({ terrain: ['coast'] }, ['city'])).toBe(false)
+  })
+  it('지형·장소 태그 구분 없이 OR', () => {
+    expect(tagMatch({ terrain: ['city'], placeTags: ['cafe'] }, ['coast'], ['cafe'])).toBe(true)
+    expect(tagMatch({ terrain: ['city'], placeTags: ['cafe'] }, [], ['surf'])).toBe(false)
+  })
+  it('placeTags 가 없으면 장소 태그 필터에 걸리지 않는다', () => {
+    expect(tagMatch({ terrain: ['coast'] }, [], ['beach'])).toBe(false)
   })
 })
 

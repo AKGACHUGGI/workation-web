@@ -145,7 +145,6 @@ export default function DongProfilePage() {
             />
           </div>
           <HourlyCurveSection
-            id={detail.id}
             hourly={detail.hourly}
             peaks={detail.peaks}
             month={month}

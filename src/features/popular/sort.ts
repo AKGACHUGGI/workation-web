@@ -4,7 +4,7 @@ import { composite } from '@/features/metric/score'
 import { GRADES } from '@/features/metric/types'
 import type { Grade, Weights } from '@/features/metric/types'
 import { SORT_BADGE_PREFIX } from '@/features/popular/copy'
-import type { PopularRegion, PopularSort, Terrain } from '@/features/popular/types'
+import type { PlaceTag, PopularRegion, PopularSort, Terrain } from '@/features/popular/types'
 
 export type PersonalScore = { score: number; grade: Grade }
 
@@ -41,10 +41,20 @@ export function sortPopular(
   return [...items].sort(cmp[sort])
 }
 
-/** 지형 필터. 빈 필터는 모두 통과, 아니면 하나라도 겹치면 통과 */
-export function terrainMatch(item: { terrain: Terrain[] }, terrains: Terrain[]): boolean {
-  if (terrains.length === 0) return true
-  return item.terrain.some((t) => terrains.includes(t))
+/**
+ * 카테고리 필터 (지형 + 장소 태그). 아무것도 안 고르면 모두 통과,
+ * 아니면 고른 태그 중 하나라도 있으면 통과 (지형·장소 구분 없이 OR)
+ */
+export function tagMatch(
+  item: { terrain: Terrain[]; placeTags?: PlaceTag[] },
+  terrains: Terrain[],
+  places: PlaceTag[] = [],
+): boolean {
+  if (terrains.length === 0 && places.length === 0) return true
+  return (
+    item.terrain.some((t) => terrains.includes(t)) ||
+    (item.placeTags ?? []).some((t) => places.includes(t))
+  )
 }
 
 /** 정렬 기준 상위 3개 배지 */

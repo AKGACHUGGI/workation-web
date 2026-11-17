@@ -9,7 +9,7 @@ type MetricRanks = ReportResponse['metricRanks']
 
 export const PDF_FAIL_MESSAGE = 'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요'
 export const REPORT_SOURCE_NOTE =
-  '출처: LG U+ 유동인구·서비스인구 2025.1~12 (행정동 단위) · 원본 인구수는 표시하지 않고 지수·등급·상대순위만 제공 · 명세 F-10'
+  '출처: LG U+ 유동인구·서비스인구 2025.1~12 (행정동 단위) · 원본 인구수는 표시하지 않고 지수·등급·상대순위만 제공'
 export const REPORT_DESCRIPTION =
   '시군구별 성수기 집중도, 숙박 성향, 대상 지역 대비 위치를 한 장으로 정리합니다. 2025년 연간 데이터 기준.'
 

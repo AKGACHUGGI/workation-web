@@ -99,6 +99,7 @@ export const DONG_ITEMS_2025_10: TierItem[] = ROWS.map(
       sigungu: { id: sgg.id, name: sgg.name },
       photoUrl: sgg.photoUrl,
       terrain: sgg.terrain,
+      placeTags: sgg.placeTags,
       scores: { quiet, crowd, peer, overnight: SIGUNGU_SCORES_2025_10[sggId].overnight, vibe },
       inherited: ['overnight'],
     }

@@ -14,9 +14,9 @@ import PopularHeader from '@/features/popular/components/PopularHeader'
 import { POPULAR_NOTE } from '@/features/popular/copy'
 import { formatCount } from '@/features/popular/format'
 import { DEFAULT_SORT, parseSort } from '@/features/popular/params'
-import { personalPopular, rankBadge, sortPopular, terrainMatch } from '@/features/popular/sort'
+import { personalPopular, rankBadge, sortPopular, tagMatch } from '@/features/popular/sort'
 import type { PopularRegion, PopularSort } from '@/features/popular/types'
-import { useTerrainParam } from '@/features/popular/useTerrainParam'
+import { usePlaceParam, useTerrainParam } from '@/features/popular/useTerrainParam'
 import { useWeights } from '@/features/popular/useWeights'
 import { carryQuery } from '@/hooks/carryQuery'
 import { useQueryState } from '@/hooks/useQueryState'
@@ -36,7 +36,8 @@ type Props = {
 export default function PopularRegions({ items, month, hoverId, onHover, conditions }: Props) {
   const [sort, setSort] = useQueryState<PopularSort>('sort', parseSort, DEFAULT_SORT)
   const [terrain, setTerrain] = useTerrainParam()
-  const { preset, setPreset, selected, setSelected, weights } = useWeights()
+  const [place, setPlace] = usePlaceParam()
+  const { weights } = useWeights()
   const { isFavorite, toggle } = useFavorites()
   const boost = useBoost()
   const { search } = useLocation()
@@ -47,23 +48,24 @@ export default function PopularRegions({ items, month, hoverId, onHover, conditi
     const personal = personalPopular(items, weights, boost)
     return sortPopular(items, sort, weights, boost)
       .map((item) => ({ item, ...personal.get(item.id)! }))
-      .filter(({ item }) => terrainMatch(item, terrain))
-  }, [items, sort, weights, terrain, boost])
+      .filter(({ item }) => tagMatch(item, terrain, place))
+  }, [items, sort, weights, terrain, place, boost])
 
   return (
     <section className="flex flex-col gap-6">
       <PopularHeader
-        count={items.length}
+        count={list.length}
         sort={sort}
         onSortChange={setSort}
-        preset={preset}
-        onPresetChange={setPreset}
-        selected={selected}
-        onSelectedChange={setSelected}
         conditions={conditions}
       />
       {list.length === 0 ? (
-        <PopularEmpty onClearFilter={() => setTerrain([])} />
+        <PopularEmpty
+          onClearFilter={() => {
+            setTerrain([])
+            setPlace([])
+          }}
+        />
       ) : (
         <div data-testid="popular-grid" className="grid grid-cols-3 gap-6">
           {list.map(({ item, score, grade }, index) => (
