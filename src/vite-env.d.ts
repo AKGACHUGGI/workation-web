@@ -10,4 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_GOOGLE_MAPS_KEY?: string
   /** AdvancedMarker 용 Map ID. 비어 있으면 DEMO_MAP_ID */
   readonly VITE_GOOGLE_MAPS_MAP_ID?: string
+  /** Supabase 프로젝트 URL (로그인). 비어 있으면 로그인 비활성 */
+  readonly VITE_SUPABASE_URL?: string
+  /** Supabase anon(public) 키. service role 키를 넣지 않는다 */
+  readonly VITE_SUPABASE_ANON_KEY?: string
 }
