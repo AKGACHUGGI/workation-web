@@ -101,10 +101,10 @@ describe('ChatThread', () => {
     expect(scrollSpy).toHaveBeenCalledWith({ block: 'nearest', behavior: 'smooth' })
   })
 
-  it('비교 답은 문장마다 한 줄, guide 는 회색으로 문장 위에', async () => {
+  it('답 문장은 한 문단으로 잇고, guide 는 회색으로 문단 위에', async () => {
     mocked.mockResolvedValueOnce(
       reply(
-        ['조용함은 주문진읍이 더 나아요.', '저녁 활기는 두 곳이 비슷해요.'],
+        ['조용히 일하려면 주문진읍이 맞아요.', '반면 또래가 많은 곳은 경포동이에요.'],
         '앞의 세 곳만 볼게요.',
       ),
     )
@@ -112,10 +112,12 @@ describe('ChatThread', () => {
     await userEvent.type(input(), '경포동이랑 비교하면?{Enter}')
     const guide = await within(log()).findByText('앞의 세 곳만 볼게요.')
     expect(guide).toHaveClass('text-text-secondary')
-    const lines = within(log()).getAllByText(/주문진읍이 더 나아요|두 곳이 비슷해요/)
-    expect(lines).toHaveLength(2)
-    expect(lines[0].tagName).toBe('P')
-    expect(guide.compareDocumentPosition(lines[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const answer = within(log()).getByText(
+      '조용히 일하려면 주문진읍이 맞아요. 반면 또래가 많은 곳은 경포동이에요.',
+    )
+    expect(answer.tagName).toBe('P')
+    expect(answer).toHaveClass('text-text-primary')
+    expect(guide.compareDocumentPosition(answer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('입력 Enter 로 보내고 비워진다, 질문은 아래로 쌓인다', async () => {
