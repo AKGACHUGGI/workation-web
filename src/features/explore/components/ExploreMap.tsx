@@ -30,6 +30,8 @@ type Props = {
   onPickDong: (id: string) => void
   onHoverDong: (id: string | null) => void
   camera: CameraCommand | null
+  /** ①·② 에서 사용자가 지도를 충분히 줄였을 때 (⓪ 으로) */
+  onZoomOut: () => void
 }
 
 const dongBoundaryStyle = () => DONG_BOUNDARY_STYLE
@@ -49,6 +51,7 @@ export default function ExploreMap({
   onPickDong,
   onHoverDong,
   camera,
+  onZoomOut,
 }: Props) {
   const status = useApiLoadingStatus()
   const sigunguGeo = useSigunguGeoQuery()
@@ -83,7 +86,7 @@ export default function ExploreMap({
         clickableIcons={false}
         style={{ width: '100%', height: '100%' }}
       >
-        <CameraController camera={camera} />
+        <CameraController camera={camera} onZoomOut={onZoomOut} />
         <SigunguLayer
           activeSgg={sgg}
           hovered={hoveredSgg}

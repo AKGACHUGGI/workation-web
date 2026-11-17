@@ -21,16 +21,19 @@ import { useExploreCamera } from '@/features/explore/useExploreCamera'
 import { useExploreState } from '@/features/explore/useExploreState'
 import { usePinsQuery } from '@/features/explore/usePinsQuery'
 import { useSigunguMeta } from '@/features/explore/useSigunguMeta'
+import { useSigunguGeoQuery } from '@/features/heatmap/useSigunguGeoQuery'
 
 /** W-09 지도 탐색 v6 (/explore). ⓪ 안내 → ① 시군구 지식그래프 → ② 동 패널 */
 export default function ExplorePage() {
   const s = useExploreState()
   const pins = usePinsQuery(s.sgg)
   const geo = useGeoQuery(s.sgg ?? undefined)
+  // ① 카메라 범위 (ExploreMap·SigunguLayer 와 같은 쿼리라 요청은 한 번)
+  const sigunguGeo = useSigunguGeoQuery()
   const meta = useSigunguMeta(s.sgg)
   // 패널 스켈레톤용 (지도 핀 스켈레톤은 ExploreMap 이 같은 훅으로 따로 늦춘다)
   const pinsLoading = useDelayedLoading(s.sgg !== null && pins.isPending)
-  const camera = useExploreCamera(s.sgg, geo.data)
+  const camera = useExploreCamera(s.sgg, s.dong, sigunguGeo.data, geo.data, pins.data?.dongs)
 
   const [collapsed, setCollapsed] = useState(false)
   /** 지도 핀 ↔ 그래프 동 노드 미리 강조 (URL 에 넣지 않음) */
@@ -129,6 +132,7 @@ export default function ExplorePage() {
             onPickDong={(id) => s.openDong(id)}
             onHoverDong={setHoveredDong}
             camera={camera}
+            onZoomOut={s.closeAll}
           />
         </GoogleMapProvider>
         {s.sgg && (

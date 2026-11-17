@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import SimilarList from '@/features/explore/components/panel/SimilarList'
-import { diffLabel } from '@/features/explore/labels'
+import { diffParts } from '@/features/explore/labels'
 import { GEUMAM, JUMUNJIN } from '@/test/fixtures/explore'
 
 describe('SimilarList', () => {
@@ -17,8 +17,14 @@ describe('SimilarList', () => {
     expect(rows).toHaveLength(3)
     expect(rows[0]).toHaveTextContent('속초시 노학동')
     expect(rows[0]).toHaveTextContent('공통 6')
-    expect(rows[0]).toHaveTextContent('조용함 B · 1위 로컬살이형 · 바닷가')
-    expect(rows[0]).toHaveTextContent(diffLabel(JUMUNJIN.similar[0].diff))
+    // 공통 사실은 칩 하나씩, 점수 차는 지표마다 이름 + 값
+    const facts = rows[0].querySelector('[data-common]')!.children
+    expect([...facts].map((f) => f.textContent)).toEqual(['조용함 B', '1위 로컬살이형', '바닷가'])
+    const diffs = rows[0].querySelector('[data-diff]')!.children
+    expect([...diffs].map((d) => d.textContent)).toEqual(
+      diffParts(JUMUNJIN.similar[0].diff).map((p) => `${p.label}${p.value}`),
+    )
+    expect(diffs[2]).toHaveTextContent('저녁−15')
     await userEvent.click(rows[1])
     expect(onPick).toHaveBeenCalledWith(JUMUNJIN.similar[1])
   })

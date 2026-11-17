@@ -65,11 +65,16 @@ describe('DongFactGraph', () => {
     expect(screen.queryByText('이 동 하루 기준')).not.toBeInTheDocument()
   })
 
-  it('눌리는 칩만 상자 + › 아이콘, 등급은 상자 없는 글자', () => {
+  it('눌리는 칩만 테두리 + › 아이콘, 등급은 테두리·› 없는 바탕 + 등급 배지', () => {
     const { container } = setup()
     for (const g of container.querySelectorAll('[data-chip="grade"]')) {
       expect(g).not.toHaveClass('border')
+      expect(g.querySelector('[data-chevron]')).toBeNull()
     }
+    const evening = screen.getByLabelText(gradeChipLabel('evening', JUMUNJIN.grades.evening!))
+    expect(evening).toHaveTextContent(
+      `저녁 활기${JUMUNJIN.grades.evening!.grade}${JUMUNJIN.grades.evening!.score}점`,
+    )
     for (const b of screen.getAllByRole('button', { name: /^(도로 한산|한산한 달)/ })) {
       expect(b.querySelector('[data-chevron]')).not.toBeNull()
     }

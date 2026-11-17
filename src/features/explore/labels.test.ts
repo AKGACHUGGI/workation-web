@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   GRADE_LABEL,
   diffLabel,
+  diffParts,
   gradeChipLabel,
   hourChipLabel,
   monthChipLabel,
@@ -39,5 +40,14 @@ describe('diffLabel', () => {
   it('null 지표는 뺀다', () => {
     expect(diffLabel({ quiet: null, peer: 3, evening: null })).toBe('또래 +3')
     expect(diffLabel({ quiet: null, peer: null, evening: null })).toBe('')
+  })
+})
+
+describe('diffParts', () => {
+  it('지표마다 짧은 이름·부호 붙은 값·방향, null 은 뺀다', () => {
+    expect(diffParts({ quiet: 0, peer: null, evening: -15 })).toEqual([
+      { key: 'quiet', label: '조용함', value: '±0', sign: 0 },
+      { key: 'evening', label: '저녁', value: '−15', sign: -1 },
+    ])
   })
 })
