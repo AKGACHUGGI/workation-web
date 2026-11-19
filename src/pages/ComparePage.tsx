@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { keepPreviousData, useQueries } from '@tanstack/react-query'
 import PageContainer from '@/components/layout/PageContainer'
 import { useToast } from '@/components/ui/toast/useToast'
-import CompareChips from '@/features/compare/components/CompareChips'
 import CompareColumn from '@/features/compare/components/CompareColumn'
 import CompareMonthChips from '@/features/compare/components/CompareMonthChips'
 import DongPickerModal from '@/features/compare/components/DongPickerModal'
@@ -23,7 +22,7 @@ export default function ComparePage() {
   const tierItems = tier.data?.items
   const validIds = useMemo(() => tierItems?.map((i) => i.id), [tierItems])
 
-  const { ids, add, remove, canAdd, dropped } = useCompareList(validIds)
+  const { ids, add, remove, dropped } = useCompareList(validIds)
   const [pickerOpen, setPickerOpen] = useState(false)
   const toast = useToast()
 
@@ -40,16 +39,6 @@ export default function ComparePage() {
     })),
   })
 
-  const entries = ids.map((id, i) => {
-    const d = details[i].data
-    const t = tierItems?.find((it) => it.id === id)
-    return {
-      id,
-      name: d?.name ?? t?.name ?? id,
-      sigunguName: d?.sigungu.name ?? t?.sigungu?.name ?? '',
-    }
-  })
-
   const firstTwins = details[0]?.data?.quieterTwins
   const emptySlots = Math.max(0, MAX_COMPARE - ids.length)
 
@@ -64,13 +53,6 @@ export default function ComparePage() {
         </div>
         <CompareMonthChips value={month} onChange={setMonth} />
       </header>
-
-      <CompareChips
-        entries={entries}
-        canAdd={canAdd}
-        onRemove={remove}
-        onAdd={() => setPickerOpen(true)}
-      />
 
       <section aria-label="비교 열" className="grid grid-cols-3 items-start gap-6">
         {ids.map((id, i) => {
