@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
-  디자인 토큰 — Figma 기업연계캡스톤 > 01 Foundations > Tokens 컬렉션(Light) 과 1:1.
+  디자인 토큰 — Figma 기업연계캡스톤 > 01 Foundations > Tokens 컬렉션(Light·Dark) 과 1:1.
   기준 문서: workation-docs/디자인/디자인-원칙.md
   Figma 이름 → CSS 변수 → Tailwind 클래스
     primitive/rausch/500 → --color-rausch-500     → bg-rausch-500
