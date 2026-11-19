@@ -27,8 +27,8 @@ export default function ConfirmModal({
   pending = false,
 }: Props) {
   const confirmTone = danger
-    ? 'bg-signal-avoid text-text-inverse hover:bg-error-500'
-    : 'bg-brand-primary text-text-inverse hover:bg-brand-hover'
+    ? 'bg-error-500 text-text-on-brand'
+    : 'bg-brand-primary text-text-on-brand hover:bg-brand-hover'
   return (
     <Modal open={open} onClose={onCancel} titleId="confirm-modal-title" width="sm">
       <div className="flex flex-col gap-4">

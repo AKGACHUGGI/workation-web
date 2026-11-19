@@ -67,7 +67,7 @@ export default function SelectionCard({ pins, pick, onOpenDong }: Props) {
       <button
         type="button"
         onClick={() => onOpenDong(pin.id)}
-        className="bg-brand-primary text-text-inverse text-explore-sm w-full rounded-lg py-2.5 font-bold"
+        className="bg-brand-primary text-text-on-brand text-explore-sm w-full rounded-lg py-2.5 font-bold"
       >
         {EXPLORE_COPY.openDong}
       </button>

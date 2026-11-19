@@ -23,7 +23,7 @@ export default function UserPhotoTile({ photo }: Props) {
           검수 대기
         </span>
       )}
-      <figcaption className="text-caption-xs text-text-inverse absolute bottom-1.5 left-1.5 font-medium">
+      <figcaption className="text-caption-xs text-text-on-photo absolute bottom-1.5 left-1.5 font-medium">
         {monthLabel(photo.month)} · {photo.regionName}
       </figcaption>
     </figure>

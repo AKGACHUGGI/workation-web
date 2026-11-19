@@ -73,7 +73,8 @@ export default function CompareColumn({
   animate,
 }: Props) {
   const dongLink = useCarryLink(`/dongs/${id}`)
-  const [chartRef, chartWidth] = useElementWidth<HTMLDivElement>(CHART_FALLBACK_WIDTH)
+  const [chartRef, chartWidth, chartMeasured] =
+    useElementWidth<HTMLDivElement>(CHART_FALLBACK_WIDTH)
   /** 제거 버튼을 누른 뒤 내려가며 사라지는 중. 애니메이션이 끝나면 onRemove */
   const [leaving, setLeaving] = useState(false)
   const articleRef = useRef<HTMLElement>(null)
@@ -166,16 +167,18 @@ export default function CompareColumn({
 
       <div className="flex flex-col gap-2">
         <CurveLegend day={day} />
-        {/* 고정 폭 차트를 열 안쪽 폭에 맞춘다 */}
-        <div ref={chartRef} className="w-full">
-          <StayCurveChart
-            values={detail.stayHourly[day]}
-            day={day}
-            yMax={stayMax ?? stayAxisMax(detail.stayHourly[day]) ?? 1}
-            height={CHART_HEIGHT}
-            width={chartWidth}
-            animate={animate}
-          />
+        {/* 고정 폭 차트를 열 안쪽 폭에 맞춘다. 폭을 잰 뒤에 그려야 선이 끝까지 이어 그려진다 */}
+        <div ref={chartRef} className="w-full" style={{ height: CHART_HEIGHT }}>
+          {chartMeasured && (
+            <StayCurveChart
+              values={detail.stayHourly[day]}
+              day={day}
+              yMax={stayMax ?? stayAxisMax(detail.stayHourly[day]) ?? 1}
+              height={CHART_HEIGHT}
+              width={chartWidth}
+              animate={animate}
+            />
+          )}
         </div>
       </div>
 

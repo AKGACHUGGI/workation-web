@@ -94,7 +94,7 @@ export default function OnboardingModal({ me }: Props) {
         type="button"
         disabled={!canSubmit || busy}
         onClick={() => submit.mutate()}
-        className="bg-brand-primary text-body-base text-text-inverse hover:bg-brand-hover disabled:opacity-dim mt-6 h-12 w-full rounded-lg font-medium disabled:cursor-not-allowed"
+        className="bg-brand-primary text-body-base text-text-on-brand hover:bg-brand-hover disabled:opacity-dim mt-6 h-12 w-full rounded-lg font-medium disabled:cursor-not-allowed"
       >
         시작하기
       </button>

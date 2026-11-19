@@ -36,7 +36,7 @@ export default function FavoriteDongs({ dongs }: Props) {
               {canCompare ? (
                 <Link
                   to={compareHref}
-                  className="bg-brand-primary text-body-sm text-text-inverse rounded-lg px-4 py-2"
+                  className="bg-brand-primary text-body-sm text-text-on-brand rounded-lg px-4 py-2"
                 >
                   비교하기
                 </Link>
@@ -44,7 +44,7 @@ export default function FavoriteDongs({ dongs }: Props) {
                 <button
                   type="button"
                   disabled
-                  className="bg-brand-primary text-body-sm text-text-inverse opacity-dim rounded-lg px-4 py-2"
+                  className="bg-brand-primary text-body-sm text-text-on-brand opacity-dim rounded-lg px-4 py-2"
                 >
                   비교하기
                 </button>

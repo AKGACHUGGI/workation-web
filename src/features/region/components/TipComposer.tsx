@@ -23,7 +23,7 @@ export default function TipComposer({ placeholder }: Props) {
       <Camera size={20} aria-hidden className="text-text-secondary shrink-0" />
       <span
         aria-hidden
-        className="bg-brand-primary text-body-sm text-text-inverse shrink-0 rounded-lg px-3 py-2 font-medium"
+        className="bg-brand-primary text-body-sm text-text-on-brand shrink-0 rounded-lg px-3 py-2 font-medium"
       >
         등록
       </span>

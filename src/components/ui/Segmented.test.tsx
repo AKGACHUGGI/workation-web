@@ -44,12 +44,25 @@ describe('Segmented', () => {
     await userEvent.click(b)
     expect(onChange).not.toHaveBeenCalled()
   })
-  it('variant=surface 는 선택 칸이 흰 바탕(잉크 바탕 아님)', () => {
-    render(
+  it('variant=surface 는 움직이는 칸이 흰 바탕(잉크 바탕 아님), 선택 글자는 잉크', () => {
+    const { container } = render(
       <Segmented options={[...options]} value="sigungu" onChange={() => {}} variant="surface" />,
     )
-    const selected = screen.getByRole('tab', { name: '시군구' })
-    expect(selected).toHaveClass('bg-bg-surface', 'shadow-xs')
-    expect(selected).not.toHaveClass('bg-selected-bg')
+    const thumb = container.querySelector('[data-slot="sliding-thumb"]')
+    expect(thumb).toHaveClass('bg-bg-surface', 'shadow-xs')
+    expect(thumb).not.toHaveClass('bg-selected-bg')
+    expect(screen.getByRole('tab', { name: '시군구' })).toHaveClass('text-text-primary')
+  })
+  it('variant=ink 는 칸이 잉크 바탕, 선택 글자는 selected-fg', () => {
+    const { container } = render(
+      <Segmented options={[...options]} value="sigungu" onChange={() => {}} />,
+    )
+    expect(container.querySelector('[data-slot="sliding-thumb"]')).toHaveClass('bg-selected-bg')
+    expect(screen.getByRole('tab', { name: '시군구' })).toHaveClass('text-selected-fg')
+  })
+  it('선택 여부로 글자 굵기가 바뀌지 않는다', () => {
+    render(<Segmented options={[...options]} value="sigungu" onChange={() => {}} size="sm" />)
+    const [a, b] = screen.getAllByRole('tab')
+    expect(a.className.match(/font-\w+/g)).toEqual(b.className.match(/font-\w+/g))
   })
 })

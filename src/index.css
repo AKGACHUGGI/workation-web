@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
-  디자인 토큰 — Figma 기업연계캡스톤 > 01 Foundations > Tokens 컬렉션(Light) 과 1:1.
+  디자인 토큰 — Figma 기업연계캡스톤 > 01 Foundations > Tokens 컬렉션(Light·Dark) 과 1:1.
   기준 문서: workation-docs/디자인/디자인-원칙.md
   Figma 이름 → CSS 변수 → Tailwind 클래스
     primitive/rausch/500 → --color-rausch-500     → bg-rausch-500
@@ -34,6 +34,7 @@
   --color-rausch-700: #c0083a;
   --color-rausch-800: #9a0630;
   --color-rausch-900: #70051f;
+  --color-rausch-950: #3a1420; /* 다크 brand-soft 바탕 */
 
   /* Tailwind 기본 gray 를 Airbnb 팔레트로 교체 */
   --color-gray-*: initial;
@@ -48,20 +49,38 @@
   --color-gray-800: #222222;
   --color-gray-900: #111111;
 
+  /* night/* — 다크모드 바탕·글자 회색 (순수 검정 대신, 다크모드 스펙 §2) */
+  --color-night-950: #161616;
+  --color-night-900: #1f1f1f;
+  --color-night-850: #262626;
+  --color-night-800: #2e2e2e;
+  --color-night-700: #3a3a3a;
+  --color-night-600: #4f4f4f;
+  --color-night-300: #8a8a8a;
+  --color-night-200: #b0b0b0;
+  --color-night-100: #e5e5e5;
+
   --color-babu-50: #e0f5f3;
   --color-babu-400: #4fc3b8;
   --color-babu-600: #00a699;
+  --color-babu-950: #0f2e2b;
 
   --color-green-*: initial;
   --color-green-50: #e6f4e6;
   --color-green-600: #008a05;
+  --color-green-400: #5cc96a;
+  --color-green-950: #10291a;
 
   --color-arches-50: #ffece4;
   --color-arches-500: #fc642d;
   --color-arches-600: #e0511f;
+  --color-arches-400: #ff8a5c;
+  --color-arches-950: #3a1f14;
 
   --color-error-50: #fbe9e7;
   --color-error-500: #c13515;
+  --color-error-400: #ff6b4a;
+  --color-error-950: #3a1712;
 
   --color-legal-link: #428bff;
 
@@ -79,6 +98,9 @@
   --color-text-tertiary: var(--color-gray-500);
   --color-text-inverse: var(--color-white);
   --color-text-brand: var(--color-rausch-500);
+  /* 두 테마 모두 흰색 — 핑크·빨강 버튼 위 글자 / 사진 위 글자 (다크모드 스펙 §3) */
+  --color-text-on-brand: var(--color-white);
+  --color-text-on-photo: var(--color-white);
 
   /* border/* */
   --color-border-default: var(--color-gray-300);
@@ -180,6 +202,18 @@
       opacity: 1;
     }
   }
+  /* 내비바 해/달 아이콘 교체 (다크모드 스펙 §4-3) */
+  --animate-theme-icon: theme-icon 320ms var(--ease-spring);
+  @keyframes theme-icon {
+    from {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   /* heat/* — 히트맵 7단계 */
   --color-heat-100: var(--color-rausch-100);
@@ -202,7 +236,11 @@
 
   /* ---------- 그림자 (shadow/card-float) — 유일한 그림자 ---------- */
   --shadow-float:
-    0 0 0 1px rgb(0 0 0 / 0.02), 0 2px 6px rgb(0 0 0 / 0.04), 0 4px 8px rgb(0 0 0 / 0.1);
+    0 0 0 1px var(--color-shadow-ring), 0 2px 6px var(--color-shadow-near),
+    0 4px 8px var(--color-shadow-far);
+  --color-shadow-ring: rgb(0 0 0 / 0.02);
+  --color-shadow-near: rgb(0 0 0 / 0.04);
+  --color-shadow-far: rgb(0 0 0 / 0.1);
 
   /* ---------- 타이포 (텍스트 스타일) — text-<이름> 하나로 size/line-height/weight 적용 ---------- */
   /* display — Black Han Sans 는 font-display 를 함께 지정 */
@@ -430,6 +468,135 @@
   --opacity-dim: 0.35; /* 직접 설정에서 고르지 않은 지표 칩 */
 }
 
+/*
+  다크모드 (스펙 docs/superpowers/specs/2026-11-19-다크모드-쫀득토글-design.md §1·§2).
+  <html data-theme> 는 index.html 스크립트와 useTheme 이 붙인다. 의미 토큰만 다시 정의한다.
+  [data-theme='light'] 는 지도 영역처럼 다크 안에서 라이트로 되돌릴 범위다. 두 블록은 같은 토큰을 같은 순서로 둔다.
+*/
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg-page: var(--color-night-950);
+  --color-bg-surface: var(--color-night-900);
+  --color-bg-subtle: var(--color-night-850);
+  --color-bg-surface-strong: var(--color-night-800);
+  --color-bg-inverse: var(--color-gray-100);
+  --color-text-primary: var(--color-gray-100);
+  --color-text-secondary: var(--color-night-200);
+  --color-text-tertiary: var(--color-night-300);
+  --color-text-inverse: var(--color-gray-800);
+  --color-border-default: var(--color-night-700);
+  --color-border-strong: var(--color-night-600);
+  --color-brand-hover: var(--color-rausch-400);
+  --color-brand-soft: var(--color-rausch-950);
+  --color-brand-soft-border: var(--color-rausch-900);
+  --color-selected-bg: var(--color-gray-100);
+  --color-selected-fg: var(--color-gray-800);
+  --color-grade-s-fg: var(--color-babu-400);
+  --color-grade-s-bg: var(--color-babu-950);
+  --color-grade-a-fg: var(--color-green-400);
+  --color-grade-a-bg: var(--color-green-950);
+  --color-grade-b-fg: var(--color-arches-400);
+  --color-grade-b-bg: var(--color-arches-950);
+  --color-grade-c-fg: var(--color-night-200);
+  --color-grade-c-bg: var(--color-night-800);
+  --color-signal-good: var(--color-green-400);
+  --color-signal-good-bg: var(--color-green-950);
+  --color-signal-avoid: var(--color-error-400);
+  --color-signal-avoid-bg: var(--color-error-950);
+  --color-chart-bar: var(--color-night-100);
+  --color-chart-bar-muted: var(--color-night-600);
+  --color-chart-weekday: var(--color-night-100);
+  --color-chart-grid: var(--color-night-700);
+  --color-chart-1: var(--color-night-100);
+  --color-chart-3: var(--color-babu-400);
+  --color-chart-line-strong: var(--color-night-100);
+  --color-chart-line-muted: var(--color-night-300);
+  --color-explore-group-trait: var(--color-gray-400);
+  --color-explore-group-trait-bg: var(--color-night-800);
+  --color-explore-group-work-bg: var(--color-rausch-950);
+  --color-explore-group-stay: var(--color-babu-400);
+  --color-explore-group-stay-bg: var(--color-babu-950);
+  --color-explore-group-rest: var(--color-green-400);
+  --color-explore-group-rest-bg: var(--color-green-950);
+  --color-explore-group-life: var(--color-arches-400);
+  --color-explore-group-life-bg: var(--color-arches-950);
+  --color-explore-skeleton-base: var(--color-night-800);
+  --color-explore-skeleton-shine: var(--color-night-700);
+  --color-explore-fact-coast: var(--color-babu-400);
+  --color-explore-fact-life: var(--color-green-400);
+  --color-explore-coast-bg: var(--color-babu-950);
+  /* 어두운 바탕에선 그림자가 안 보여 1px 밝은 테두리로 떠 보이게 한다 */
+  --color-shadow-ring: rgb(255 255 255 / 0.08);
+  --color-shadow-near: rgb(0 0 0 / 0.32);
+  --color-shadow-far: rgb(0 0 0 / 0.48);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  color: var(--color-text-primary);
+  --color-bg-page: var(--color-white);
+  --color-bg-surface: var(--color-white);
+  --color-bg-subtle: var(--color-gray-50);
+  --color-bg-surface-strong: var(--color-gray-100);
+  --color-bg-inverse: var(--color-gray-800);
+  --color-text-primary: var(--color-gray-800);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-tertiary: var(--color-gray-500);
+  --color-text-inverse: var(--color-white);
+  --color-border-default: var(--color-gray-300);
+  --color-border-strong: var(--color-gray-400);
+  --color-brand-hover: var(--color-rausch-600);
+  --color-brand-soft: var(--color-rausch-50);
+  --color-brand-soft-border: var(--color-rausch-100);
+  --color-selected-bg: var(--color-gray-800);
+  --color-selected-fg: var(--color-white);
+  --color-grade-s-fg: var(--color-babu-600);
+  --color-grade-s-bg: var(--color-babu-50);
+  --color-grade-a-fg: var(--color-green-600);
+  --color-grade-a-bg: var(--color-green-50);
+  --color-grade-b-fg: var(--color-arches-600);
+  --color-grade-b-bg: var(--color-arches-50);
+  --color-grade-c-fg: var(--color-gray-600);
+  --color-grade-c-bg: var(--color-gray-100);
+  --color-signal-good: var(--color-green-600);
+  --color-signal-good-bg: var(--color-green-50);
+  --color-signal-avoid: var(--color-error-500);
+  --color-signal-avoid-bg: var(--color-error-50);
+  --color-chart-bar: var(--color-gray-800);
+  --color-chart-bar-muted: var(--color-gray-300);
+  --color-chart-weekday: var(--color-gray-800);
+  --color-chart-grid: var(--color-gray-200);
+  --color-chart-1: var(--color-gray-800);
+  --color-chart-3: var(--color-babu-600);
+  --color-chart-line-strong: var(--color-gray-800);
+  --color-chart-line-muted: var(--color-gray-400);
+  --color-explore-group-trait: var(--color-gray-700);
+  --color-explore-group-trait-bg: var(--color-gray-100);
+  --color-explore-group-work-bg: var(--color-rausch-50);
+  --color-explore-group-stay: var(--color-babu-600);
+  --color-explore-group-stay-bg: var(--color-babu-50);
+  --color-explore-group-rest: var(--color-green-600);
+  --color-explore-group-rest-bg: var(--color-green-50);
+  --color-explore-group-life: var(--color-arches-600);
+  --color-explore-group-life-bg: var(--color-arches-50);
+  --color-explore-skeleton-base: var(--color-gray-100);
+  --color-explore-skeleton-shine: var(--color-white);
+  --color-explore-fact-coast: var(--color-babu-600);
+  --color-explore-fact-life: var(--color-green-600);
+  --color-explore-coast-bg: var(--color-babu-50);
+  --color-shadow-ring: rgb(0 0 0 / 0.02);
+  --color-shadow-near: rgb(0 0 0 / 0.04);
+  --color-shadow-far: rgb(0 0 0 / 0.1);
+}
+
+/* 테마가 바뀌는 프레임 동안 전환을 꺼서 요소마다 다른 속도로 색이 바뀌지 않게 한다 (스펙 §4-4) */
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
 /* 간격은 Tailwind 기본 --spacing(0.25rem = 4px) 이 Figma space/1~16 과 동일하므로 그대로 사용 */
 
 html,
@@ -477,7 +644,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-explore-fade,
-  .animate-skeleton-pulse {
+  .animate-skeleton-pulse,
+  .animate-theme-icon {
     animation: none;
   }
 }

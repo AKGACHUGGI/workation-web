@@ -67,7 +67,7 @@ export default function TierPage() {
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="bg-brand-primary text-body-base text-text-inverse hover:bg-brand-hover rounded-lg px-6 py-3 font-medium"
+            className="bg-brand-primary text-body-base text-text-on-brand hover:bg-brand-hover rounded-lg px-6 py-3 font-medium"
           >
             다시 시도
           </button>

@@ -115,7 +115,11 @@ export default function ExplorePage() {
   return (
     <div className="min-w-desktop h-explore flex">
       <h1 className="sr-only">{EXPLORE_COPY.pageTitle}</h1>
-      <section aria-label={EXPLORE_COPY.mapRegion} className="relative min-w-0 flex-1">
+      <section
+        aria-label={EXPLORE_COPY.mapRegion}
+        data-theme="light"
+        className="relative min-w-0 flex-1"
+      >
         <GoogleMapProvider
           fallback={
             <MapPlaceholder title={EXPLORE_COPY.mapNoKey} className="rounded-none border-0" />
