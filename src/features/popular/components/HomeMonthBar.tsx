@@ -1,4 +1,4 @@
-import MonthChips from '@/components/ui/MonthChips'
+import MonthPicker from '@/components/ui/MonthPicker'
 import { useMonthParam } from '@/hooks/useQueryState'
 
 /**
@@ -9,7 +9,7 @@ export default function HomeMonthBar() {
   const [month, setMonth] = useMonthParam()
   return (
     <div className="flex justify-center pt-5">
-      <MonthChips value={month} onChange={setMonth} size="sm" />
+      <MonthPicker value={month} onChange={setMonth} />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import Chip from '@/components/ui/Chip'
-import MonthChips from '@/components/ui/MonthChips'
+import MonthPicker from '@/components/ui/MonthPicker'
 import Segmented from '@/components/ui/Segmented'
 import { PRESET_LABEL } from '@/features/metric/constants'
 import type { MonthParam } from '@/features/metric/month'
@@ -48,7 +48,7 @@ export default function TierControls({
           ))}
         </div>
       )}
-      <MonthChips value={month} onChange={onMonthChange} className="max-w-xs" />
+      <MonthPicker value={month} onChange={onMonthChange} />
     </div>
   )
 }
