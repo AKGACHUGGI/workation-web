@@ -142,7 +142,7 @@ export default function RegionDetailPage() {
           { label: d.name },
         ]}
         title={`${d.name}, ${d.province}`}
-        metaLine={`${d.tags.join(' · ')} · ${mLabel} · 2025 LG U+ 유동·서비스인구`}
+        metaLine={`${d.tags.join(' · ')} · ${mLabel}`}
         tags={[
           ...d.tags.map((t) => ({ label: t })),
           { label: SEASON_LABEL[d.seasonType] },

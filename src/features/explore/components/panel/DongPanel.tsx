@@ -84,7 +84,7 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
         coastal={dong.coastKm !== null && dong.coastKm <= 1}
         onPick={onOpenSimilar}
       />
-      <SourceLine>{EXPLORE_COPY.dongSource(dong.syncedAt.slice(0, 10))}</SourceLine>
+      <SourceLine>{EXPLORE_COPY.dongUpdated(dong.syncedAt.slice(0, 10))}</SourceLine>
     </article>
   )
 }

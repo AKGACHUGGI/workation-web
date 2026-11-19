@@ -19,8 +19,8 @@ export default function SearchSection({ q, pending, noResult, onSubmit }: Props)
     <section className="flex flex-col items-center gap-5 pt-10 pb-1">
       <h1 className="text-heading-2xl text-text-primary">어떤 워케이션을 찾고 있나요?</h1>
       <p className="text-body-sm text-text-secondary">
-        원하는 시기 · 분위기 · 동네를 문장으로 적어보세요. LG U+ 유동·서비스인구 데이터로 12개
-        시군구 중 맞는 지역을 AI가 추천합니다.
+        원하는 시기 · 분위기 · 동네를 문장으로 적어보세요. 12개 시군구 중 맞는 지역을 AI가
+        추천합니다.
       </p>
       <SearchBar key={q} initial={q} pending={pending} onSubmit={onSubmit} />
       <ExampleChips onPick={onSubmit} />

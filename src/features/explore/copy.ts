@@ -130,8 +130,7 @@ export const EXPLORE_COPY = {
   cardTypeTitle: (type: string, n: number) => `${type} · 동 ${n}곳`,
   cardCommon: (n: number) => `공통 ${n}`,
   openDong: '동네 자세히 보기',
-  sigunguSource:
-    '데이터: LG U+ 유동인구 2025 · 생활권 = 생활권 지수 0.7 이상 · 바닷가 = 해안선 1km 이내',
+  sigunguSource: '생활권 = 생활권 지수 0.7 이상 · 바닷가 = 해안선 1km 이내',
   backToGraph: (sigungu: string) => `${sigungu} 그래프로`,
   dongSub: (sido: string, sigungu: string) => `${sido} · ${sigungu}`,
   coastChip: (km: number) => `바닷가 ${km.toFixed(1)}km`,
@@ -151,7 +150,7 @@ export const EXPLORE_COPY = {
   similarCoastTitle: '비슷한 바닷가 동',
   similarPlainTitle: '비슷한 동',
   similarHint: '지표 거리 기준 · 점수 차 = 상대 − 이 동',
-  dongSource: (date: string) => `데이터: LG U+ 유동인구 2025 · 갱신 ${date}`,
+  dongUpdated: (date: string) => `갱신 ${date}`,
   dongError: '그래프를 불러오지 못했어요.',
   dongNotFound: '동네 정보를 찾을 수 없어요.',
   closePanel: '패널 닫기',
