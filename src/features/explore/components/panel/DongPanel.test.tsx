@@ -38,7 +38,7 @@ describe('DongPanel', () => {
     expect(screen.getByRole('region', { name: '워케이션 유형' })).toBeInTheDocument()
     expect(screen.getByText(JUMUNJIN.briefing.join(' '))).toBeInTheDocument()
     expect(screen.getByRole('list', { name: '비슷한 바닷가 동' })).toBeInTheDocument()
-    expect(screen.getByText('데이터: LG U+ 유동인구 2025 · 갱신 2026-11-13')).toBeInTheDocument()
+    expect(screen.getByText('갱신 2026-11-13')).toBeInTheDocument()
     const back = screen.getByRole('button', { name: '강릉시 그래프로' })
     expect(back).toHaveAttribute('title', '강릉시 그래프로')
     expect(back).toHaveTextContent(/^$/)

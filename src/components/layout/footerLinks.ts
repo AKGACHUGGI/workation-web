@@ -14,7 +14,6 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: '데이터',
     links: [
-      { label: 'LG U+ 유동인구 · 서비스인구 2025', href: '#' },
       { label: '대상 12개 시군구 · 행정동 204곳', href: '#' },
       { label: '지표 정의서 v0.3', href: '#' },
       { label: 'API 문서 /api/v1', href: '#' },

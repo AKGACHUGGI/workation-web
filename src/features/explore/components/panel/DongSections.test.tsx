@@ -55,7 +55,7 @@ describe('Briefing', () => {
 
 describe('SourceLine', () => {
   it('문구를 그대로', () => {
-    render(<SourceLine>데이터: LG U+ 유동인구 2025 · 갱신 2026-11-13</SourceLine>)
-    expect(screen.getByText('데이터: LG U+ 유동인구 2025 · 갱신 2026-11-13')).toBeInTheDocument()
+    render(<SourceLine>갱신 2026-11-13</SourceLine>)
+    expect(screen.getByText('갱신 2026-11-13')).toBeInTheDocument()
   })
 })
