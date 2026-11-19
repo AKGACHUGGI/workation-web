@@ -1,3 +1,6 @@
+import SlidingThumb from '@/components/ui/SlidingThumb'
+import useSlidingThumb from '@/hooks/useSlidingThumb'
+
 export type SegmentedOption<T extends string> = {
   value: T
   label: string
@@ -21,7 +24,7 @@ type Props<T extends string> = {
   className?: string
 }
 
-/** 탭·월·범위 선택 UI. role=tablist / tab + aria-selected */
+/** 탭·월·범위 선택 UI. role=tablist / tab + aria-selected. 선택 칸은 움직이는 칸 하나로 그린다 (쫀득토글 스펙 §6) */
 export default function Segmented<T extends string>({
   options,
   value,
@@ -31,22 +34,24 @@ export default function Segmented<T extends string>({
   variant = 'ink',
   className = '',
 }: Props<T>) {
+  const { listRef, thumbRef, thumb } = useSlidingThumb(value)
   // Figma: sm = W-01 지도 패널 범위 토글(px 10 · py 4 · 12/16 Medium), md = DayToggle(px 16 · py 6 · 14/20 Medium)
   const item =
     size === 'sm' ? 'px-2.5 py-1 text-caption-segment' : 'px-4 py-1.5 text-body-sm font-medium'
+  const thumbTone =
+    variant === 'surface' ? 'bg-bg-surface shadow-xs rounded-md' : 'bg-selected-bg rounded-md'
+  const selectedText = variant === 'surface' ? 'text-text-primary' : 'text-selected-fg'
   return (
     <div
+      ref={listRef}
       role="tablist"
       aria-label={ariaLabel}
-      className={`bg-bg-subtle inline-flex items-center gap-1 rounded-lg p-1 ${className}`}
+      className={`bg-bg-subtle relative inline-flex items-center gap-1 rounded-lg p-1 ${className}`}
     >
+      <SlidingThumb thumbRef={thumbRef} thumb={thumb} className={thumbTone} />
       {options.map((opt) => {
         const selected = opt.value === value
-        const tone = !selected
-          ? 'text-text-secondary hover:text-text-primary'
-          : variant === 'surface'
-            ? 'bg-bg-surface text-text-primary shadow-xs'
-            : 'bg-selected-bg text-selected-fg'
+        const tone = selected ? selectedText : 'text-text-secondary hover:text-text-primary'
         const dim = opt.disabled ? 'cursor-not-allowed opacity-dim' : 'cursor-pointer'
         return (
           <button
@@ -57,7 +62,8 @@ export default function Segmented<T extends string>({
             aria-disabled={opt.disabled || undefined}
             title={opt.title}
             onClick={opt.disabled ? undefined : () => onChange(opt.value)}
-            className={`inline-flex items-center rounded-md whitespace-nowrap ${item} ${tone} ${dim}`}
+            // 칸이 지나가는 시점에 글자색이 바뀌도록 살짝 늦춘다. 굵기는 바꾸지 않는다
+            className={`relative inline-flex items-center rounded-md whitespace-nowrap transition-colors delay-75 duration-200 motion-reduce:transition-none ${item} ${tone} ${dim}`}
           >
             {opt.label}
           </button>
