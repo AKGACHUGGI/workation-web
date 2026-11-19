@@ -17,7 +17,7 @@ describe('TierPage', () => {
     renderWithRouter(<TierPage />, { route: '/tier?month=2025-10' })
     const s = await screen.findByRole('region', { name: 'S 등급' })
     expect(within(s).getAllByTestId('tier-card')[0]).toHaveTextContent('양양군')
-    expect(screen.getByText(/12개 시군구을 S/)).toBeInTheDocument()
+    expect(screen.getByText(/12개 시군구 순위/)).toBeInTheDocument()
   })
 
   it('활기 있는 한 달로 바꾸면 1위 전주시, URL preset=lively', async () => {

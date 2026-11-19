@@ -5,7 +5,7 @@ const cards = (page: Page, grade: 'S' | 'A' | 'B' | 'C') =>
   page.getByRole('region', { name: `${grade} 등급` }).getByTestId('tier-card')
 const param = (page: Page, key: string) => new URL(page.url()).searchParams.get(key)
 
-test.describe('W-02 티어리스트', () => {
+test.describe('W-02 랭킹', () => {
   test('프리셋 전환', async ({ page }) => {
     await page.goto('/tier?month=2025-10')
     await expect(cards(page, 'S').first()).toContainText('양양군')
@@ -56,11 +56,11 @@ test.describe('W-02 티어리스트', () => {
     for (const card of await all.all()) await expect(card).toContainText('고성군')
 
     await filter.getByRole('button', { name: '전체' }).click()
-    await expect(cards(page, 'S')).toHaveCount(6)
+    await expect(cards(page, 'S')).toHaveCount(8)
     await page
       .getByRole('region', { name: 'S 등급' })
       .getByRole('button', { name: /개 더보기$/ })
       .click()
-    expect(await cards(page, 'S').count()).toBeGreaterThan(6)
+    expect(await cards(page, 'S').count()).toBeGreaterThan(8)
   })
 })

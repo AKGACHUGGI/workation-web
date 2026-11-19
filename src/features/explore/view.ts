@@ -21,8 +21,11 @@ export type CameraCommand = {
   | { kind: 'view'; center: LatLng; zoom: number }
 )
 
-/** ⓪ 첫 진입: 강원 동해안 5개 시군구 (고성~동해, Figma ⓪ 387:8601) */
-export const DEFAULT_BOUNDS: Bounds = { west: 128.25, south: 37.4, east: 129.2, north: 38.65 }
+/**
+ * ⓪ 첫 진입: 대한민국 전체. 위아래는 평양 위 ~ 제주 아래 여유까지(보통 화면에선 높이가 줌을 정한다),
+ * 좌우는 가운데가 경도 126.85 쯤 오게 두고 좁은 화면에서도 울릉도까지 들어오게 잡았다
+ */
+export const DEFAULT_BOUNDS: Bounds = { west: 122.7, south: 32.5, east: 131.0, north: 39.5 }
 /** ① 시군구 경계에 맞출 때 패딩(px) */
 export const SIGUNGU_PADDING = 40
 /** ⓪ ↔ ①, ② → ① 이동 시간(ms) */

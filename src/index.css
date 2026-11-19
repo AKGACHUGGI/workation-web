@@ -346,17 +346,6 @@
       stroke-dashoffset: -49;
     }
   }
-  /* 카드 목록: 아래에서 떠올라 살짝 넘쳤다 자리 잡기 (PopularRegions 가 순서대로 지연) */
-  --animate-card-rise: card-rise 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  @keyframes card-rise {
-    from {
-      transform: translateY(24px) scale(0.94);
-      opacity: 0;
-    }
-    60% {
-      opacity: 1;
-    }
-  }
   /* W-05 비교 카드 등장: 아래에서 올라와 스프링처럼 위로 넘쳤다 출렁이며 멈춘다.
      이징은 감쇠 스프링(감쇠비 0.5 · 주기 0.5초)을 샘플링한 linear(). 투명도는 따로 짧게 */
   --ease-spring: linear(
