@@ -13,7 +13,6 @@ import MyTabs from '@/features/me/components/MyTabs'
 import MyTips from '@/features/me/components/MyTips'
 import NotificationSettings from '@/features/me/components/NotificationSettings'
 import ProfileHeader from '@/features/me/components/ProfileHeader'
-import SyncNote from '@/features/me/components/SyncNote'
 import { DEFAULT_MY_TAB, parseMyTab } from '@/features/me/components/tabs'
 import type { MyTab } from '@/features/me/components/tabs'
 import { useMeSummary } from '@/features/me/useMeSummary'
@@ -105,7 +104,6 @@ export default function MyPage() {
         <aside className="flex w-100 shrink-0 flex-col gap-6">
           <NotificationSettings />
           <AccountSection me={me} summary={summaryData} />
-          <SyncNote />
         </aside>
       </div>
     </PageContainer>

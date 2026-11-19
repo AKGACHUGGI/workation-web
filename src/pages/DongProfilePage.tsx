@@ -187,6 +187,7 @@ export default function DongProfilePage() {
             participationLabel={DONG_COPY.pollParticipation}
             title="체감 투표"
             sectionCaption="투표 결과는 지표 검증·가중치 조정에 반영"
+            target={{ kind: 'dongs', id: dongId, month }}
           />
           <Link to={compareLink} className="group flex items-center justify-between pt-6 pb-2">
             <span className="flex flex-col gap-0.5">

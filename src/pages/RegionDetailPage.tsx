@@ -54,7 +54,8 @@ export default function RegionDetailPage() {
   const tier = useTierQuery(month, 'sigungu')
   const region = useRegionQuery(sggId, month)
   const notes = useRegionNotesQuery(sggId)
-  const poll = useRegionPollQuery(sggId, month === 'annual' ? DEFAULT_MONTH : month, preset)
+  const pollMonth = month === 'annual' ? DEFAULT_MONTH : month
+  const poll = useRegionPollQuery(sggId, pollMonth, preset)
 
   // 지역마다 한 번, 그 순간 화면이 가진 점수·지형을 스냅숏으로 관심 기록한다 (설계 8절)
   const recordedSgg = useRef<string | null>(null)
@@ -249,8 +250,9 @@ export default function RegionDetailPage() {
             onRetry={() => poll.refetch()}
             participationLabel="지표 검증에 반영돼요"
             photoCaption={`${mLabel} · 사용자 제공 · 검수 후 게시`}
+            target={{ kind: 'regions', id: sggId, month: pollMonth, preset }}
           />
-          <LinkList links={d.links} />
+          <LinkList links={d.links} area={`${d.province} ${d.name}`} />
         </div>
         <PlanCard
           score={score}
@@ -267,7 +269,7 @@ export default function RegionDetailPage() {
             { label: '가기 좋은 달', value: formatMonths(d.bestMonths) },
             { label: '피할 달', value: formatMonths(d.avoidMonths) },
             { label: '주말 ÷ 주중 낮 체류', value: `${d.stats.weekendRatio.toFixed(2)}배` },
-            { label: '지원사업', value: supportLink?.title ?? '—' },
+            { label: '지원사업', value: supportLink?.title ?? '등록 전' },
           ]}
         />
       </div>

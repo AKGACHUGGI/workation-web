@@ -1,4 +1,5 @@
 import type { MonthParam } from '@/features/metric/month'
+import type { PresetKey } from '@/features/metric/types'
 
 export type SeasonType = 'summer_beach' | 'spring_autumn' | 'second_half_rise' | 'flat'
 export type DongKind = 'living' | 'tourist'
@@ -65,4 +66,24 @@ export type PollResponse = {
   no: number
   total: number
   photos: { url: string; author: string }[]
+  /** 로그인 사용자의 내 투표. 비로그인·미투표면 null (예전 서버 응답엔 없을 수 있다) */
+  myVote?: PollChoice | null
 }
+
+/**
+ * POST /api/{regions|dongs}/{id}/poll/vote → 200 PollResponse (로그인 필요).
+ * choice null 은 투표 취소. 같은 (대상, month, preset) 에 사용자당 1표
+ */
+export type PollChoice = 'yes' | 'no'
+export type PollTarget =
+  | { kind: 'regions'; id: string; month: MonthParam; preset: PresetKey }
+  | { kind: 'dongs'; id: string; month: MonthParam }
+export type VotePollRequest = { month: MonthParam; preset?: PresetKey; choice: PollChoice | null }
+
+/**
+ * POST /api/{regions|dongs}/{id}/notes → 201 Note (로그인 필요).
+ * body 는 앞뒤 공백을 자른 뒤 1~300자. 400 형식 오류 · 404 대상 없음 · 429 TIP_RATE_LIMIT(1분 3개)
+ */
+export const NOTE_MAX_LEN = 300
+export type NoteTarget = { kind: 'regions' | 'dongs'; id: string }
+export type CreateNoteRequest = { body: string; visitMonth?: Exclude<MonthParam, 'annual'> }
