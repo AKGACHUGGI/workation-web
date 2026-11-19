@@ -6,6 +6,9 @@ import CompareColumn from '@/features/compare/components/CompareColumn'
 import type { DongDetailResponse } from '@/features/dong/types'
 import type { TierItem } from '@/features/tier/types'
 
+/** 곡선 축 눈금 숫자와 지표 숫자가 겹치지 않게 차트 안 글자는 제외 */
+const NOT_CHART = { ignore: 'script, style, svg *' }
+
 const detail: DongDetailResponse = {
   id: '5182025300',
   name: '거진읍',
@@ -19,6 +22,7 @@ const detail: DongDetailResponse = {
   month: '2025-10',
   stats: { dayInflow: 0.79, localLife: 75, peerShare: 39, eveningVibe: 0.18, eveningSurplus: 0.85 },
   hourly: { weekday: Array(24).fill(50), weekend: Array(24).fill(60) },
+  stayHourly: { weekday: Array(24).fill(4000), weekend: Array(24).fill(5000) },
   peaks: {
     weekday: { peakHour: 11, lowHour: 3, lowValue: 48 },
     weekend: { peakHour: 13, lowHour: 4, lowValue: 40 },
@@ -64,7 +68,7 @@ describe('CompareColumn', () => {
     expect(screen.getByText('37')).toBeInTheDocument() // 동네 조용함
     expect(screen.getByText('38')).toBeInTheDocument() // 저녁 활기
     expect(screen.getByText('44')).toBeInTheDocument() // 또래 밀도
-    expect(screen.getByText('75')).toBeInTheDocument() // 생활권 지수
+    expect(screen.getByText('75', NOT_CHART)).toBeInTheDocument() // 생활권 지수
     expect(screen.getByText('고성군 내 3위 · 낮 유입 0.79')).toBeInTheDocument()
     expect(screen.getByText(/주말에 사람이 몰리고/)).toBeInTheDocument()
   })
@@ -106,7 +110,7 @@ describe('CompareColumn', () => {
     expect(onRetry).toHaveBeenCalledTimes(1)
   })
 
-  it('로딩이면 스켈레톤', () => {
+  it('로딩이면 스켈레톤 없이 자리만 잡는다', () => {
     renderWithRouter(
       <CompareColumn
         id="x"
@@ -118,10 +122,11 @@ describe('CompareColumn', () => {
         onRemove={() => {}}
       />,
     )
-    expect(screen.getByTestId('column-skeleton')).toBeInTheDocument()
+    expect(screen.getByTestId('column-pending')).toBeEmptyDOMElement()
+    expect(screen.queryByRole('article')).not.toBeInTheDocument()
   })
 
-  it('티어 응답 대기 중이면 상세가 있어도 스켈레톤 (0·C 깜빡임 없음)', () => {
+  it('티어 응답 대기 중이면 상세가 있어도 카드를 띄우지 않는다 (0·C 깜빡임 없음)', () => {
     renderWithRouter(
       <CompareColumn
         id="5182025300"
@@ -134,8 +139,8 @@ describe('CompareColumn', () => {
         onRemove={() => {}}
       />,
     )
-    expect(screen.getByTestId('column-skeleton')).toBeInTheDocument()
-    expect(screen.queryByText('0')).not.toBeInTheDocument()
+    expect(screen.getByTestId('column-pending')).toBeInTheDocument()
+    expect(screen.queryByText('0', NOT_CHART)).not.toBeInTheDocument()
   })
 
   it('티어 항목이 끝내 없으면 티어 지표 3개는 —, 생활권 지수는 표시', () => {
@@ -152,6 +157,6 @@ describe('CompareColumn', () => {
       />,
     )
     expect(screen.getAllByText('—')).toHaveLength(3)
-    expect(screen.getByText('75')).toBeInTheDocument()
+    expect(screen.getByText('75', NOT_CHART)).toBeInTheDocument()
   })
 })

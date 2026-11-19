@@ -41,6 +41,7 @@ export type DongDetailResponse = {
     eveningSurplus: number // 실제 ÷ 예측 저녁 보행, 소수 2자리
   }
   hourly: Record<DayGroup, number[]> // 길이 24, 0~100, 두 배열 중 최대 = 100
+  stayHourly: Record<DayGroup, number[]> // 길이 24, 시간대별 평균 체류인구(명). W-05 비교 곡선
   peaks: Record<DayGroup, { peakHour: number; lowHour: number; lowValue: number }>
   activityMix: Record<ActivityKey, number> // 정수, 합 100
   seasonType: SeasonType

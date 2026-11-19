@@ -1,13 +1,14 @@
+import { useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import MetricCard from '@/components/ui/MetricCard'
 import Tag from '@/components/ui/Tag'
-import ColumnSkeleton from '@/features/compare/components/ColumnSkeleton'
+import StayCurveChart from '@/features/compare/components/StayCurveChart'
 import { COMPARE_COPY, shortMetricCopy } from '@/features/compare/copy'
+import { stayAxisMax } from '@/features/compare/stayScale'
 import { dominantActivity } from '@/features/dong/activity'
-import HourlyCurveChart from '@/features/dong/components/HourlyCurveChart'
 import { buildDongSummary, localLifeGrade } from '@/features/dong/summary'
-import type { DongDetailResponse } from '@/features/dong/types'
+import type { DayGroup, DongDetailResponse } from '@/features/dong/types'
 import { metricGrade } from '@/features/metric/score'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import type { TierItem } from '@/features/tier/types'
@@ -26,25 +27,32 @@ type Props = {
   isError: boolean
   onRetry: () => void
   onRemove: () => void
+  /** 곡선에 그릴 요일그룹. 페이지 헤더 토글이 모든 열에 같이 준다 */
+  day?: DayGroup
+  /** 열들이 함께 쓰는 체류 곡선 세로축 최대값. 없으면 이 열 값으로 정한다 */
+  stayMax?: number | null
+  /** 테스트에서 false */
+  animate?: boolean
 }
+
+/** EmptyColumn 의 min-h-96 (24rem). 제거할 때 카드가 이 높이로 줄어들며 빈 칸이 된다 */
+const EMPTY_COLUMN_HEIGHT = 384
 
 /** Figma W-05 v2 곡선 높이 150 + 축 라벨 */
 const CHART_HEIGHT = 170
 /** 측정 전 폭 (최소 1128px 본문 기준 열 안쪽 폭 근사) */
 const CHART_FALLBACK_WIDTH = 300
 
-/** 주중·주말 범례 (Figma 251:4118). 색은 HourlyCurveChart 의 선과 같다: 주중 chart/weekday(잉크) · 주말 chart/weekend(브랜드) */
-function CurveLegend() {
+/** 범례: 지금 그린 요일그룹 한 줄. 색은 StayCurveChart 선과 같다 (주중 잉크 · 주말 브랜드) */
+function CurveLegend({ day }: { day: DayGroup }) {
   return (
-    <div className="text-caption-xs text-text-secondary flex items-center gap-4">
-      <span className="flex items-center gap-1.5">
-        <span aria-hidden className="bg-chart-weekday h-0.75 w-4 rounded-xs" />
-        주중
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span aria-hidden className="bg-chart-weekend h-0.75 w-4 rounded-xs" />
-        주말
-      </span>
+    <div className="text-caption-xs text-text-secondary flex items-center gap-1.5">
+      <span
+        aria-hidden
+        className={`${day === 'weekday' ? 'bg-chart-weekday' : 'bg-chart-weekend'} h-0.75 w-4 rounded-xs`}
+      />
+      {COMPARE_COPY.stayLegend(day)}
+      <span className="text-text-tertiary ml-auto">{COMPARE_COPY.stayUnit}</span>
     </div>
   )
 }
@@ -60,11 +68,39 @@ export default function CompareColumn({
   isError,
   onRetry,
   onRemove,
+  day = 'weekday',
+  stayMax,
+  animate,
 }: Props) {
   const dongLink = useCarryLink(`/dongs/${id}`)
   const [chartRef, chartWidth] = useElementWidth<HTMLDivElement>(CHART_FALLBACK_WIDTH)
+  /** 제거 버튼을 누른 뒤 내려가며 사라지는 중. 애니메이션이 끝나면 onRemove */
+  const [leaving, setLeaving] = useState(false)
+  const articleRef = useRef<HTMLElement>(null)
 
-  if (isPending || tierPending) return <ColumnSkeleton />
+  /**
+   * 제거: 카드가 제자리에서 빈 칸(EmptyColumn)으로 바뀐다.
+   * 내용이 흐려지고 테두리가 점선이 된 뒤, 높이가 빈 칸 높이로 줄어들면 목록에서 빼서 빈 칸과 바꾼다.
+   * 동작 줄이기(또는 animate 없는 테스트 환경)면 바로 뺀다.
+   */
+  const removeWithMorph = () => {
+    const el = articleRef.current
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? true
+    if (reduced || !el?.animate) {
+      onRemove()
+      return
+    }
+    setLeaving(true)
+    el.animate([{ height: `${el.offsetHeight}px` }, { height: `${EMPTY_COLUMN_HEIGHT}px` }], {
+      duration: 460,
+      delay: 140, // 내용이 먼저 흐려지고 나서 줄어든다
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fill: 'forwards',
+    }).finished.then(onRemove, () => {})
+  }
+
+  // 스켈레톤 없이 자리만 잡아 두고(빈 칸이 옆으로 밀리지 않게), 데이터가 오면 카드가 아래에서 올라온다
+  if (isPending || tierPending) return <div data-testid="column-pending" aria-hidden />
   if (isError || !detail) {
     return (
       <div className="border-border-default flex min-h-96 flex-col items-center justify-center gap-3 rounded-xl border p-6">
@@ -97,7 +133,13 @@ export default function CompareColumn({
 
   return (
     <article
-      className="border-border-default bg-bg-surface flex min-w-0 flex-col gap-4 rounded-xl border p-5"
+      ref={articleRef}
+      className={`bg-bg-surface flex min-w-0 flex-col gap-4 rounded-xl border p-5 ${
+        leaving
+          ? // 빈 칸으로 변신: 점선 테두리 + 내용 흐려짐, 높이는 morphToEmpty 가 줄인다
+            'border-border-default pointer-events-none overflow-hidden border-dashed [&>*]:opacity-0 [&>*]:transition-opacity [&>*]:duration-200'
+          : 'border-border-default motion-safe:animate-column-rise'
+      }`}
       aria-label={detail.name}
     >
       <header className="flex items-start justify-between gap-2">
@@ -115,7 +157,7 @@ export default function CompareColumn({
         <button
           type="button"
           aria-label={`${detail.name} 제거`}
-          onClick={onRemove}
+          onClick={removeWithMorph}
           className="text-text-secondary hover:text-text-primary rounded-md"
         >
           <X size={18} aria-hidden />
@@ -123,15 +165,16 @@ export default function CompareColumn({
       </header>
 
       <div className="flex flex-col gap-2">
-        <CurveLegend />
+        <CurveLegend day={day} />
         {/* 고정 폭 차트를 열 안쪽 폭에 맞춘다 */}
         <div ref={chartRef} className="w-full">
-          <HourlyCurveChart
-            hourly={detail.hourly}
-            day="weekday"
-            compact
+          <StayCurveChart
+            values={detail.stayHourly[day]}
+            day={day}
+            yMax={stayMax ?? stayAxisMax(detail.stayHourly[day]) ?? 1}
             height={CHART_HEIGHT}
             width={chartWidth}
+            animate={animate}
           />
         </div>
       </div>

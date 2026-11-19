@@ -15,17 +15,15 @@ test.describe('W-05 동네 비교', () => {
 
   test('추가·제거', async ({ page }) => {
     await page.goto(`/compare?dongs=${GEOJIN},${GEUMHO}&month=2025-10`)
-    await page.getByRole('button', { name: '+ 행정동 추가' }).click()
+    await page.getByRole('button', { name: '추가', exact: true }).click()
     const dialog = page.getByRole('dialog', { name: '행정동 추가' })
     await dialog.getByRole('searchbox').fill('연동')
     await dialog.getByRole('option', { name: /연동/ }).click()
     await expect(dialog).toBeHidden()
     await expect(page.getByRole('article', { name: '연동' })).toBeVisible()
     await expect(page).toHaveURL(new RegExp(`dongs=${GEOJIN}%2C${GEUMHO}%2C${YEON}`))
-    await expect(page.getByRole('button', { name: '+ 행정동 추가' })).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
+    // 3칸이 다 차면 빈 칸(추가 버튼)이 없다
+    await expect(page.getByRole('button', { name: '추가', exact: true })).toHaveCount(0)
 
     await page
       .getByRole('article', { name: '거진읍' })
