@@ -5,6 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>워케이션(가제)</title>
+    <script>
+      // 화면을 그리기 전에 테마를 붙여 새로고침 때 흰 화면이 번쩍이지 않게 한다.
+      // 키·규칙은 src/hooks/theme.ts 와 같다 (저장값 우선, 없으면 시스템 설정)
+      ;(function () {
+        var t = null
+        try {
+          t = localStorage.getItem('workation.theme')
+        } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+        }
+        document.documentElement.dataset.theme = t
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
