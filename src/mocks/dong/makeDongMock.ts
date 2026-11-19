@@ -231,6 +231,15 @@ function curve(peak: number, low: number, lowValue: number): number[] {
 
 const round2 = (v: number) => Math.round(v * 100) / 100
 
+/**
+ * 체류인구(명) 곡선. 보행 곡선보다 납작하다(밤에도 주민이 머문다).
+ * 규모는 동 코드로 정해 동마다 다르게 (3,000 ~ 12,000명)
+ */
+export function stayCurve(id: string, walk: number[]): number[] {
+  const scale = 3000 + (Number(id.slice(-4)) % 7) * 1500
+  return walk.map((v) => Math.round(scale * (0.65 + 0.35 * (v / 100))))
+}
+
 export function makeDongMock(id: string, month: MonthParam): DongDetailResponse {
   if (id === '5182025300' && month === '2025-10') return GEOJIN_2025_10
   const m = DONG_MANUAL[id]
@@ -265,6 +274,7 @@ export function makeDongMock(id: string, month: MonthParam): DongDetailResponse 
       eveningSurplus: round2(b.stats.eveningSurplus + s * 0.02),
     },
     hourly: { weekday, weekend },
+    stayHourly: { weekday: stayCurve(id, weekday), weekend: stayCurve(id, weekend) },
     peaks: {
       weekday: {
         peakHour: b.shape.weekday.peak,

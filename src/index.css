@@ -357,6 +357,73 @@
       opacity: 1;
     }
   }
+  /* W-05 비교 카드 등장: 아래에서 올라와 스프링처럼 위로 넘쳤다 출렁이며 멈춘다.
+     이징은 감쇠 스프링(감쇠비 0.5 · 주기 0.5초)을 샘플링한 linear(). 투명도는 따로 짧게 */
+  --ease-spring: linear(
+    0,
+    0.044,
+    0.157,
+    0.31,
+    0.48,
+    0.647,
+    0.799,
+    0.927,
+    1.027,
+    1.097,
+    1.141,
+    1.16,
+    1.161,
+    1.149,
+    1.127,
+    1.1,
+    1.072,
+    1.046,
+    1.023,
+    1.004,
+    0.99,
+    0.98,
+    0.975,
+    0.973,
+    0.974,
+    0.977,
+    0.981,
+    0.986,
+    0.99,
+    0.994,
+    0.998,
+    1.001,
+    1.002,
+    1.004,
+    1.004,
+    1.004,
+    1.004,
+    1.003,
+    1.003,
+    1.002,
+    1
+  );
+  --animate-column-rise: column-rise 1s var(--ease-spring) both, column-fade 240ms ease-out both;
+  @keyframes column-rise {
+    from {
+      transform: translateY(100px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes column-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  /* W-05 빈 칸 글자 등장: 카드가 빈 칸으로 줄어든 직후 안쪽 문구·버튼이 살짝 떠오르며 나타난다 */
+  --animate-empty-in: empty-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes empty-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
   /* 검색 중 버튼 바깥으로 퍼지는 맥박 링 */
   --animate-search-pulse: search-pulse 1s ease-out infinite;
   @keyframes search-pulse {

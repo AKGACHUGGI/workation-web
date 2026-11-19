@@ -1,13 +1,17 @@
-import type { DongDetailResponse } from '@/features/dong/types'
+import { formatPeople } from '@/features/compare/stayScale'
+import type { DayGroup, DongDetailResponse } from '@/features/dong/types'
+
+export const DAY_LABEL: Record<DayGroup, string> = { weekday: '주중', weekend: '주말' }
 
 export const COMPARE_COPY = {
   title: '동네 비교',
   description:
     '행정동 2~3개의 24시간 곡선과 지표를 나란히 봅니다. 즐겨찾기나 동네 프로필에서 추가할 수 있습니다.',
-  comparing: '비교 중',
-  add: '+ 행정동 추가',
-  max: '최대 3개',
-  maxTooltip: '최대 3개까지 비교할 수 있습니다',
+  /** 곡선 범례: 무엇을 어떤 단위로 그렸는지 */
+  stayLegend: (day: DayGroup) => `${DAY_LABEL[day]} 체류인구`,
+  stayUnit: '시간대별 평균 · 명',
+  stayTooltip: (h: number, day: DayGroup, v: number) =>
+    `${h}시 · ${DAY_LABEL[day]} ${formatPeople(v)}명`,
   emptyColumn: '비교할 동네를 추가하세요',
   emptyHint: '동네 프로필이나 즐겨찾기에서 추가할 수 있습니다',
   columnError: '불러오지 못했습니다',
