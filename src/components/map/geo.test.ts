@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { bboxToBounds, centroid, toLatLngPaths } from '@/components/map/geo'
+import { afterEach, describe, expect, it } from 'vitest'
+import { bboxToBounds, centroid, resolveToken, toLatLngPaths } from '@/components/map/geo'
 import type { GeoFeature, PolygonGeometry } from '@/components/map/geo'
 
 const square: GeoFeature = {
@@ -55,5 +55,21 @@ describe('centroid / bboxToBounds', () => {
       east: 128.5,
       north: 38.49,
     })
+  })
+})
+
+describe('resolveToken', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+    document.documentElement.style.removeProperty('--color-x')
+  })
+  it('지도 범위가 있으면 그 안의 값(라이트)으로 읽는다', () => {
+    document.documentElement.style.setProperty('--color-x', 'black')
+    expect(resolveToken('var(--color-x)')).toBe('black')
+    const scope = document.createElement('div')
+    scope.dataset.slot = 'map-scope'
+    scope.style.setProperty('--color-x', 'white')
+    document.body.append(scope)
+    expect(resolveToken('var(--color-x)')).toBe('white')
   })
 })

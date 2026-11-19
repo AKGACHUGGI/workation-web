@@ -39,4 +39,8 @@ describe('Navbar (Figma Web/NavbarV2)', () => {
     expect(screen.getByRole('button', { name: '언어' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '로그인' })).toBeInTheDocument()
   })
+  it('언어 버튼 옆에 다크 모드 전환 버튼이 있다', () => {
+    renderWithRouter(<Navbar />, { route: '/' })
+    expect(screen.getByRole('button', { name: '다크 모드로 전환' })).toBeInTheDocument()
+  })
 })
