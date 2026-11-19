@@ -54,8 +54,6 @@ describe('EXPLORE_COPY 패널 문구', () => {
   it('헤더·출처', () => {
     expect(EXPLORE_COPY.sigunguSub('강원특별자치도', 21)).toBe('강원특별자치도 · 행정동 21곳')
     expect(EXPLORE_COPY.backToGraph('강릉시')).toBe('강릉시 그래프로')
-    expect(EXPLORE_COPY.dongUpdated('2026-11-13')).toBe(
-      '갱신 2026-11-13',
-    )
+    expect(EXPLORE_COPY.dongUpdated('2026-11-13')).toBe('갱신 2026-11-13')
   })
 })

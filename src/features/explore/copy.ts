@@ -130,8 +130,7 @@ export const EXPLORE_COPY = {
   cardTypeTitle: (type: string, n: number) => `${type} · 동 ${n}곳`,
   cardCommon: (n: number) => `공통 ${n}`,
   openDong: '동네 자세히 보기',
-  sigunguSource:
-    '생활권 = 생활권 지수 0.7 이상 · 바닷가 = 해안선 1km 이내',
+  sigunguSource: '생활권 = 생활권 지수 0.7 이상 · 바닷가 = 해안선 1km 이내',
   backToGraph: (sigungu: string) => `${sigungu} 그래프로`,
   dongSub: (sido: string, sigungu: string) => `${sido} · ${sigungu}`,
   coastChip: (km: number) => `바닷가 ${km.toFixed(1)}km`,
