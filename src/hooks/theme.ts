@@ -38,9 +38,7 @@ export function applyTheme(theme: Theme) {
   root.classList.add('theme-switching')
   root.dataset.theme = theme
   // 새 색이 그려진 다음 프레임에 전환을 되살린다
-  requestAnimationFrame(() =>
-    requestAnimationFrame(() => root.classList.remove('theme-switching')),
-  )
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')))
 }
 
 export function watchSystemTheme(onChange: (theme: Theme) => void): () => void {

@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from 'vitest'
 // 앱 tsconfig 에는 node 타입이 없어(tsc -b) node:fs 를 타입 없이 불러온다.
 // vitest 설정이 css: false 라 index.css?raw 는 빈 문자열이 된다
 // 경로는 vitest 실행 위치(프로젝트 루트) 기준
-const fs = await vi.importActual<{ readFileSync(path: string, encoding: 'utf8'): string }>('node:fs')
+const fs = await vi.importActual<{ readFileSync(path: string, encoding: 'utf8'): string }>(
+  'node:fs',
+)
 const CSS = fs.readFileSync('src/index.css', 'utf8')
 
 /** src 아래 컴포넌트 원문 (테스트 파일 제외) */
@@ -46,11 +48,14 @@ describe('디자인 토큰', () => {
     const theme = new Set(declared(block('@theme')))
     for (const sel of [":root[data-theme='dark']", "[data-theme='light']"]) {
       const b = block(sel)
-      for (const name of [...declared(b), ...referenced(b)]) expect(theme, `${sel} ${name}`).toContain(name)
+      for (const name of [...declared(b), ...referenced(b)])
+        expect(theme, `${sel} ${name}`).toContain(name)
     }
   })
   it('다크 블록은 제공자 색·scrim·히트맵·지도 토큰을 건드리지 않는다', () => {
     const dark = declared(block(":root[data-theme='dark']"))
-    expect(dark.filter((n) => /kakao|google|scrim|heat-|explore-map-|skeleton-map/.test(n))).toEqual([])
+    expect(
+      dark.filter((n) => /kakao|google|scrim|heat-|explore-map-|skeleton-map/.test(n)),
+    ).toEqual([])
   })
 })
