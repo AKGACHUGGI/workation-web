@@ -11,10 +11,22 @@ type Props = {
   children: ReactNode
   /** sm 440px (로그인), md 640px (동 추가) */
   width?: 'sm' | 'md'
+  /**
+   * center: 세로 가운데 (기본)
+   * top: 위쪽 고정. 검색 결과처럼 내용 높이가 바뀌어도 머리(제목·입력창)가 제자리에 있고 아래만 늘고 준다
+   */
+  align?: 'center' | 'top'
 }
 
 /** 공통 모달. 스크림(scrim 토큰) 위 가운데, 포커스 트랩, Esc·스크림 클릭 닫기, body 스크롤 잠금 */
-export default function Modal({ open, onClose, titleId, children, width = 'md' }: Props) {
+export default function Modal({
+  open,
+  onClose,
+  titleId,
+  children,
+  width = 'md',
+  align = 'center',
+}: Props) {
   const ref = useRef<HTMLDivElement>(null)
   useFocusTrap(ref, open, onClose)
 
@@ -32,7 +44,7 @@ export default function Modal({ open, onClose, titleId, children, width = 'md' }
   return createPortal(
     <div
       data-testid="modal-scrim"
-      className="bg-scrim/50 fixed inset-0 z-50 flex items-center justify-center py-8"
+      className={`bg-scrim/50 fixed inset-0 z-50 flex justify-center py-8 ${align === 'top' ? 'items-start pt-[12vh]' : 'items-center'}`}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}

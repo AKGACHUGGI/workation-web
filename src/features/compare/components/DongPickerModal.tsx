@@ -38,7 +38,7 @@ export default function DongPickerModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} titleId={TITLE_ID} width="md">
+    <Modal open={open} onClose={onClose} titleId={TITLE_ID} width="md" align="top">
       <div className="flex flex-col gap-4">
         <h2 id={TITLE_ID} className="text-heading-lg text-text-primary">
           행정동 추가
