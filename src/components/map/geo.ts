@@ -45,10 +45,12 @@ export function bboxToBounds([west, south, east, north]: [number, number, number
 
 /**
  * Maps JS 는 'var(--color-x)' 를 색으로 못 읽는다.
- * document 에서 토큰 값을 읽어 실제 색 문자열로 바꾼다 (SSR 없음).
+ * 지도 범위(다크에서도 라이트, 다크모드 스펙 §5)에서 토큰 값을 읽어 실제 색 문자열로 바꾼다.
+ * 범위가 없으면 문서 기준 (SSR 없음).
  */
 export function resolveToken(cssVar: string): string {
   const name = cssVar.replace(/^var\((--[^)]+)\)$/, '$1')
   if (!name.startsWith('--')) return cssVar
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || cssVar
+  const scope = document.querySelector('[data-slot="map-scope"]') ?? document.documentElement
+  return getComputedStyle(scope).getPropertyValue(name).trim() || cssVar
 }
