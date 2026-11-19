@@ -23,8 +23,8 @@ type Props = {
   onMouseLeave?: () => void
   /** 지도 hover 연동 강조 */
   highlighted?: boolean
-  /** 주면 이 지연(ms) 뒤 아래에서 쫀득하게 떠오르며 나타난다 */
-  enterDelay?: number
+  /** 순위 목록 모션(useRankMotion)이 이 카드를 알아보는 id */
+  rankId?: string
 }
 
 /**
@@ -47,16 +47,14 @@ export default function ListingCard({
   onMouseEnter,
   onMouseLeave,
   highlighted = false,
-  enterDelay,
+  rankId,
 }: Props) {
   return (
     <div
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`relative rounded-xl transition-shadow ${highlighted ? 'shadow-float' : 'hover:shadow-float'} ${
-        enterDelay === undefined ? '' : 'motion-safe:animate-card-rise'
-      }`}
-      style={enterDelay === undefined ? undefined : { animationDelay: `${enterDelay}ms` }}
+      data-rank-id={rankId}
+      className={`relative rounded-xl transition-shadow ${highlighted ? 'shadow-float' : 'hover:shadow-float'}`}
     >
       <Link to={href} className="flex flex-col gap-2.5">
         <PhotoThumb photoUrl={photoUrl} alt={title} label={badge} />

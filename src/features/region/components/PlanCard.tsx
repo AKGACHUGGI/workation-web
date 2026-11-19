@@ -16,7 +16,7 @@ type Props = {
   onMonthChange: (m: MonthParam) => void
   preset: PresetKey
   onPresetChange: (p: PresetKey) => void
-  /** '직접 설정은 티어리스트에서' 링크 */
+  /** '직접 설정은 랭킹에서' 링크 */
   customLinkHref: string
   onFavorite: () => void
   onShare: () => void
@@ -109,7 +109,7 @@ export default function PlanCard({
       </div>
       {preset === 'custom' && (
         <Link to={customLinkHref} className="text-caption-xs text-text-secondary -mt-2 underline">
-          직접 설정은 티어리스트에서
+          직접 설정은 랭킹에서
         </Link>
       )}
 

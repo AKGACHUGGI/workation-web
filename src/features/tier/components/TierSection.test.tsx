@@ -25,7 +25,6 @@ describe('TierSection', () => {
         collapsible={false}
         selected={null}
         tab="value"
-        monthLabel="10월"
       />,
     )
     const section = screen.getByRole('region', { name: 'S 등급' })
@@ -34,22 +33,15 @@ describe('TierSection', () => {
     expect(within(section).getAllByTestId('tier-card')).toHaveLength(10)
   })
 
-  it('행정동 범위는 6개까지, 더보기로 펼치고 접는다', async () => {
+  it('행정동 범위는 8개까지, 더보기로 펼치고 접는다', async () => {
     renderWithRouter(
-      <TierSection
-        group={dongGroup}
-        description=""
-        collapsible
-        selected={null}
-        tab="metric"
-        monthLabel="10월"
-      />,
+      <TierSection group={dongGroup} description="" collapsible selected={null} tab="metric" />,
     )
-    expect(screen.getAllByTestId('tier-card')).toHaveLength(6)
-    await userEvent.click(screen.getByRole('button', { name: '+ 4개 더보기' }))
+    expect(screen.getAllByTestId('tier-card')).toHaveLength(8)
+    await userEvent.click(screen.getByRole('button', { name: '+ 2개 더보기' }))
     expect(screen.getAllByTestId('tier-card')).toHaveLength(10)
     await userEvent.click(screen.getByRole('button', { name: '접기' }))
-    expect(screen.getAllByTestId('tier-card')).toHaveLength(6)
+    expect(screen.getAllByTestId('tier-card')).toHaveLength(8)
   })
 
   it('0개면 안내 문구', () => {
@@ -60,7 +52,6 @@ describe('TierSection', () => {
         collapsible
         selected={null}
         tab="value"
-        monthLabel="10월"
       />,
     )
     expect(screen.getByText('이 등급에 해당하는 동네가 없습니다')).toBeInTheDocument()
@@ -82,7 +73,6 @@ describe('TierSection', () => {
         collapsible={false}
         selected={null}
         tab="value"
-        monthLabel="10월"
       />,
       { route: '/tier?month=2025-10&preset=lively&tab=metric' },
     )

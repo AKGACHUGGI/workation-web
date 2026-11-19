@@ -9,7 +9,7 @@ test.describe('공통 기반', () => {
 
     await page.getByRole('link', { name: '랭킹' }).click()
     await expect(page).toHaveURL(/\/tier$/)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('티어리스트')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('랭킹')
 
     await page.getByRole('link', { name: '동네 고르기' }).click()
     await expect(page).toHaveURL(/\/compare$/)

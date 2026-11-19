@@ -20,6 +20,7 @@ import { usePlaceParam, useTerrainParam } from '@/features/popular/useTerrainPar
 import { useWeights } from '@/features/popular/useWeights'
 import { carryQuery } from '@/hooks/carryQuery'
 import { useQueryState } from '@/hooks/useQueryState'
+import { useRankMotion } from '@/hooks/useRankMotion'
 
 const CHIP_METRICS: MetricKey[] = ['quiet', 'peer', 'overnight']
 
@@ -50,7 +51,8 @@ export default function PopularRegions({ items, month, hoverId, onHover, conditi
       .map((item) => ({ item, ...personal.get(item.id)! }))
       .filter(({ item }) => tagMatch(item, terrain, place))
   }, [items, sort, weights, terrain, place, boost])
-  const order = list.map(({ item }) => item.id).join()
+  // 응답이 바뀌면(달) 페이드, 정렬·무드·필터로 순서만 바뀌면 카드가 새 순위 자리로 이동
+  const motionRef = useRankMotion<HTMLDivElement>(items)
 
   return (
     <section className="flex flex-col gap-6">
@@ -68,12 +70,11 @@ export default function PopularRegions({ items, month, hoverId, onHover, conditi
           }}
         />
       ) : (
-        // 검색·정렬로 목록이 바뀌면 그리드를 새로 그려 카드가 순서대로 떠오르게 한다
-        <div key={order} data-testid="popular-grid" className="grid grid-cols-3 gap-6">
+        <div ref={motionRef} data-testid="popular-grid" className="grid grid-cols-3 gap-6">
           {list.map(({ item, score, grade }, index) => (
             <ListingCard
               key={item.id}
-              enterDelay={Math.min(index, 8) * 60}
+              rankId={item.id}
               photoUrl={item.photoUrl}
               title={`${item.name}, ${item.province}`}
               score={score}

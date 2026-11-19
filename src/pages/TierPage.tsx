@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useBoost } from '@/features/interest'
-import { monthLabel } from '@/features/metric/month'
 import { buildTiers, filterTiers } from '@/features/tier/buildTiers'
 import CustomMetricToggles from '@/features/tier/components/CustomMetricToggles'
 import MetricGroupTabs from '@/features/tier/components/MetricGroupTabs'
@@ -13,14 +12,17 @@ import { tierDescription, tierFootnote } from '@/features/tier/copy'
 import { toTierMode } from '@/features/tier/mode'
 import { useTierParams } from '@/features/tier/useTierParams'
 import { useTierQuery } from '@/features/tier/useTierQuery'
+import { useRankMotion } from '@/hooks/useRankMotion'
 
-/** W-02 티어리스트. API 재호출은 month·scope 변경 때만, 나머지는 프론트 재계산 */
+/** W-02 랭킹. API 재호출은 month·scope 변경 때만, 나머지는 프론트 재계산 */
 export default function TierPage() {
   const p = useTierParams()
   const query = useTierQuery(p.month, p.scope)
   const { data } = query
   const { scope, sgg, setSgg } = p
   const boost = useBoost()
+  // 응답이 바뀌면(달·범위) 페이드, 같은 응답에서 기준만 바뀌면 카드가 새 순위 자리로 이동
+  const motionRef = useRankMotion<HTMLDivElement>(data)
 
   // 응답에 없는 시군구 필터는 전체로 (replace)
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function TierPage() {
   const copy = { tab: p.tab, preset: p.preset, metrics: p.metrics, metric: p.metric }
 
   return (
-    // Figma W-02 본문: 좌우 32 · 위 32 (본문 폭 1376)
+    // 본문: 좌우 32 · 위 32 (본문 폭 1376)
     <div className="max-w-page min-w-desktop mx-auto flex w-full flex-col gap-6 px-8 py-8">
       <TierHeader count={data?.items.length} scope={scope} onScopeChange={p.setScope} />
       <TierControls
@@ -60,19 +62,22 @@ export default function TierPage() {
       {query.isPending ? (
         <TierSkeleton />
       ) : query.isError || !groups ? (
-        <div className="border-border-default flex flex-col items-start gap-3 rounded-2xl border p-8">
-          <p className="text-body-base text-text-primary">티어 정보를 불러오지 못했습니다</p>
+        <div className="border-border-default flex flex-col items-start gap-4 rounded-xl border p-8">
+          <p className="text-body-base text-text-primary">랭킹을 불러오지 못했습니다</p>
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="bg-brand-primary text-body-sm text-text-inverse hover:bg-brand-hover rounded-lg px-4 py-2"
+            className="bg-brand-primary text-body-base text-text-inverse hover:bg-brand-hover rounded-lg px-6 py-3 font-medium"
           >
             다시 시도
           </button>
         </div>
       ) : (
-        <div className={`flex flex-col gap-4 ${query.isPlaceholderData ? 'opacity-60' : ''}`}>
-          {groups.map((group) => (
+        <div
+          ref={motionRef}
+          className={`mt-4 flex flex-col gap-12 ${query.isPlaceholderData ? 'opacity-60' : ''}`}
+        >
+          {groups.map((group, i) => (
             <TierSection
               key={group.grade}
               group={group}
@@ -80,7 +85,8 @@ export default function TierPage() {
               collapsible={scope === 'dong'}
               selected={selected}
               tab={p.tab}
-              monthLabel={monthLabel(p.month)}
+              // 순위는 등급을 이어서 센다 (앞 등급 개수 합 + 1)
+              rankStart={groups.slice(0, i).reduce((n, g) => n + g.entries.length, 1)}
             />
           ))}
         </div>
