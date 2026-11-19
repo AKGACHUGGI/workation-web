@@ -1,5 +1,4 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import indexHtml from '../../index.html?raw'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   THEME_STORAGE_KEY,
@@ -51,7 +50,6 @@ describe('theme', () => {
     expect(document.documentElement.dataset.theme).toBe('dark')
   })
   it('index.html 의 화면 그리기 전 스크립트가 같은 저장 키를 쓴다', () => {
-    const html = readFileSync(resolve(process.cwd(), 'index.html'), 'utf8')
-    expect(html).toContain(`'${THEME_STORAGE_KEY}'`)
+    expect(indexHtml).toContain(`'${THEME_STORAGE_KEY}'`)
   })
 })
