@@ -2,6 +2,7 @@ import type { MonthParam } from '@/features/metric/month'
 import type { NotesResponse, PollResponse } from '@/features/region/types'
 import { makeDongMock } from '@/mocks/dong/makeDongMock'
 import { DONG_MANUAL } from '@/mocks/dong/manual'
+import { withCreatedNotes } from '@/mocks/region'
 
 export function getDongMock(id: string, month: MonthParam) {
   if (!(id in DONG_MANUAL)) return undefined
@@ -10,6 +11,10 @@ export function getDongMock(id: string, month: MonthParam) {
 
 /** 거진읍만 샘플 노트, 나머지는 빈 목록 */
 export function getDongNotesMock(id: string): NotesResponse {
+  return withCreatedNotes('dongs', id, baseDongNotes(id))
+}
+
+function baseDongNotes(id: string): NotesResponse {
   if (id !== '5182025300') return { total: 0, items: [] }
   return {
     total: 2,

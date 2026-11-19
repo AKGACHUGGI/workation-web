@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { Camera, ThumbsDown, ThumbsUp } from 'lucide-react'
 import FallbackImage from '@/components/ui/FallbackImage'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
 import DetailSection from '@/features/region/components/DetailSection'
-import type { PollResponse } from '@/features/region/types'
+import PhotoUploadModal from '@/features/region/components/PhotoUploadModal'
+import type { PollChoice, PollResponse, PollTarget } from '@/features/region/types'
+import { useVotePollMutation } from '@/features/region/useVotePollMutation'
 import Avatar from '@/components/ui/Avatar'
 
 type Props = {
@@ -22,6 +25,21 @@ type Props = {
    * 없으면 사진 칸을 그리지 않고 투표 카드가 전체 폭을 쓴다 (W-04 Figma 251:3824)
    */
   photoCaption?: string
+  /** 투표를 보낼 대상. 없으면 버튼은 로그인만 요구하고 투표하지 않는다 */
+  target?: PollTarget
+}
+
+const VOTE_BASE =
+  'text-body-sm flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 font-medium transition-colors'
+const VOTE_TONE: Record<PollChoice, { on: string; off: string }> = {
+  yes: {
+    on: 'border-signal-good bg-signal-good-bg text-signal-good',
+    off: 'border-transparent bg-bg-subtle text-text-secondary hover:text-signal-good',
+  },
+  no: {
+    on: 'border-text-secondary bg-bg-subtle text-text-primary',
+    off: 'border-transparent bg-bg-subtle text-text-secondary hover:text-text-primary',
+  },
 }
 
 /** 체감 투표(Figma ReactionPoll 27:177) + 이달의 사진(UserPhotoTile·PhotoUploadTile). W-04 재사용 */
@@ -35,9 +53,12 @@ export default function PollSection({
   title = '체감 투표 · 이달의 사진',
   sectionCaption = '사용자 참여 · 지표 검증에 반영',
   photoCaption,
+  target,
 }: Props) {
   const requireLogin = useRequireLogin()
-  const vote = () => requireLogin(() => {})
+  const vote = useVotePollMutation(target)
+  const [uploadOpen, setUploadOpen] = useState(false)
+  const myVote = data?.myVote ?? null
   const yes = data && data.total > 0 ? Math.round((data.yes / data.total) * 100) : 0
   const no = data && data.total > 0 ? 100 - yes : 0
   const showPhotos = photoCaption !== undefined
@@ -64,20 +85,22 @@ export default function PollSection({
                 <div className="bg-signal-good h-full rounded-sm" style={{ width: `${yes}%` }} />
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={vote}
-                  className="bg-signal-good-bg text-signal-good text-body-sm flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 font-medium"
-                >
-                  <ThumbsUp size={16} aria-hidden /> 그래요 {yes}%
-                </button>
-                <button
-                  type="button"
-                  onClick={vote}
-                  className="bg-bg-subtle text-text-secondary text-body-sm flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 font-medium"
-                >
-                  <ThumbsDown size={16} aria-hidden /> 아니요 {no}%
-                </button>
+                {(['yes', 'no'] as const).map((choice) => {
+                  const on = myVote === choice
+                  const Icon = choice === 'yes' ? ThumbsUp : ThumbsDown
+                  return (
+                    <button
+                      key={choice}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => vote(choice)}
+                      className={`${VOTE_BASE} ${on ? VOTE_TONE[choice].on : VOTE_TONE[choice].off}`}
+                    >
+                      <Icon size={16} aria-hidden fill={on ? 'currentColor' : 'none'} />
+                      {choice === 'yes' ? '그래요' : '아니요'} {choice === 'yes' ? yes : no}%
+                    </button>
+                  )
+                })}
               </div>
               <p className="text-caption-xs text-text-tertiary">
                 {data.total}명 참여 · {participationLabel}
@@ -111,11 +134,16 @@ export default function PollSection({
             </div>
             <button
               type="button"
-              onClick={() => requireLogin(() => {})}
+              onClick={() => requireLogin(() => setUploadOpen(true))}
               className="bg-bg-subtle border-border-strong text-caption-segment text-text-secondary flex h-22.5 w-30 flex-col items-center justify-center gap-1 rounded-lg border border-dashed"
             >
               <Camera size={20} aria-hidden /> 이달의 사진 올리기
             </button>
+            <PhotoUploadModal
+              open={uploadOpen}
+              onClose={() => setUploadOpen(false)}
+              caption={photoCaption}
+            />
           </div>
         )}
       </div>

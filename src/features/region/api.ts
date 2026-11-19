@@ -6,6 +6,8 @@ import type {
   PollResponse,
   RegionDetailResponse,
 } from '@/features/region/types'
+import type { CreateNoteRequest, Note, NoteTarget } from '@/features/region/types'
+import type { PollChoice, PollTarget, VotePollRequest } from '@/features/region/types'
 import { api } from '@/lib/api'
 import { NotFoundError } from '@/lib/errors'
 import { isMock, mockDelay } from '@/lib/mock'
@@ -45,4 +47,35 @@ export async function fetchRegionPoll(
     return mockDelay(getPollMock(id, month, preset))
   }
   return api<PollResponse>(`/api/regions/${id}/poll?month=${month}&preset=${preset}`)
+}
+
+export async function createNote(target: NoteTarget, req: CreateNoteRequest): Promise<Note> {
+  if (isMock) {
+    const { createNoteMock } = await import('@/mocks/region')
+    return mockDelay(createNoteMock(target, req))
+  }
+  return api<Note>(`/api/${target.kind}/${target.id}/notes`, {
+    method: 'POST',
+    body: JSON.stringify(req),
+  })
+}
+
+/** 체감 투표. choice null 이면 취소. 응답은 갱신된 투표 집계(myVote 포함) */
+export async function votePoll(
+  target: PollTarget,
+  choice: PollChoice | null,
+): Promise<PollResponse> {
+  if (isMock) {
+    const { votePollMock } = await import('@/mocks/region/pollVotes')
+    return mockDelay(votePollMock(target, choice))
+  }
+  const req: VotePollRequest = {
+    month: target.month,
+    ...(target.kind === 'regions' && { preset: target.preset }),
+    choice,
+  }
+  return api<PollResponse>(`/api/${target.kind}/${target.id}/poll/vote`, {
+    method: 'POST',
+    body: JSON.stringify(req),
+  })
 }

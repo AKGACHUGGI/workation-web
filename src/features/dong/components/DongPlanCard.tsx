@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import PlanActions from '@/components/ui/PlanActions'
 import { formatHour, localLifeLabel } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
 import { useFavorites } from '@/features/me/useFavorites'
+import { useShareUrl } from '@/features/region/useShareUrl'
 import { METRIC_LABEL } from '@/features/metric/constants'
 import { MONTHS, monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
@@ -41,7 +43,7 @@ export default function DongPlanCard({
   const [stay, setStay] = useState<(typeof STAY)[number]>('2주')
   const { isFavorite, toggle } = useFavorites()
   const saved = isFavorite('dongs', detail.id)
-  const compareLink = useCarryLink(`/compare?dongs=${detail.id}`)
+  const share = useShareUrl()
   const sggLink = useCarryLink(`/regions/${detail.sigungu.id}`)
 
   return (
@@ -51,11 +53,13 @@ export default function DongPlanCard({
           <span className="text-heading-2xl text-text-primary">
             {quiet ? Math.round(quiet.score) : '—'}
           </span>
-          <span className="text-body-sm text-text-secondary">점 · {METRIC_LABEL.quiet}</span>
+          <span className="text-body-sm text-text-secondary whitespace-nowrap">
+            점 · {METRIC_LABEL.quiet}
+          </span>
         </div>
         {quiet && (
-          <p className="text-body-sm text-text-primary font-medium">
-            행정동 {quiet.total}곳 중 백분위 {Math.round(quiet.score)} · {quiet.grade}
+          <p className="text-body-sm text-text-primary font-medium whitespace-nowrap">
+            {quiet.total}곳 중 백분위 {Math.round(quiet.score)} · {quiet.grade}
           </p>
         )}
       </div>
@@ -105,23 +109,12 @@ export default function DongPlanCard({
         </Link>
       </div>
 
-      <button
-        type="button"
-        onClick={() => toggle('dongs', detail.id)}
-        aria-pressed={saved}
-        className="bg-brand-primary text-body-base text-text-on-brand hover:bg-brand-hover h-12 rounded-lg px-6 font-medium"
-      >
-        {saved ? '즐겨찾기에 있음' : '이 동네 즐겨찾기'}
-      </button>
-      <Link
-        to={compareLink}
-        className="border-text-primary text-body-base text-text-primary hover:bg-bg-subtle inline-flex h-12 items-center justify-center rounded-lg border px-6 font-medium"
-      >
-        다른 동네와 비교
-      </Link>
-      <p className="text-caption-xs text-text-tertiary text-center">
-        즐겨찾기는 로그인 시 기기 간 동기화돼요
-      </p>
+      <PlanActions
+        favorite={saved}
+        onFavorite={() => toggle('dongs', detail.id)}
+        onShare={share}
+        favoriteLabel="이 동네 즐겨찾기"
+      />
 
       <dl className="border-border-default text-body-sm flex flex-col gap-2.5 border-t pt-4">
         <div className="flex justify-between">

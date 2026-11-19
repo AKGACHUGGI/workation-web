@@ -18,6 +18,16 @@ export const LINK_KIND_LABEL: Record<LinkKind, string> = {
   tour: '관광',
 }
 
+/** 링크 그룹 순서 (지원사업이 워케이션 결정에 가장 직접적) */
+export const LINK_KIND_ORDER: LinkKind[] = ['support', 'stay', 'tour']
+
+/** region_link 가 비었을 때 보여 줄 외부 검색어. 앞에 '시도 시군구' 를 붙인다 (중구·고성군 같은 동명 구분) */
+export const LINK_FALLBACK_QUERY: Record<LinkKind, string> = {
+  support: '워케이션 지원사업',
+  stay: '숙소',
+  tour: '가볼만한 곳',
+}
+
 /** 숙박 계수 구간 문구 */
 export function overnightCopy(coef: number): string {
   if (coef >= 0.9) return '방문객 대부분 숙박'

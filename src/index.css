@@ -649,3 +649,43 @@ body {
     animation: none;
   }
 }
+
+/* PlanCard 즐겨찾기·공유 아이콘 반짝 — 세그먼트 토글처럼 움츠렸다 스프링으로 튕기고, 광채 4줄이 퍼진다.
+   빨강 버튼 바탕(brand-primary)은 다크에서도 그대로라 노랑은 테마별로 다시 정의하지 않는다 */
+@theme {
+  --color-yellow-400: #ffc933;
+  --color-accent-favorite: var(--color-yellow-400);
+  --animate-icon-pop: icon-pop 480ms var(--ease-spring);
+  @keyframes icon-pop {
+    0% {
+      transform: scale(1);
+    }
+    15% {
+      transform: scale(0.6);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  /* 공유 아이콘 원 하나가 위→아래로 차오름 (ShareFlowIcon 이 원마다 delay 를 준다) */
+  --animate-share-fill: share-fill 260ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  @keyframes share-fill {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  --animate-icon-burst: icon-burst 520ms cubic-bezier(0.22, 1, 0.36, 1) 70ms both;
+  @keyframes icon-burst {
+    from {
+      opacity: 1;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.25);
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import PlanActions from '@/components/ui/PlanActions'
 import { PRESET_LABEL } from '@/features/metric/constants'
 import { MONTHS, monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
@@ -21,7 +22,7 @@ type Props = {
   onFavorite: () => void
   onShare: () => void
   summary: { label: string; value: string }[]
-  /** 즐겨찾기에 있음 → 라벨 '즐겨찾기에 있음' + aria-pressed */
+  /** 즐겨찾기에 있음 → 북마크 노랗게 채움 + aria-pressed */
   favorite?: boolean
 }
 
@@ -113,24 +114,12 @@ export default function PlanCard({
         </Link>
       )}
 
-      <button
-        type="button"
-        onClick={onFavorite}
-        aria-pressed={favorite}
-        className="bg-brand-primary text-body-base text-text-on-brand hover:bg-brand-hover h-12 rounded-lg px-6 font-medium"
-      >
-        {favorite ? '즐겨찾기에 있음' : '이 지역 즐겨찾기'}
-      </button>
-      <button
-        type="button"
-        onClick={onShare}
-        className="border-text-primary bg-bg-surface text-body-base text-text-primary hover:bg-bg-subtle h-12 rounded-lg border px-6 font-medium"
-      >
-        공유하기
-      </button>
-      <p className="text-caption-xs text-text-tertiary text-center">
-        즐겨찾기는 로그인 시 기기 간 동기화돼요
-      </p>
+      <PlanActions
+        favorite={favorite}
+        onFavorite={onFavorite}
+        onShare={onShare}
+        favoriteLabel="이 지역 즐겨찾기"
+      />
 
       <dl className="border-border-default text-body-sm flex flex-col gap-2.5 border-t pt-4">
         {summary.map((s) => (
