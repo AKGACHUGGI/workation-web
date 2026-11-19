@@ -53,7 +53,7 @@ export default function HeatmapSchematic({ entries, hoverId, onHover, onPick, pe
             const tone =
               onPick || e.dimmed
                 ? 'bg-bg-surface-strong text-text-tertiary'
-                : `${HEAT_BG[e.step]} ${dark ? 'text-text-inverse' : 'text-text-primary'}`
+                : `${HEAT_BG[e.step]} ${dark ? 'text-text-on-brand' : 'text-text-primary'}`
             const className = `absolute inline-flex items-center gap-1 rounded-full px-3 py-1.5 whitespace-nowrap ${tone} ${
               hoverId === e.id ? 'ring-text-primary ring-2' : ''
             }`

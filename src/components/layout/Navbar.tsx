@@ -86,7 +86,7 @@ export default function Navbar() {
     <header className="border-border-default bg-bg-surface h-navbar min-w-desktop sticky top-0 z-10 border-b">
       <div className="flex h-full items-center justify-between px-8">
         <Link to={carryQuery('/', current)} className="flex w-60 items-center gap-2">
-          <span className="bg-brand-primary text-text-inverse flex size-8 items-center justify-center rounded-lg">
+          <span className="bg-brand-primary text-text-on-brand flex size-8 items-center justify-center rounded-lg">
             <MapPin size={18} aria-hidden />
           </span>
           <span className="font-display text-display-logo text-text-brand">워케이션맵</span>

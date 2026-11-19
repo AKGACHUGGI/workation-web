@@ -117,7 +117,7 @@ export default function PlanCard({
         type="button"
         onClick={onFavorite}
         aria-pressed={favorite}
-        className="bg-brand-primary text-body-base text-text-inverse hover:bg-brand-hover h-12 rounded-lg px-6 font-medium"
+        className="bg-brand-primary text-body-base text-text-on-brand hover:bg-brand-hover h-12 rounded-lg px-6 font-medium"
       >
         {favorite ? '즐겨찾기에 있음' : '이 지역 즐겨찾기'}
       </button>

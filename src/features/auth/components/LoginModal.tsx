@@ -52,7 +52,7 @@ export default function LoginModal({ open, onClose }: Props) {
           <span className="flex items-center gap-2">
             <span
               aria-hidden="true"
-              className="bg-brand-primary text-text-inverse flex size-8 items-center justify-center rounded-lg"
+              className="bg-brand-primary text-text-on-brand flex size-8 items-center justify-center rounded-lg"
             >
               <MapPin size={18} />
             </span>

@@ -122,7 +122,7 @@ export default function SearchBar({ initial, pending, onSubmit }: Props) {
         disabled={pending}
         onAnimationStart={onLensAnim}
         onAnimationIteration={onLensAnim}
-        className="bg-brand-primary hover:bg-brand-hover text-text-inverse relative inline-flex size-12.5 shrink-0 items-center justify-center rounded-full transition-transform active:scale-90 disabled:cursor-progress"
+        className="bg-brand-primary hover:bg-brand-hover text-text-on-brand relative inline-flex size-12.5 shrink-0 items-center justify-center rounded-full transition-transform active:scale-90 disabled:cursor-progress"
       >
         {spinning && (
           <span

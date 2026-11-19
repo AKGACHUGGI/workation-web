@@ -94,7 +94,7 @@ export default function DongProfilePage() {
         <button
           type="button"
           onClick={() => dong.refetch()}
-          className="bg-brand-primary text-text-inverse mt-4 rounded-lg px-5 py-3"
+          className="bg-brand-primary text-text-on-brand mt-4 rounded-lg px-5 py-3"
         >
           {DONG_COPY.retry}
         </button>

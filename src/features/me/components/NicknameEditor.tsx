@@ -44,7 +44,7 @@ export default function NicknameEditor({ initial, onSave, onCancel }: Props) {
       <button
         type="submit"
         disabled={!valid || saving}
-        className="bg-brand-primary text-body-sm text-text-inverse hover:bg-brand-hover disabled:opacity-dim rounded-lg px-4 py-2"
+        className="bg-brand-primary text-body-sm text-text-on-brand hover:bg-brand-hover disabled:opacity-dim rounded-lg px-4 py-2"
       >
         저장
       </button>

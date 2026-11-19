@@ -48,7 +48,7 @@ export default function ChatInput({ disabled, onSend }: Props) {
         aria-label={EXPLORE_COPY.chatSend}
         disabled={!canSend}
         onClick={send}
-        className="bg-brand-primary hover:bg-brand-hover disabled:bg-rausch-100 text-text-inverse flex size-10 shrink-0 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed"
+        className="bg-brand-primary hover:bg-brand-hover disabled:bg-rausch-100 text-text-on-brand flex size-10 shrink-0 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed"
       >
         <ArrowUp aria-hidden className="size-4" />
       </button>

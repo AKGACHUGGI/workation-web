@@ -103,7 +103,7 @@ export default function PollSection({
                     aria-hidden
                     className="to-scrim/50 absolute inset-0 bg-linear-to-b from-transparent"
                   />
-                  <figcaption className="text-caption-segment text-text-inverse relative flex items-center gap-1">
+                  <figcaption className="text-caption-segment text-text-on-photo relative flex items-center gap-1">
                     <Avatar initial={p.author} size="sm" />@{p.author}
                   </figcaption>
                 </figure>

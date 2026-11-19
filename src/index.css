@@ -79,6 +79,9 @@
   --color-text-tertiary: var(--color-gray-500);
   --color-text-inverse: var(--color-white);
   --color-text-brand: var(--color-rausch-500);
+  /* 두 테마 모두 흰색 — 핑크·빨강 버튼 위 글자 / 사진 위 글자 (다크모드 스펙 §3) */
+  --color-text-on-brand: var(--color-white);
+  --color-text-on-photo: var(--color-white);
 
   /* border/* */
   --color-border-default: var(--color-gray-300);
