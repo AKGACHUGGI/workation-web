@@ -94,4 +94,34 @@ describe('TipComposer', () => {
     await userEvent.click(screen.getByRole('button', { name: '첨부 사진 1 삭제' }))
     expect(screen.queryByRole('img', { name: '첨부 사진 1' })).not.toBeInTheDocument()
   })
+
+  it('사진을 붙이면 본문과 함께 파일을 보낸다', async () => {
+    URL.createObjectURL = vi.fn(() => 'blob:preview')
+    URL.revokeObjectURL = vi.fn()
+    vi.mocked(createNote).mockResolvedValue(NOTE)
+    const { container } = renderComposer()
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    await userEvent.upload(container.querySelector<HTMLInputElement>('input[type=file]')!, file)
+    await userEvent.type(screen.getByRole('textbox', { name: '워케이션 팁' }), '바다 사진')
+    await userEvent.click(screen.getByRole('button', { name: '등록' }))
+    expect(createNote).toHaveBeenCalledWith(TARGET, { body: '바다 사진', photos: [file] })
+    await waitFor(() =>
+      expect(screen.queryByRole('img', { name: '첨부 사진 1' })).not.toBeInTheDocument(),
+    )
+  })
+
+  it('방문 월을 휠에서 고르면 함께 보내고, 등록 후 비운다', async () => {
+    vi.mocked(createNote).mockResolvedValue(NOTE)
+    renderComposer()
+    await userEvent.click(screen.getByRole('button', { name: '방문 월: 방문 월' }))
+    await userEvent.click(screen.getByRole('option', { name: '12월' }))
+    await userEvent.click(screen.getByRole('button', { name: '선택 완료' }))
+    expect(screen.getByRole('button', { name: '방문 월: 12월 방문' })).toBeInTheDocument()
+    await userEvent.type(screen.getByRole('textbox', { name: '워케이션 팁' }), '조용해요')
+    await userEvent.click(screen.getByRole('button', { name: '등록' }))
+    expect(createNote).toHaveBeenCalledWith(TARGET, { body: '조용해요', visitMonth: '2025-12' })
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '방문 월: 방문 월' })).toBeInTheDocument(),
+    )
+  })
 })

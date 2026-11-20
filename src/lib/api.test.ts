@@ -48,6 +48,12 @@ describe('api', () => {
     mockFetch(204)
     await expect(api('/api/me', { method: 'DELETE' })).resolves.toBeUndefined()
   })
+  it('FormData 본문에는 Content-Type 을 붙이지 않는다 (multipart boundary 는 브라우저가)', async () => {
+    const fetchMock = mockFetch(201, {})
+    await api('/x', { method: 'POST', body: new FormData() })
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(init.headers).toEqual({})
+  })
   it('호출부 헤더는 기본 헤더에 합쳐진다', async () => {
     const fetchMock = mockFetch(200, {})
     await api('/x', { headers: { 'X-Extra': '1' } })

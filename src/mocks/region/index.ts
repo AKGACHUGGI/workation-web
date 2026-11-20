@@ -49,10 +49,21 @@ export function createNoteMock(target: NoteTarget, req: CreateNoteRequest): Note
     body: req.body.trim(),
     helpful: 0,
     replies: 0,
+    photos: (req.photos ?? []).map((f, i) => ({ id: `mock-${i}`, url: URL.createObjectURL(f) })),
+    mine: true,
     ...(req.visitMonth && { visitMonth: req.visitMonth }),
   }
   createdNotes.set(key, [note, ...(createdNotes.get(key) ?? [])])
   return note
+}
+
+/** 이번 세션에서 쓴 노트 (수정 mock 이 고친다) */
+export function findCreatedNote(id: string): Note | undefined {
+  for (const list of createdNotes.values()) {
+    const hit = list.find((n) => n.id === id)
+    if (hit) return hit
+  }
+  return undefined
 }
 
 /** GET 노트 mock 에 이번 세션에서 쓴 노트를 맨 앞에 얹는다 (refetch 해도 유지) */

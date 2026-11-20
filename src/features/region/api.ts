@@ -7,6 +7,13 @@ import type {
   RegionDetailResponse,
 } from '@/features/region/types'
 import type { CreateNoteRequest, Note, NoteTarget } from '@/features/region/types'
+import type {
+  HelpfulResponse,
+  MonthPhotoTarget,
+  RepliesResponse,
+  Reply,
+} from '@/features/region/types'
+import type { MyPhotosResponse } from '@/features/me/types'
 import type { PollChoice, PollTarget, VotePollRequest } from '@/features/region/types'
 import { api } from '@/lib/api'
 import { NotFoundError } from '@/lib/errors'
@@ -54,9 +61,78 @@ export async function createNote(target: NoteTarget, req: CreateNoteRequest): Pr
     const { createNoteMock } = await import('@/mocks/region')
     return mockDelay(createNoteMock(target, req))
   }
+  const { photos, ...fields } = req
   return api<Note>(`/api/${target.kind}/${target.id}/notes`, {
     method: 'POST',
-    body: JSON.stringify(req),
+    body: photos?.length ? toForm(fields, photos) : JSON.stringify(fields),
+  })
+}
+
+/** 문자열 필드 + photos(같은 이름으로 여러 장) → multipart */
+function toForm(fields: Record<string, string | undefined>, photos: File[]): FormData {
+  const form = new FormData()
+  for (const [k, v] of Object.entries(fields)) if (v !== undefined) form.append(k, v)
+  photos.forEach((f) => form.append('photos', f))
+  return form
+}
+
+/** 내 팁 본문 고치기 → 고친 Note */
+export async function updateNote(id: string, body: string): Promise<Note> {
+  if (isMock) {
+    const { updateNoteMock } = await import('@/mocks/region/tipSocial')
+    return mockDelay(updateNoteMock(id, body))
+  }
+  return api<Note>(`/api/me/tips/${id}`, { method: 'PATCH', body: JSON.stringify({ body }) })
+}
+
+/** 도움돼요 누르기(on) · 취소. 여러 번 불러도 결과가 같다 */
+export async function setHelpful(id: string, on: boolean): Promise<HelpfulResponse> {
+  if (isMock) {
+    const { setHelpfulMock } = await import('@/mocks/region/tipSocial')
+    return mockDelay(setHelpfulMock(id, on))
+  }
+  return api<HelpfulResponse>(`/api/tips/${id}/helpful`, { method: on ? 'PUT' : 'DELETE' })
+}
+
+export async function fetchReplies(tipId: string): Promise<RepliesResponse> {
+  if (isMock) {
+    const { getRepliesMock } = await import('@/mocks/region/tipSocial')
+    return mockDelay(getRepliesMock(tipId))
+  }
+  return api<RepliesResponse>(`/api/tips/${tipId}/replies`)
+}
+
+export async function createReply(tipId: string, body: string): Promise<Reply> {
+  if (isMock) {
+    const { createReplyMock } = await import('@/mocks/region/tipSocial')
+    return mockDelay(createReplyMock(tipId, body))
+  }
+  return api<Reply>(`/api/tips/${tipId}/replies`, {
+    method: 'POST',
+    body: JSON.stringify({ body }),
+  })
+}
+
+export async function deleteReply(id: string): Promise<void> {
+  if (isMock) {
+    const { deleteReplyMock } = await import('@/mocks/region/tipSocial')
+    return mockDelay(deleteReplyMock(id))
+  }
+  return api<void>(`/api/me/replies/${id}`, { method: 'DELETE' })
+}
+
+/** 이달의 사진 올리기. 올린 사진(내 사진 모양)을 돌려준다 */
+export async function uploadMonthPhotos(
+  target: MonthPhotoTarget,
+  photos: File[],
+): Promise<MyPhotosResponse> {
+  if (isMock) {
+    const { uploadMonthPhotosMock } = await import('@/mocks/region/tipSocial')
+    return mockDelay(uploadMonthPhotosMock(target, photos))
+  }
+  return api<MyPhotosResponse>(`/api/${target.kind}/${target.id}/photos`, {
+    method: 'POST',
+    body: toForm({ month: target.month }, photos),
   })
 }
 

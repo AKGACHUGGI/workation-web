@@ -48,6 +48,10 @@ export default function AuthMenu() {
       queryClient.setQueryData(authKeys.me, null)
       // W-08 meKeys.all(['me']) 캐시 비우기. features/auth 는 features/me 를 import 하지 않으므로 키를 직접 쓴다
       queryClient.removeQueries({ queryKey: ['me'] })
+      // 노트 · 답글의 mine · myHelpful 은 보는 사람 기준이라 다시 받는다 (region·dong notes, tip replies)
+      queryClient.removeQueries({
+        predicate: (q) => q.queryKey[2] === 'notes' || q.queryKey[2] === 'replies',
+      })
       show('로그아웃했습니다')
     },
   })

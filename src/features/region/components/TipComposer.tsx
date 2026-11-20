@@ -4,12 +4,25 @@ import Avatar from '@/components/ui/Avatar'
 import { useToast } from '@/components/ui/toast/useToast'
 import { useAuth } from '@/features/auth/useAuth'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
-import { NOTE_MAX_LEN } from '@/features/region/types'
-import type { NoteTarget } from '@/features/region/types'
+import { MONTHS, monthLabel } from '@/features/metric/month'
+import MonthPicker from '@/components/ui/MonthPicker'
+import type { PickerOption } from '@/components/ui/MonthPicker'
+import { NOTE_MAX_LEN, NOTE_PHOTO_MAX } from '@/features/region/types'
+import type { CreateNoteRequest, NoteTarget } from '@/features/region/types'
 import { useCreateNoteMutation } from '@/features/region/useCreateNoteMutation'
 import { usePhotoPicker } from '@/features/upload/usePhotoPicker'
 
 type Props = { placeholder: string; target: NoteTarget }
+
+type VisitMonth = NonNullable<CreateNoteRequest['visitMonth']>
+/** 방문 월 휠: 맨 위 '선택 안 함'('') + 1~12월 */
+const VISIT_OPTIONS: readonly PickerOption<VisitMonth | ''>[] = [
+  { value: '', label: '선택 안 함' },
+  ...MONTHS.filter((m): m is VisitMonth => m !== 'annual').map((m) => ({
+    value: m,
+    label: monthLabel(m),
+  })),
+]
 
 /**
  * 작성 입력 바 (Figma TipComposer 27:175): 회색 바 · '나' 아바타 · 입력 · 카메라 · 등록.
@@ -21,7 +34,11 @@ export default function TipComposer({ placeholder, target }: Props) {
   const toast = useToast()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [body, setBody] = useState('')
-  const { photos, open, remove, clear, inputProps } = usePhotoPicker({ onReject: toast.show })
+  const [visitMonth, setVisitMonth] = useState<VisitMonth | ''>('')
+  const { photos, open, remove, clear, inputProps } = usePhotoPicker({
+    max: NOTE_PHOTO_MAX,
+    onReject: toast.show,
+  })
   const mutation = useCreateNoteMutation(target)
 
   // 자동 높이: 내용만큼 늘리고 max-h 를 넘으면 스크롤
@@ -37,14 +54,25 @@ export default function TipComposer({ placeholder, target }: Props) {
 
   const submit = () => {
     if (!canSubmit) return
-    // TODO(R2): 사진은 아직 보내지 않는다. presign → PUT 업로드 후 받은 key 를 노트 바디에 함께 넘긴다
-    mutation.mutate(trimmed, {
+    // 사진이 있으면 multipart 로 함께 보낸다 (서버가 WebP 로 바꿔 R2 에 올린다)
+    const req: CreateNoteRequest = {
+      body: trimmed,
+      ...(visitMonth && { visitMonth }),
+      ...(photos.length && { photos: photos.map((p) => p.file) }),
+    }
+    mutation.mutate(req, {
       onSuccess: () => {
         setBody('')
+        setVisitMonth('')
         clear()
         toast.show('팁을 남겼어요')
       },
-      onError: () => toast.show('팁을 올리지 못했어요. 잠시 후 다시 시도해 주세요'),
+      onError: () =>
+        toast.show(
+          photos.length
+            ? '팁을 올리지 못했어요. 사진 형식(JPEG·PNG·WebP)과 크기를 확인해 주세요'
+            : '팁을 올리지 못했어요. 잠시 후 다시 시도해 주세요',
+        ),
     })
   }
 
@@ -73,6 +101,15 @@ export default function TipComposer({ placeholder, target }: Props) {
           placeholder={placeholder}
           aria-label="워케이션 팁"
           className="text-body-sm text-text-primary placeholder:text-text-tertiary max-h-40 min-w-0 flex-1 resize-none self-center bg-transparent py-1 outline-none"
+        />
+        <MonthPicker
+          size="sm"
+          title="방문 월"
+          value={visitMonth}
+          onChange={setVisitMonth}
+          options={VISIT_OPTIONS}
+          triggerLabel={visitMonth ? `${monthLabel(visitMonth)} 방문` : '방문 월'}
+          className="mb-1 shrink-0"
         />
         <input {...inputProps} />
         <button

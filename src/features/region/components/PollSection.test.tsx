@@ -22,7 +22,9 @@ const BASE: PollResponse = { question: '조용했나요?', yes: 3, no: 1, total:
 let server: PollResponse = BASE
 let failVote = false
 const votePoll = vi.fn()
+const uploadMonthPhotos = vi.fn()
 vi.mock('@/features/region/api', () => ({
+  uploadMonthPhotos: (...args: unknown[]) => uploadMonthPhotos(...args),
   fetchRegionPoll: () => Promise.resolve(server),
   votePoll: (t: PollTarget, choice: PollChoice | null) => {
     votePoll(t, choice)
@@ -110,9 +112,10 @@ describe('PollSection 체감 투표', () => {
 })
 
 describe('PollSection 이달의 사진 올리기', () => {
-  it('사진을 고르면 미리보기, 제출하면 검수 대기 토스트', async () => {
+  it('사진을 고르면 미리보기, 제출하면 그 달로 올리고 바로 게시 토스트', async () => {
     loggedIn = true
     show.mockReset()
+    uploadMonthPhotos.mockReset().mockResolvedValue({ items: [] })
     globalThis.URL.createObjectURL ??= () => 'blob:preview'
     globalThis.URL.revokeObjectURL ??= () => {}
     const user = userEvent.setup()
@@ -123,20 +126,55 @@ describe('PollSection 이달의 사진 올리기', () => {
         status="success"
         onRetry={() => {}}
         participationLabel="지표 검증에 반영돼요"
-        photoCaption="10월 · 사용자 제공 · 검수 후 게시"
+        photoCaption="10월 · 사용자 제공"
+        target={TARGET}
       />,
     )
     await user.click(screen.getByRole('button', { name: /이달의 사진 올리기/ }))
     const submit = screen.getByRole('button', { name: '제출' })
     expect(submit).toBeDisabled()
-    expect(screen.getByText(/검수 후 게시돼요/)).toBeInTheDocument()
+    expect(screen.getByText(/올리면 바로 게시돼요/)).toBeInTheDocument()
 
     const file = new File(['x'], 'sea.jpg', { type: 'image/jpeg' })
     await user.upload(screen.getByTestId('photo-input'), file)
     expect(screen.getByRole('img', { name: 'sea.jpg' })).toBeInTheDocument()
 
     await user.click(submit)
-    expect(show).toHaveBeenCalledWith(expect.stringContaining('검수'))
+    expect(uploadMonthPhotos).toHaveBeenCalledWith(
+      { kind: 'regions', id: '51820', month: '2025-10' },
+      [file],
+    )
+    await waitFor(() => expect(show).toHaveBeenCalledWith('사진을 올렸어요'))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('올리기에 실패하면 모달을 닫지 않고 실패 토스트', async () => {
+    loggedIn = true
+    show.mockReset()
+    uploadMonthPhotos.mockReset().mockRejectedValue(new Error('API 400'))
+    globalThis.URL.createObjectURL ??= () => 'blob:preview'
+    globalThis.URL.revokeObjectURL ??= () => {}
+    const user = userEvent.setup()
+    renderWithRouter(
+      <PollSection
+        question="조용했나요?"
+        data={BASE}
+        status="success"
+        onRetry={() => {}}
+        participationLabel="지표 검증에 반영돼요"
+        photoCaption="10월 · 사용자 제공"
+        target={TARGET}
+      />,
+    )
+    await user.click(screen.getByRole('button', { name: /이달의 사진 올리기/ }))
+    await user.upload(
+      screen.getByTestId('photo-input'),
+      new File(['x'], 'a.jpg', { type: 'image/jpeg' }),
+    )
+    await user.click(screen.getByRole('button', { name: '제출' }))
+    await waitFor(() =>
+      expect(show).toHaveBeenCalledWith(expect.stringContaining('올리지 못했어요')),
+    )
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 })

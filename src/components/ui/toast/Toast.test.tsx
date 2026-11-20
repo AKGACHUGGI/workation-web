@@ -51,4 +51,24 @@ describe('Toast', () => {
     expect(onUndo).toHaveBeenCalledTimes(1)
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
+
+  it('닫으면 바로 status 가 빠지고, 아래로 빠지는 애니메이션 뒤 DOM 에서 치운다', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const { container } = render(
+      <ToastProvider>
+        <Trigger />
+      </ToastProvider>,
+    )
+    await user.click(screen.getByText('copy'))
+    expect(screen.getByRole('status')).toHaveClass('animate-toast-in')
+    await user.click(screen.getByRole('button', { name: '닫기' }))
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    const leaving = container.querySelector('.animate-toast-out')
+    expect(leaving).toHaveTextContent('링크를 복사했습니다')
+    expect(leaving).toHaveAttribute('aria-hidden', 'true')
+    act(() => vi.advanceTimersByTime(400))
+    expect(container.querySelector('.animate-toast-out')).toBeNull()
+    vi.useRealTimers()
+  })
 })

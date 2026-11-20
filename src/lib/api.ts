@@ -14,10 +14,13 @@ async function authHeader(): Promise<Record<string, string>> {
 }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  // FormData(사진 업로드)는 브라우저가 boundary 를 넣은 multipart Content-Type 을 직접 붙인다
+  const json: Record<string, string> =
+    init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
+      ...json,
       ...(await authHeader()),
       ...init?.headers,
     },
