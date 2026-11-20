@@ -109,4 +109,15 @@ describe('TipComposer', () => {
       expect(screen.queryByRole('img', { name: '첨부 사진 1' })).not.toBeInTheDocument(),
     )
   })
+
+  it('방문 월을 고르면 함께 보내고, 등록 후 비운다', async () => {
+    vi.mocked(createNote).mockResolvedValue(NOTE)
+    renderComposer()
+    const month = screen.getByRole('combobox', { name: '방문 월' })
+    await userEvent.selectOptions(month, '2025-12')
+    await userEvent.type(screen.getByRole('textbox', { name: '워케이션 팁' }), '조용해요')
+    await userEvent.click(screen.getByRole('button', { name: '등록' }))
+    expect(createNote).toHaveBeenCalledWith(TARGET, { body: '조용해요', visitMonth: '2025-12' })
+    await waitFor(() => expect(month).toHaveValue(''))
+  })
 })

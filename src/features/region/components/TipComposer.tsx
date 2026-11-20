@@ -4,8 +4,9 @@ import Avatar from '@/components/ui/Avatar'
 import { useToast } from '@/components/ui/toast/useToast'
 import { useAuth } from '@/features/auth/useAuth'
 import { useRequireLogin } from '@/features/auth/useRequireLogin'
+import { MONTHS, monthLabel } from '@/features/metric/month'
 import { NOTE_MAX_LEN, NOTE_PHOTO_MAX } from '@/features/region/types'
-import type { NoteTarget } from '@/features/region/types'
+import type { CreateNoteRequest, NoteTarget } from '@/features/region/types'
 import { useCreateNoteMutation } from '@/features/region/useCreateNoteMutation'
 import { usePhotoPicker } from '@/features/upload/usePhotoPicker'
 
@@ -21,6 +22,7 @@ export default function TipComposer({ placeholder, target }: Props) {
   const toast = useToast()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [body, setBody] = useState('')
+  const [visitMonth, setVisitMonth] = useState<CreateNoteRequest['visitMonth']>()
   const { photos, open, remove, clear, inputProps } = usePhotoPicker({
     max: NOTE_PHOTO_MAX,
     onReject: toast.show,
@@ -41,10 +43,15 @@ export default function TipComposer({ placeholder, target }: Props) {
   const submit = () => {
     if (!canSubmit) return
     // 사진이 있으면 multipart 로 함께 보낸다 (서버가 WebP 로 바꿔 R2 에 올린다)
-    const req = { body: trimmed, ...(photos.length && { photos: photos.map((p) => p.file) }) }
+    const req: CreateNoteRequest = {
+      body: trimmed,
+      ...(visitMonth && { visitMonth }),
+      ...(photos.length && { photos: photos.map((p) => p.file) }),
+    }
     mutation.mutate(req, {
       onSuccess: () => {
         setBody('')
+        setVisitMonth(undefined)
         clear()
         toast.show('팁을 남겼어요')
       },
@@ -83,6 +90,27 @@ export default function TipComposer({ placeholder, target }: Props) {
           aria-label="워케이션 팁"
           className="text-body-sm text-text-primary placeholder:text-text-tertiary max-h-40 min-w-0 flex-1 resize-none self-center bg-transparent py-1 outline-none"
         />
+        <select
+          value={visitMonth ?? ''}
+          onChange={(e) =>
+            setVisitMonth((e.target.value || undefined) as CreateNoteRequest['visitMonth'])
+          }
+          onMouseDown={(e) => {
+            if (!isLoggedIn) {
+              e.preventDefault()
+              requireLogin(() => {})
+            }
+          }}
+          aria-label="방문 월"
+          className="text-caption-segment text-text-secondary hover:text-text-primary mb-1.5 shrink-0 cursor-pointer bg-transparent outline-none"
+        >
+          <option value="">방문 월</option>
+          {MONTHS.filter((m) => m !== 'annual').map((m) => (
+            <option key={m} value={m}>
+              {monthLabel(m)} 방문
+            </option>
+          ))}
+        </select>
         <input {...inputProps} />
         <button
           type="button"
