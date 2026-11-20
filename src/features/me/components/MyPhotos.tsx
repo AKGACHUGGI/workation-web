@@ -26,7 +26,7 @@ export default function MyPhotos() {
   return (
     <MePanel
       title={`내 사진 ${data.items.length}장`}
-      aside={`검수 완료 ${approved} · 대기 ${pending}`}
+      aside={`공개 ${approved} · 가려짐 ${pending}`}
     >
       <div className="grid grid-cols-4 gap-2">
         {data.items.map((p) => (

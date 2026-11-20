@@ -57,7 +57,31 @@ export type Note = {
   body: string
   helpful: number
   replies: number
+  /** 붙인 사진 (공개된 것만, 올린 순서). 예전 서버 응답엔 없을 수 있다 */
+  photos?: NotePhoto[]
+  /** 로그인 사용자가 쓴 팁이면 true (아니면 키가 없다) */
+  mine?: true
+  /** 로그인 사용자가 도움돼요를 눌렀으면 true */
+  myHelpful?: true
 }
+export type NotePhoto = { id: string; url: string }
+
+/** PATCH /api/me/tips/{id} {body} → 200 Note. 본문만 고친다 (사진·방문 월은 그대로) */
+export type UpdateNoteRequest = { body: string }
+
+/** PUT · DELETE /api/tips/{id}/helpful → 200. 내 팁엔 400 OWN_TIP */
+export type HelpfulResponse = { helpful: number; myHelpful: boolean }
+
+/** GET /api/tips/{id}/replies → {items} 오래된 순 · POST {body} → 201 Reply · DELETE /api/me/replies/{id} */
+export type Reply = {
+  id: string
+  author: { nickname: string; initial: string }
+  createdAt: string // ISO
+  body: string
+  mine?: true
+}
+export type RepliesResponse = { items: Reply[] }
+export const REPLY_MAX_LEN = 300
 
 /** GET /api/regions/{sggId}/poll?month=&preset= */
 export type PollResponse = {
@@ -86,4 +110,16 @@ export type VotePollRequest = { month: MonthParam; preset?: PresetKey; choice: P
  */
 export const NOTE_MAX_LEN = 300
 export type NoteTarget = { kind: 'regions' | 'dongs'; id: string }
-export type CreateNoteRequest = { body: string; visitMonth?: Exclude<MonthParam, 'annual'> }
+export type CreateNoteRequest = {
+  body: string
+  visitMonth?: Exclude<MonthParam, 'annual'>
+  /** 0~3장. 있으면 multipart 로 보낸다 (서버가 WebP 로 바꿔 R2 에 올린다) */
+  photos?: File[]
+}
+export const NOTE_PHOTO_MAX = 3
+
+/**
+ * POST /api/{regions|dongs}/{id}/photos (multipart: month · photos 1~3장) → 201 {items: MyPhoto[]}.
+ * 올리면 바로 공개되고, 신고가 쌓이면 가려진다
+ */
+export type MonthPhotoTarget = { kind: 'regions' | 'dongs'; id: string; month: MonthParam }

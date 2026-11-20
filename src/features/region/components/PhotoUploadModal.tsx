@@ -1,21 +1,29 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Camera, X } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import { useToast } from '@/components/ui/toast/useToast'
+import { meKeys } from '@/features/me/queryKeys'
+import { uploadMonthPhotos } from '@/features/region/api'
+import type { MonthPhotoTarget } from '@/features/region/types'
 import { usePhotoPicker } from '@/features/upload/usePhotoPicker'
 
 export const PHOTO_MAX = 3
-export const PHOTO_SUBMITTED = '사진을 받았어요 · 검수 후 게시돼요'
+export const PHOTO_SUBMITTED = '사진을 올렸어요'
+export const PHOTO_FAILED = '사진을 올리지 못했어요. 형식(JPEG·PNG·WebP)과 크기를 확인해 주세요'
 
 type Props = {
   open: boolean
   onClose: () => void
-  /** 제목 아래 캡션 (예: '10월 · 사용자 제공 · 검수 후 게시') */
+  /** 제목 아래 캡션 (예: '10월 · 사용자 제공') */
   caption?: string
+  /** 올릴 곳 (지역·동 + 달). 그 달 투표의 사진 칸에 바로 보인다 */
+  target: MonthPhotoTarget
 }
 
-/** 이달의 사진 올리기: 고르기 → 미리보기 → 검수 안내 → 제출. 업로드는 아직 없다(UI 만) */
-export default function PhotoUploadModal({ open, onClose, caption }: Props) {
+/** 이달의 사진 올리기: 고르기 → 미리보기 → 제출. 올리면 바로 공개되고, 신고가 쌓이면 가려진다 */
+export default function PhotoUploadModal({ open, onClose, caption, target }: Props) {
   const { show } = useToast()
+  const queryClient = useQueryClient()
   const {
     photos,
     open: pick,
@@ -32,11 +40,21 @@ export default function PhotoUploadModal({ open, onClose, caption }: Props) {
     onClose()
   }
 
-  const submit = () => {
-    // TODO(R2): POST /api/uploads/presign → 각 사진 PUT → 받은 key 로 이달의 사진 등록 API 호출
-    show(PHOTO_SUBMITTED)
-    close()
-  }
+  const upload = useMutation({
+    mutationFn: (files: File[]) => uploadMonthPhotos(target, files),
+    onSuccess: () => {
+      // 투표 응답의 photos 를 다시 받는다 (regionKeys.poll · dongKeys.poll 의 앞부분)
+      const scope = target.kind === 'regions' ? 'region' : 'dong'
+      queryClient.invalidateQueries({ queryKey: [scope, target.id, 'poll'] })
+      queryClient.invalidateQueries({ queryKey: meKeys.photos })
+      queryClient.invalidateQueries({ queryKey: meKeys.summary })
+      show(PHOTO_SUBMITTED)
+      close()
+    },
+    onError: () => show(PHOTO_FAILED),
+  })
+
+  const submit = () => upload.mutate(photos.map((p) => p.file))
 
   return (
     <Modal open={open} onClose={close} titleId="photo-upload-title" width="sm">
@@ -76,7 +94,7 @@ export default function PhotoUploadModal({ open, onClose, caption }: Props) {
           )}
         </div>
         <p className="text-caption-xs text-text-tertiary">
-          운영자 검수 후 게시돼요 · 최대 {PHOTO_MAX}장, 장당 10MB 이하
+          올리면 바로 게시돼요 · 최대 {PHOTO_MAX}장, 장당 10MB 이하
         </p>
         <div className="flex justify-end gap-2">
           <button
@@ -89,10 +107,10 @@ export default function PhotoUploadModal({ open, onClose, caption }: Props) {
           <button
             type="button"
             onClick={submit}
-            disabled={photos.length === 0}
+            disabled={photos.length === 0 || upload.isPending}
             className="bg-brand-primary text-text-on-brand hover:bg-brand-hover text-body-sm disabled:opacity-dim rounded-lg px-4 py-2 font-medium"
           >
-            제출
+            {upload.isPending ? '올리는 중…' : '제출'}
           </button>
         </div>
       </div>

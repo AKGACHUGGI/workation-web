@@ -21,7 +21,7 @@ type Props = {
   title?: string
   sectionCaption?: string
   /**
-   * 이달의 사진 칸 위 캡션('10월 · 사용자 제공 · 검수 후 게시').
+   * 이달의 사진 칸 위 캡션('10월 · 사용자 제공').
    * 없으면 사진 칸을 그리지 않고 투표 카드가 전체 폭을 쓴다 (W-04 Figma 251:3824)
    */
   photoCaption?: string
@@ -139,11 +139,14 @@ export default function PollSection({
             >
               <Camera size={20} aria-hidden /> 이달의 사진 올리기
             </button>
-            <PhotoUploadModal
-              open={uploadOpen}
-              onClose={() => setUploadOpen(false)}
-              caption={photoCaption}
-            />
+            {target && (
+              <PhotoUploadModal
+                open={uploadOpen}
+                onClose={() => setUploadOpen(false)}
+                caption={photoCaption}
+                target={{ kind: target.kind, id: target.id, month: target.month }}
+              />
+            )}
           </div>
         )}
       </div>

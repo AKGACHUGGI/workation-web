@@ -20,7 +20,7 @@ export default function UserPhotoTile({ photo }: Props) {
       />
       {pending && (
         <span className="bg-bg-inverse text-caption-badge text-text-inverse absolute top-1.5 left-1.5 rounded-md px-2 py-1">
-          검수 대기
+          신고로 가려짐
         </span>
       )}
       <figcaption className="text-caption-xs text-text-on-photo absolute bottom-1.5 left-1.5 font-medium">

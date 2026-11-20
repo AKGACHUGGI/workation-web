@@ -249,7 +249,7 @@ export default function RegionDetailPage() {
             status={status(poll)}
             onRetry={() => poll.refetch()}
             participationLabel="지표 검증에 반영돼요"
-            photoCaption={`${mLabel} · 사용자 제공 · 검수 후 게시`}
+            photoCaption={`${monthLabel(pollMonth)} · 사용자 제공`}
             target={{ kind: 'regions', id: sggId, month: pollMonth, preset }}
           />
           <LinkList links={d.links} area={`${d.province} ${d.name}`} />
