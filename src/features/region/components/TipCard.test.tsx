@@ -89,7 +89,9 @@ describe('TipCard', () => {
   it('내 팁: 도움돼요는 누를 수 없고, 수정해 저장하면 바뀐다', async () => {
     vi.mocked(updateNote).mockResolvedValue({ ...MINE, body: '고친 팁' })
     await renderCard(MINE)
-    expect(screen.queryByRole('button', { name: /도움돼요/ })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /도움돼요/ }))
+    expect(setHelpful).not.toHaveBeenCalled()
+    expect(screen.getByRole('status')).toHaveTextContent('내 팁에는 도움돼요를 누를 수 없어요')
     expect(screen.queryByRole('button', { name: /신고/ })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: '수정' }))
     const box = screen.getByRole('textbox', { name: '팁 고치기' })

@@ -129,10 +129,15 @@ export default function TipCard({ note, targetHref, targetLabel, trailing }: Pro
       )}
       <footer className="flex items-center gap-4">
         {note.mine ? (
-          // 내 팁에는 누를 수 없다 (서버 400 OWN_TIP) — 수만 보여 준다
-          <span className={ACTION}>
+          // 내 팁에는 누를 수 없다 (서버 400 OWN_TIP). 눌러도 반응이 없으면 고장처럼 보여 이유를 알린다
+          <button
+            type="button"
+            aria-disabled
+            onClick={() => show('내 팁에는 도움돼요를 누를 수 없어요')}
+            className={`${ACTION} cursor-default`}
+          >
             <ThumbsUp size={16} aria-hidden /> 도움돼요 {note.helpful}
-          </span>
+          </button>
         ) : (
           <button
             type="button"
