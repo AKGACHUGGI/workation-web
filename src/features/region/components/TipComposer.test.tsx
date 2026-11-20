@@ -110,14 +110,18 @@ describe('TipComposer', () => {
     )
   })
 
-  it('방문 월을 고르면 함께 보내고, 등록 후 비운다', async () => {
+  it('방문 월을 휠에서 고르면 함께 보내고, 등록 후 비운다', async () => {
     vi.mocked(createNote).mockResolvedValue(NOTE)
     renderComposer()
-    const month = screen.getByRole('combobox', { name: '방문 월' })
-    await userEvent.selectOptions(month, '2025-12')
+    await userEvent.click(screen.getByRole('button', { name: '방문 월: 방문 월' }))
+    await userEvent.click(screen.getByRole('option', { name: '12월' }))
+    await userEvent.click(screen.getByRole('button', { name: '선택 완료' }))
+    expect(screen.getByRole('button', { name: '방문 월: 12월 방문' })).toBeInTheDocument()
     await userEvent.type(screen.getByRole('textbox', { name: '워케이션 팁' }), '조용해요')
     await userEvent.click(screen.getByRole('button', { name: '등록' }))
     expect(createNote).toHaveBeenCalledWith(TARGET, { body: '조용해요', visitMonth: '2025-12' })
-    await waitFor(() => expect(month).toHaveValue(''))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '방문 월: 방문 월' })).toBeInTheDocument(),
+    )
   })
 })
