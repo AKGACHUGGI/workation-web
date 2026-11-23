@@ -72,7 +72,7 @@ describe('rankIn — 고성군 10월 실데이터', () => {
     expect(Math.round(r!.score)).toBe(50)
     expect(r).toMatchObject({ rank: 3, total: 12, grade: 'S' })
   })
-  it('활기 있는 한 달 → 47 · 7위', () => {
+  it('활기 있는 곳 → 47 · 7위', () => {
     const r = rankIn(SIGUNGU_ITEMS_2025_10, '51820', {
       tab: 'value',
       weights: PRESET_WEIGHTS.lively,

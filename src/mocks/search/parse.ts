@@ -18,7 +18,7 @@ const FIXED: Record<string, SearchIntent> = {
     stay: 'month',
     peer: true,
     tags: [
-      { axis: 'preset', label: '활기 있는 한 달' },
+      { axis: 'preset', label: '활기 있는 곳' },
       { axis: 'terrain', label: '해안' },
       { axis: 'stay', label: '한 달' },
       { axis: 'peer', label: '또래' },
