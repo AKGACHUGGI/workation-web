@@ -38,6 +38,22 @@ describe('OnboardingModal', () => {
     expect(start).toBeDisabled()
   })
 
+  it('확정 화면: 제목·연령대 라벨·휠 처음 위치(30대, 선택 표시 없음)·제출 버튼 문구', () => {
+    renderWithAuth(<div />, { me: DUI })
+    const dialog = screen.getByRole('dialog', { name: '거의 다 됐어요' })
+    expect(within(dialog).getByRole('heading', { level: 2 })).toHaveTextContent('거의 다 됐어요')
+    expect(dialog.querySelector('#onboarding-age-label')).toHaveTextContent('연령대')
+    const listbox = within(dialog).getByRole('listbox', { name: '연령대' })
+    // 휠은 처음에 index 2(30대) 항목을 가운데로 스크롤한다(항목 높이 48px)
+    const start = within(listbox).getByRole('option', { name: '30대' })
+    expect(start).toHaveAttribute('id', 'age-option-2')
+    expect(listbox.scrollTop).toBe(2 * 48)
+    // 선택 표시는 없다: aria-selected="true" 도, activedescendant 도 없다
+    expect(within(listbox).queryAllByRole('option', { selected: true })).toHaveLength(0)
+    expect(listbox).not.toHaveAttribute('aria-activedescendant')
+    expect(within(dialog).getByRole('button', { name: '시작하기' })).toHaveTextContent('시작하기')
+  })
+
   it('연령대 listbox 에 10대~90대 9개 선택지가 있다', () => {
     renderWithAuth(<div />, { me: DUI })
     const listbox = screen.getByRole('listbox', { name: '연령대' })
