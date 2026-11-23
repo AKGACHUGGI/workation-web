@@ -9,6 +9,7 @@ import LoginReturnWatcher from '@/features/auth/components/LoginReturnWatcher'
 import OnboardingModal from '@/features/auth/components/OnboardingModal'
 import { authKeys } from '@/features/auth/queryKeys'
 import { useAuth } from '@/features/auth/useAuth'
+import { useInvalidateOnViewerChange } from '@/features/auth/useInvalidateOnViewerChange'
 import { UnauthorizedError } from '@/lib/errors'
 import { supabase } from '@/lib/supabase'
 
@@ -19,11 +20,14 @@ import { supabase } from '@/lib/supabase'
  * - me.needsOnboarding → OnboardingModal
  * - 조회·뮤테이션이 401 → 세션 만료로 보고 me 를 null 로, 모달 열기 (['auth','me'] 조회는 fetchMe 가 401 을 null 로 바꾸므로 제외)
  * - Supabase SIGNED_OUT(다른 탭 로그아웃·refresh 실패) → me 를 null 로
+ * - 보는 사람의 기준(사용자·연령대)이 바뀌면 점수 쿼리 무효화(useInvalidateOnViewerChange)
  */
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const { show } = useToast()
   const { me } = useAuth()
+  // 보는 사람(사용자·연령대)이 바뀌면 개인화된 점수 쿼리를 다시 받는다
+  useInvalidateOnViewerChange(me)
   const [isOpen, setOpen] = useState(false)
   const [returned, setReturned] = useState(false)
   const pendingRef = useRef<(() => void) | null>(null)

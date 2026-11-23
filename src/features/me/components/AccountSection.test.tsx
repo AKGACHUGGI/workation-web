@@ -27,6 +27,7 @@ const me = {
   emailMasked: 'du***@kakao.com',
   needsOnboarding: false,
   createdAt: '2025-03-14T09:00:00+09:00',
+  ageGroup: null,
 }
 
 describe('AccountSection', () => {

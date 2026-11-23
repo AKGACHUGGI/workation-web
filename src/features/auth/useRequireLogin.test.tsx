@@ -64,6 +64,7 @@ describe('useRequireLogin', () => {
     // mock 로그인 결과를 흉내: 캐시에 온보딩 필요 사용자
     act(() => client.setQueryData(authKeys.me, DUI))
     // 쿼리 알림은 notifyManager 가 다음 틱에 묶어 보내므로 온보딩 모달을 기다린다
+    await userEvent.click(await screen.findByRole('option', { name: '30대' }))
     await userEvent.click(await screen.findByRole('checkbox', { name: /이용약관/ }))
     await userEvent.click(screen.getByRole('checkbox', { name: /개인정보 처리방침/ }))
     await userEvent.click(screen.getByRole('button', { name: '시작하기' }))
