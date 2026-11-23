@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { MapPin, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
+import BrandGlyph from '@/components/ui/BrandGlyph'
 import Modal from '@/components/ui/Modal'
 import { useToast } from '@/components/ui/toast/useToast'
 import { mockLogin, signIn } from '@/features/auth/api'
@@ -54,7 +55,7 @@ export default function LoginModal({ open, onClose }: Props) {
               aria-hidden="true"
               className="bg-brand-primary text-text-on-brand flex size-8 items-center justify-center rounded-lg"
             >
-              <MapPin size={18} />
+              <BrandGlyph size={20} />
             </span>
             <span className="font-display text-display-logo text-text-primary">워케이션맵</span>
           </span>
