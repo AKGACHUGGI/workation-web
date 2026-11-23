@@ -1,9 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { Globe, MapPin } from 'lucide-react'
+import { Globe } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { NAV_ITEMS } from '@/components/layout/navItems'
 import type { NavItem } from '@/components/layout/navItems'
 import ThemeToggle from '@/components/layout/ThemeToggle'
+import BrandGlyph from '@/components/ui/BrandGlyph'
 import AuthMenu from '@/features/auth/components/AuthMenu'
 import { carryQuery } from '@/hooks/carryQuery'
 
@@ -77,7 +78,7 @@ function TabIndicator({ pathname }: { pathname: string }) {
 
 /**
  * Figma Web/NavbarV2 (54:258). 높이 80 · 좌우 32 · 하단 헤어라인.
- * 좌: 로고(빨간 핀 32 + 워케이션맵) · 중앙: 제품 탭 3개 · 우: 언어 · 해/달 · 계정 필(AuthMenu).
+ * 좌: 로고(빨간 바탕 핀·노트북 32 + 워케이션맵) · 중앙: 제품 탭 3개 · 우: 언어 · 해/달 · 계정 필(AuthMenu).
  * 메뉴 이동 시 month·preset 쿼리 유지
  */
 export default function Navbar() {
@@ -88,7 +89,7 @@ export default function Navbar() {
       <div className="flex h-full items-center justify-between px-8">
         <Link to={carryQuery('/', current)} className="flex w-60 items-center gap-2">
           <span className="bg-brand-primary text-text-on-brand flex size-8 items-center justify-center rounded-lg">
-            <MapPin size={18} aria-hidden />
+            <BrandGlyph size={20} />
           </span>
           <span className="font-display text-display-logo text-text-brand">워케이션맵</span>
         </Link>
