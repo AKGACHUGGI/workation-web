@@ -17,7 +17,7 @@ test.describe('W-01 탐색(홈) — mock, 지도 키 없음', () => {
     await expect(page.getByRole('link', { name: '양양군 51' })).toBeVisible()
   })
 
-  test('정렬·필터: 조회 많은 순 → 제주시, 도시 필터 → 카드 감소', async ({ page }) => {
+  test('정렬·필터: 조회 많은 순 → 제주시, 해안 필터 → 카드 감소', async ({ page }) => {
     await page.goto('/?month=2025-10')
     await page.getByRole('button', { name: /정렬/ }).click()
     await page.getByRole('option', { name: '조회 많은 순' }).click()
@@ -26,12 +26,13 @@ test.describe('W-01 탐색(홈) — mock, 지도 키 없음', () => {
     await expect(cards.first()).toContainText('제주시')
 
     const before = await cards.count()
-    // 카테고리 nav 의 '도시' 버튼만 누르도록 exact 로 한정
+    // 산간·도시 칩은 지웠다. mock 에는 해안이 아닌 시군구가 있어 해안 필터로 카드가 준다.
+    // 예시 칩 문구에도 '해안' 이 들어가므로 카테고리 nav 의 버튼으로 한정
     await page
       .getByRole('navigation', { name: '카테고리' })
-      .getByRole('button', { name: '도시', exact: true })
+      .getByRole('button', { name: '해안', exact: true })
       .click()
-    await expect(page).toHaveURL(/terrain=city/)
+    await expect(page).toHaveURL(/terrain=coast/)
     await expect.poll(() => cards.count()).toBeLessThan(before)
   })
 
