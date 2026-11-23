@@ -1,11 +1,9 @@
 import type { LucideIcon } from 'lucide-react'
 import {
   BedDouble,
-  Building,
   Coffee,
   ConciergeBell,
   Library,
-  Mountain,
   Sailboat,
   Store,
   TreePalm,
@@ -37,8 +35,6 @@ const place = (value: PlaceTag, label: string, icon: LucideIcon): Category => ({
 /** 홈 카테고리 = 장소 태그 필터만 (백엔드 webapi/data.py TAG_KO 순서·라벨). 분위기(프리셋)는 MoodRow */
 export const CATEGORIES: Category[] = [
   terrain('coast', '해안', Waves),
-  terrain('mountain', '산간', Mountain),
-  terrain('city', '도시', Building),
   place('beach', '해수욕장', Umbrella),
   place('island', '섬', TreePalm),
   place('surf', '서핑', Sailboat),

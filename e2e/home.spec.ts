@@ -26,7 +26,7 @@ test.describe('W-01 탐색(홈) — mock, 지도 키 없음', () => {
     await expect(cards.first()).toContainText('제주시')
 
     const before = await cards.count()
-    // 예시 칩('또래가 많고 저녁이 활기찬 도시에서 한 달')도 '도시'를 포함하므로 카테고리 nav + exact 로 한정
+    // 카테고리 nav 의 '도시' 버튼만 누르도록 exact 로 한정
     await page
       .getByRole('navigation', { name: '카테고리' })
       .getByRole('button', { name: '도시', exact: true })

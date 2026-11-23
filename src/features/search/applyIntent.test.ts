@@ -41,6 +41,18 @@ describe('applyIntentToParams', () => {
   })
 })
 
+describe('장소 태그(place)', () => {
+  const cafe: SearchIntent = { month: '2025-11', place: ['library', 'cafe'], tags: [] }
+  it('place 를 카테고리 순서로 URL 에 넣는다', () => {
+    expect(applyIntentToParams(cafe, sp('')).toString()).toBe('month=2025-11&place=cafe%2Clibrary')
+  })
+  it('조건 태그 × 로 place 를 지운다', () => {
+    expect(removeIntentAxis('place', sp('month=2025-11&place=cafe')).toString()).toBe(
+      'month=2025-11',
+    )
+  })
+})
+
 describe('removeIntentAxis', () => {
   it('축에 해당하는 키를 지운다', () => {
     expect(removeIntentAxis('terrain', sp('month=2025-11&terrain=coast')).toString()).toBe(
