@@ -48,6 +48,6 @@ export const METRIC_DEFINITION: Record<MetricKey, string> = {
 
 export const PRESET_LABEL: Record<PresetKey, string> = {
   quiet: '조용한 곳',
-  lively: '활기 있는 한 달',
+  lively: '활기 있는 곳',
   custom: '직접 설정',
 }

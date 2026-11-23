@@ -16,7 +16,7 @@ describe('tierDescription', () => {
     expect(tierDescription(base, 'A')).toBe('평균 이상')
     expect(tierDescription(base, 'B')).toBe('평균 이하')
     expect(tierDescription({ ...base, preset: 'lively' }, 'C')).toBe(
-      '활기 있는 한 달 조건과 거리 있음',
+      '활기 있는 곳 조건과 거리 있음',
     )
   })
   it('직접 설정', () => {

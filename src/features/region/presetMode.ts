@@ -10,7 +10,7 @@ export const DEFAULT_CUSTOM_METRICS: MetricKey[] = ['quiet', 'crowd', 'overnight
 
 export type PresetMode = {
   mode: TierMode
-  /** '조용한 곳' / '활기 있는 한 달' / '직접 설정 (조용 · 시기 · 숙박)' */
+  /** '조용한 곳' / '활기 있는 곳' / '직접 설정 (조용 · 시기 · 숙박)' */
   presetLabel: string
   /** custom 일 때 고른 지표, 아니면 null */
   selected: MetricKey[] | null

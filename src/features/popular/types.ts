@@ -30,7 +30,7 @@ export type PopularRegion = {
   photoUrl: string
   tags: string[] // Meta1
   terrain: Terrain[] // 수동
-  placeTags?: PlaceTag[] // 지형 외 장소 태그. 백엔드가 아직 내려주지 않아 없으면 []
+  placeTags?: PlaceTag[] // 지형 외 장소 태그 (백엔드 Region.tags 에서 지형 제외). 없으면 []
   scores: MetricScores // month 기준 백분위 (tier 와 동일 규칙)
   favoriteCount: number // 누적 즐겨찾기 수 (해제 반영)
   viewCount: number // 최근 30일 W-03 조회수 (백엔드 중복 제거 규칙)

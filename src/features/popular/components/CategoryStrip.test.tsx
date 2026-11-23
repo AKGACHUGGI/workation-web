@@ -13,10 +13,10 @@ describe('CategoryStrip', () => {
     await userEvent.click(screen.getByRole('button', { name: '해안' }))
     expect(screen.getByTestId('location')).not.toHaveTextContent('terrain=')
   })
-  it('복수 지형 선택', async () => {
-    renderWithRouter(<CategoryStrip />, { route: '/?terrain=coast' })
-    await userEvent.click(screen.getByRole('button', { name: '도시' }))
-    expect(screen.getByTestId('location')).toHaveTextContent('terrain=coast%2Ccity')
+  it('산간 · 도시 칩은 없다 (해당 시군구 0곳)', () => {
+    renderWithRouter(<CategoryStrip />)
+    expect(screen.queryByRole('button', { name: '산간' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '도시' })).not.toBeInTheDocument()
   })
   it('장소 태그는 place 쿼리로 토글', async () => {
     renderWithRouter(<CategoryStrip />, { route: '/?terrain=coast' })

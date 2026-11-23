@@ -50,7 +50,7 @@ function useListParam<T>(
   return [value, set]
 }
 
-/** terrain 쿼리: 해안 · 산간 · 도시 */
+/** terrain 쿼리: 해안 (산간 · 도시는 해당 시군구가 없어 뺐다) */
 export function useTerrainParam(): [Terrain[], (next: Terrain[]) => void] {
   return useListParam('terrain', parseTerrain, serializeTerrain)
 }

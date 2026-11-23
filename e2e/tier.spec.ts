@@ -9,7 +9,7 @@ test.describe('W-02 랭킹', () => {
   test('프리셋 전환', async ({ page }) => {
     await page.goto('/tier?month=2025-10')
     await expect(cards(page, 'S').first()).toContainText('양양군')
-    await page.getByRole('button', { name: '활기 있는 한 달' }).click()
+    await page.getByRole('button', { name: '활기 있는 곳' }).click()
     await expect(cards(page, 'S').first()).toContainText('전주시')
     await expect.poll(() => param(page, 'preset')).toBe('lively')
   })

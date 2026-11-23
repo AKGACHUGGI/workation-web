@@ -15,7 +15,7 @@ describe('문구 사전', () => {
   it('프리셋 라벨', () => {
     expect(PRESET_LABEL).toEqual({
       quiet: '조용한 곳',
-      lively: '활기 있는 한 달',
+      lively: '활기 있는 곳',
       custom: '직접 설정',
     })
   })
