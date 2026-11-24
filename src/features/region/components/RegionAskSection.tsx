@@ -1,7 +1,7 @@
+import AskCard from '@/features/chat/components/AskCard'
 import ChatThread from '@/features/chat/components/ChatThread'
 import { CHAT_COPY } from '@/features/chat/copy'
 import type { MonthParam } from '@/features/metric/month'
-import DetailSection from '@/features/region/components/DetailSection'
 
 type Props = {
   sigunguId: string
@@ -13,17 +13,18 @@ type Props = {
 
 /**
  * 시군구 상세 채팅 (시군구 채팅 스펙 §8). 시군구에 묻는다("조용한 동네 어디야?").
- * 답에 나온 동마다 "자세히 →" 로 동 상세에 보낸다. 동 이름을 넣어 물으면 같은 대화에서 동 답이 온다
+ * 답에 나온 동마다 "자세히 →" 로 동 상세에 보낸다. 동 이름을 넣어 물으면 같은 대화에서 동 답이 온다.
+ * 사이드바 계획 카드 아래 카드(AskCard)
  */
 export default function RegionAskSection({ sigunguId, name, month, dongHref }: Props) {
   return (
-    <DetailSection title={CHAT_COPY.regionTitle(name)} titleId="region-ask-title">
+    <AskCard title={CHAT_COPY.regionTitle(name)} titleId="region-ask-title">
       <ChatThread
         target={{ surface: 'region', sigunguId, month }}
         label={CHAT_COPY.regionTitle(name)}
         placeholder={CHAT_COPY.regionPlaceholder(name)}
         dongHref={dongHref}
       />
-    </DetailSection>
+    </AskCard>
   )
 }

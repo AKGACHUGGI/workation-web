@@ -29,6 +29,25 @@ test.describe('W-03 지역 상세', () => {
     await expect(page).toHaveURL('/dongs/5182034000?month=2025-10&preset=lively')
   })
 
+  test('채팅: 사이드바 계획 카드 아래, 끝까지 내려도 채팅은 화면에 붙어 있고 계획 카드는 따라오지 않는다', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto('/regions/51820?month=2025-10')
+    const ask = page.locator('section[aria-labelledby="region-ask-title"]')
+    const plan = page.getByRole('complementary')
+    await expect(ask.getByRole('heading', { name: '고성군에 물어보기' })).toBeVisible()
+    const [planBox, askBox] = [await plan.boundingBox(), await ask.boundingBox()]
+    expect(askBox!.y).toBeGreaterThan(planBox!.y + planBox!.height - 1)
+    expect(Math.abs(askBox!.x - planBox!.x)).toBeLessThan(1)
+
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+    await expect(plan).not.toBeInViewport()
+    await expect(ask.getByRole('textbox', { name: '고성군에 물어보기' })).toBeInViewport()
+    const stuck = await ask.boundingBox()
+    expect(stuck!.y + stuck!.height).toBeLessThanOrEqual(800)
+  })
+
   test('채팅: 조용한 동네 → 자세히 → 동 상세(달 유지)', async ({ page }) => {
     await page.goto('/regions/51820?month=2025-10')
     const ask = page.locator('section[aria-labelledby="region-ask-title"]')

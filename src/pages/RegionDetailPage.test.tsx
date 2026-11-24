@@ -56,14 +56,18 @@ describe('RegionDetailPage 관심 기록', () => {
 })
 
 describe('RegionDetailPage 채팅', () => {
-  it('채팅 섹션은 동 목록 앞', async () => {
+  it('채팅은 본문이 아니라 사이드바 계획 카드 아래', async () => {
     renderWithRouter(<RegionDetailPage />, {
       route: '/regions/51820?month=2025-10',
       path: '/regions/:sggId',
     })
     const ask = await screen.findByRole('heading', { name: '고성군에 물어보기' })
     const list = screen.getByRole('heading', { name: /^행정동 \d+곳$/ })
-    expect(ask.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const plan = screen.getByRole('complementary')
+    // 본문(동 목록)과 계획 카드 모두 채팅보다 앞, 채팅은 계획 카드 안이 아니다
+    expect(list.compareDocumentPosition(ask) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(plan.compareDocumentPosition(ask) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(plan.contains(ask)).toBe(false)
   })
 
   it('답의 "자세히 →" 는 month·preset 을 유지한다', async () => {
