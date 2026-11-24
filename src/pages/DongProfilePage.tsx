@@ -145,7 +145,6 @@ export default function DongProfilePage() {
               peerGrade={peerGrade}
             />
           </div>
-          <DongAskSection key={dongId} dongId={dongId} month={month} />
           <HourlyCurveSection
             hourly={detail.hourly}
             peaks={detail.peaks}
@@ -201,14 +200,18 @@ export default function DongProfilePage() {
             <ChevronRight size={20} aria-hidden className="text-text-primary" />
           </Link>
         </div>
-        <DongPlanCard
-          detail={detail}
-          month={month}
-          onMonthChange={setMonth}
-          quiet={quiet}
-          presetLabel={presetLabel}
-          sgg={sgg}
-        />
+        {/* 계획 카드는 제자리에 두고, 채팅은 그 아래에서 스크롤하면 화면 위쪽에 붙는다 (열이 본문 높이만큼 늘어야 붙어 있는다) */}
+        <div className="w-sidebar mt-6 flex shrink-0 flex-col gap-4 self-stretch">
+          <DongPlanCard
+            detail={detail}
+            month={month}
+            onMonthChange={setMonth}
+            quiet={quiet}
+            presetLabel={presetLabel}
+            sgg={sgg}
+          />
+          <DongAskSection key={dongId} dongId={dongId} month={month} />
+        </div>
       </div>
     </PageContainer>
   )

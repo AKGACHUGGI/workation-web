@@ -31,7 +31,7 @@ const cellLabel = 'text-caption-segment text-text-primary'
 const cellSelect =
   'text-body-sm text-text-secondary w-full cursor-pointer appearance-none bg-transparent outline-none'
 
-/** 사이드바 sticky 계획 카드 (Figma 251:3837, PlanCard 54:208 의 동네판) */
+/** 사이드바 계획 카드 (Figma 251:3837, PlanCard 54:208 의 동네판). 스크롤을 따라오지 않는다 — 아래 채팅이 붙는다 */
 export default function DongPlanCard({
   detail,
   month,
@@ -47,7 +47,7 @@ export default function DongPlanCard({
   const sggLink = useCarryLink(`/regions/${detail.sigungu.id}`)
 
   return (
-    <aside className="border-border-default bg-bg-surface w-sidebar shadow-float sticky top-24 mt-6 flex shrink-0 flex-col gap-4 self-start rounded-xl border p-6">
+    <aside className="border-border-default bg-bg-surface shadow-float flex flex-col gap-4 rounded-xl border p-6">
       <div className="flex items-end justify-between gap-2">
         <div className="flex items-end gap-1">
           <span className="text-heading-2xl text-text-primary">

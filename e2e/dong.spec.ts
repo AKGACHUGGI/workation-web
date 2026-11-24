@@ -37,6 +37,25 @@ test.describe('W-04 동네 프로필', () => {
     await expect(ask.getByRole('log', { name: '물어본 대화' })).toContainText('조용함은')
   })
 
+  test('채팅: 사이드바 계획 카드 아래, 끝까지 내려도 채팅은 화면에 붙어 있고 계획 카드는 따라오지 않는다', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto(`/dongs/${GEOJIN}?month=2025-10`)
+    const ask = page.locator('#ask')
+    const plan = page.getByRole('complementary')
+    await expect(ask.getByRole('heading', { name: '이 동네에 물어보기' })).toBeVisible()
+    const [planBox, askBox] = [await plan.boundingBox(), await ask.boundingBox()]
+    expect(askBox!.y).toBeGreaterThan(planBox!.y + planBox!.height - 1)
+    expect(Math.abs(askBox!.x - planBox!.x)).toBeLessThan(1)
+
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+    await expect(plan).not.toBeInViewport()
+    await expect(ask.getByRole('textbox', { name: '이 동네에 물어보기' })).toBeInViewport()
+    const stuck = await ask.boundingBox()
+    expect(stuck!.y + stuck!.height).toBeLessThanOrEqual(800)
+  })
+
   // 지도 패널에서 옮겨 온 흐름 (시군구 채팅 스펙 §9)
   test('채팅: 같은 시군구 비교 2문장 → 예시 교체, 다른 시군구 → 안내, 이어 묻기', async ({
     page,

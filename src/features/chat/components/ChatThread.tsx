@@ -21,7 +21,7 @@ const CHIP =
  * 상세 페이지 채팅 (시군구 채팅 스펙 §8). 대화 · 예시 질문 · 입력. 브리핑은 그리지 않는다(지도 패널에만).
  * 예시 질문은 늘 보이고 답이 오면 응답 examples 로 바뀐다. 대화 목록은 높이 288px 까지만 늘고
  * 그 안에서 스크롤된다. 새 차례가 붙거나 답이 오면 그 말풍선이 보이게 내린다(동작 줄이기면 즉시).
- * 돌아온 기록에서는 내리지 않는다. 읽기 폭은 640px 까지
+ * 돌아온 기록에서는 내리지 않는다. 읽기 폭은 640px 까지. 부모 높이가 모자라면(동 상세 사이드바) 대화 목록이 줄어든다
  */
 export default function ChatThread({ target, label, placeholder, dongHref }: Props) {
   const { thread, pending, ask, retry } = useChatThread(target)
@@ -36,7 +36,7 @@ export default function ChatThread({ target, label, placeholder, dongHref }: Pro
   }, [last])
 
   return (
-    <div className="bg-bg-subtle flex max-w-160 flex-col gap-2.5 rounded-xl px-3.5 py-3">
+    <div className="bg-bg-subtle flex min-h-0 max-w-160 flex-col gap-2.5 rounded-xl px-3.5 py-3">
       <div
         role="log"
         aria-live="polite"

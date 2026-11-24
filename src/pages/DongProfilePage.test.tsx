@@ -75,14 +75,18 @@ describe('DongProfilePage', () => {
     expect(await screen.findByTestId('quiet-score')).toHaveTextContent('37')
     expect(recordInterest).toHaveBeenCalledTimes(1)
   }, 10_000)
-  it('채팅 섹션은 점수 카드 다음, 24시간 곡선 앞', async () => {
+  it('채팅은 본문이 아니라 사이드바 계획 카드 아래', async () => {
     renderWithRouter(<DongProfilePage />, {
       route: '/dongs/5182025300?month=2025-10',
       path: '/dongs/:dongId',
     })
     const ask = await screen.findByRole('heading', { name: '이 동네에 물어보기' })
-    const curve = screen.getByRole('heading', { name: '24시간 붐빔 곡선' })
-    expect(ask.compareDocumentPosition(curve) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const plan = screen.getByRole('complementary')
+    const compare = screen.getByRole('link', { name: /다른 동네와 나란히 비교하기/ })
+    // 본문 맨 끝(비교 링크)과 계획 카드 모두 채팅보다 앞, 채팅은 계획 카드 안이 아니다
+    expect(compare.compareDocumentPosition(ask) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(plan.compareDocumentPosition(ask) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(plan.contains(ask)).toBe(false)
   }, 10_000)
   it('동 A → B → A: 채팅 입력이 비고, 돌아온 동의 기록에서 대화가 튀지 않는다', async () => {
     const scrollSpy = vi.fn()
