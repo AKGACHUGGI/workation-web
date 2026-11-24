@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
 import { ACTIVITY_LABEL, dominantActivity } from '@/features/dong/activity'
 import ActivityMixBar from '@/features/dong/components/ActivityMixBar'
+import DongAskSection from '@/features/dong/components/DongAskSection'
 import DongHero from '@/features/dong/components/DongHero'
 import DongMap from '@/features/dong/components/DongMap'
 import DongMetricGrid from '@/features/dong/components/DongMetricGrid'
@@ -144,6 +145,7 @@ export default function DongProfilePage() {
               peerGrade={peerGrade}
             />
           </div>
+          <DongAskSection dongId={dongId} month={month} />
           <HourlyCurveSection
             hourly={detail.hourly}
             peaks={detail.peaks}

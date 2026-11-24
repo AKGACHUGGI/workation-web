@@ -53,4 +53,13 @@ describe('DongProfilePage', () => {
     expect(await screen.findByTestId('quiet-score')).toHaveTextContent('37')
     expect(recordInterest).toHaveBeenCalledTimes(1)
   }, 10_000)
+  it('채팅 섹션은 점수 카드 다음, 24시간 곡선 앞', async () => {
+    renderWithRouter(<DongProfilePage />, {
+      route: '/dongs/5182025300?month=2025-10',
+      path: '/dongs/:dongId',
+    })
+    const ask = await screen.findByRole('heading', { name: '이 동네에 물어보기' })
+    const curve = screen.getByRole('heading', { name: '24시간 붐빔 곡선' })
+    expect(ask.compareDocumentPosition(curve) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  }, 10_000)
 })
