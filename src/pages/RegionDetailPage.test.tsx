@@ -54,3 +54,15 @@ describe('RegionDetailPage 관심 기록', () => {
     expect(recordInterest).toHaveBeenCalledTimes(1)
   }, 10_000)
 })
+
+describe('RegionDetailPage 채팅', () => {
+  it('채팅 섹션은 동 목록 앞', async () => {
+    renderWithRouter(<RegionDetailPage />, {
+      route: '/regions/51820?month=2025-10',
+      path: '/regions/:sggId',
+    })
+    const ask = await screen.findByRole('heading', { name: '고성군에 물어보기' })
+    const list = screen.getByRole('heading', { name: /^행정동 \d+곳$/ })
+    expect(ask.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+})

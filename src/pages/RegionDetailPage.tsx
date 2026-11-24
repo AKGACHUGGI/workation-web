@@ -17,6 +17,7 @@ import PhotoGallery from '@/features/region/components/PhotoGallery'
 import PlanCard from '@/features/region/components/PlanCard'
 import PollSection from '@/features/region/components/PollSection'
 import ReasonSection from '@/features/region/components/ReasonSection'
+import RegionAskSection from '@/features/region/components/RegionAskSection'
 import RegionHero from '@/features/region/components/RegionHero'
 import RegionSkeleton from '@/features/region/components/RegionSkeleton'
 import ScoreCard from '@/features/region/components/ScoreCard'
@@ -229,6 +230,7 @@ export default function RegionDetailPage() {
           />
           <WeekendCompare ratio={d.stats.weekendRatio} />
           <ReasonSection sentences={sentences} />
+          <RegionAskSection sigunguId={sggId} name={d.name} month={month} dongHref={hrefFor} />
           <DongList
             dongs={d.dongs}
             excludedDongs={d.excludedDongs}
