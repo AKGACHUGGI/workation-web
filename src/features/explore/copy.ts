@@ -144,6 +144,7 @@ export const EXPLORE_COPY = {
   noValue: '값 없음',
   briefingTitle: '이 동네에서 일하는 하루',
   briefingEmpty: '브리핑을 준비하고 있어요.',
+  askOnDetail: '이 동네에 물어보기 →',
   similarCoastTitle: '비슷한 바닷가 동',
   similarPlainTitle: '비슷한 동',
   similarHint: '지표 거리 기준 · 점수 차 = 상대 − 이 동',

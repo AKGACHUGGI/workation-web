@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import type { DayGroup, DetailKind, DongDetail, SimilarDong } from '@/features/explore/types'
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
@@ -78,7 +79,14 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
       <TypeBars types={dong.types} />
       <DongFactGraph dong={dong} day={day} detail={detail} onDetail={setDetail} />
       <DetailSlot dong={dong} day={day} onDay={setDay} detail={detail} />
-      <Briefing sentences={dong.briefing} />
+      <Briefing sentences={dong.briefing}>
+        <Link
+          to={`/dongs/${dong.id}#ask`}
+          className="text-caption-xs text-text-primary self-start font-medium underline underline-offset-2"
+        >
+          {EXPLORE_COPY.askOnDetail}
+        </Link>
+      </Briefing>
       <SimilarList
         similar={dong.similar}
         coastal={dong.coastKm !== null && dong.coastKm <= 1}

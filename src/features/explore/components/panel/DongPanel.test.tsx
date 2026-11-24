@@ -5,7 +5,6 @@ import renderWithRouter from '@/test/renderWithRouter'
 import { GEUMAM, JUMUNJIN } from '@/test/fixtures/explore'
 
 vi.mock('@/features/explore/api', () => ({
-  postChat: vi.fn(),
   fetchDong: vi.fn(),
   fetchPins: vi.fn(),
 }))
@@ -26,6 +25,18 @@ beforeEach(() => {
 })
 
 describe('DongPanel', () => {
+  it('브리핑 아래 동 상세 채팅 링크, 패널에는 채팅 입력이 없다', async () => {
+    mocked.mockResolvedValue(JUMUNJIN)
+    renderWithRouter(<DongPanel dongId={JUMUNJIN.id} {...props()} />)
+    const briefing = await screen.findByRole('region', { name: '이 동네에서 일하는 하루' })
+    expect(within(briefing).getByRole('link', { name: '이 동네에 물어보기 →' })).toHaveAttribute(
+      'href',
+      `/dongs/${JUMUNJIN.id}#ask`,
+    )
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: '예시 질문' })).not.toBeInTheDocument()
+  })
+
   it('성공: 헤더 → 사진 → 유형 → 그래프 → 상세 → 브리핑 → 비슷한 동 → 출처', async () => {
     mocked.mockResolvedValue(JUMUNJIN)
     const p = props()
