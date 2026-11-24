@@ -230,7 +230,13 @@ export default function RegionDetailPage() {
           />
           <WeekendCompare ratio={d.stats.weekendRatio} />
           <ReasonSection sentences={sentences} />
-          <RegionAskSection sigunguId={sggId} name={d.name} month={month} dongHref={hrefFor} />
+          <RegionAskSection
+            key={sggId}
+            sigunguId={sggId}
+            name={d.name}
+            month={month}
+            dongHref={hrefFor}
+          />
           <DongList
             dongs={d.dongs}
             excludedDongs={d.excludedDongs}
