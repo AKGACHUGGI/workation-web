@@ -4,6 +4,7 @@ import { EXPLORE_COPY } from '@/features/explore/copy'
 import type { DayGroup, DetailKind, DongDetail, SimilarDong } from '@/features/explore/types'
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
 import { useDongQuery } from '@/features/explore/useDongQuery'
+import { useCarryLink } from '@/hooks/useCarryLink'
 import { NotFoundError } from '@/lib/errors'
 import Briefing from '@/features/explore/components/panel/Briefing'
 import DetailSlot from '@/features/explore/components/panel/DetailSlot'
@@ -72,6 +73,7 @@ type BodyProps = {
 function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
   const [day, setDay] = useState<DayGroup>('weekday')
   const [detail, setDetail] = useState<DetailKind>('hour')
+  const askHref = `${useCarryLink(`/dongs/${dong.id}`)}#ask`
   return (
     <article aria-label={dong.name} className="flex flex-1 flex-col gap-3 pt-4">
       <PanelHeader dong={dong} onBack={onBack} />
@@ -81,7 +83,7 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
       <DetailSlot dong={dong} day={day} onDay={setDay} detail={detail} />
       <Briefing sentences={dong.briefing}>
         <Link
-          to={`/dongs/${dong.id}#ask`}
+          to={askHref}
           className="text-caption-xs text-text-primary self-start font-medium underline underline-offset-2"
         >
           {EXPLORE_COPY.askOnDetail}
