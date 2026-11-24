@@ -7,7 +7,9 @@ const GEUMAM = '5211357500'
 
 const body = (question: string, panel = JUMUNJIN): ChatRequest => ({
   conversationId: null,
+  surface: 'dong',
   panel,
+  month: null,
   question,
   criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
 })
@@ -16,6 +18,7 @@ describe('chatMock', () => {
   it('동 1개: 의도별 규칙 문장, conversationId = mock-<동>', () => {
     expect(chatMock(body('이 동네 조용해?'))).toEqual({
       conversationId: `mock-${JUMUNJIN}`,
+      scope: 'dong',
       dongs: [{ id: JUMUNJIN, name: '주문진읍' }],
       intent: 'quiet',
       sentences: [{ text: '조용함은 B등급(31점)이에요.', source: 'rule' }],
@@ -80,5 +83,33 @@ describe('chatMock', () => {
       '해안선에서 1km 넘게 떨어진 동네예요.',
     )
     expect(chatMock(body('이 동네 조용해?', '0000000000'))).toBeNull()
+  })
+})
+
+describe('chatMock 시군구', () => {
+  it('조용함 등급 순 동 3곳, scope region, 없는 시군구는 null', () => {
+    const res = chatMock({
+      conversationId: null,
+      surface: 'region',
+      sigungu: '51820',
+      month: '2025-10',
+      question: '조용한 동네 어디야?',
+      criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
+    })
+    expect(res?.scope).toBe('region')
+    expect(res?.conversationId).toBe('mock-51820')
+    expect(res?.dongs.length).toBeGreaterThan(0)
+    expect(res?.dongs.length).toBeLessThanOrEqual(3)
+    expect(res?.sentences[0].text).toMatch(/^조용한 순으로 /)
+    expect(
+      chatMock({
+        conversationId: null,
+        surface: 'region',
+        sigungu: '99999',
+        month: null,
+        question: '조용한 동네 어디야?',
+        criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
+      }),
+    ).toBeNull()
   })
 })

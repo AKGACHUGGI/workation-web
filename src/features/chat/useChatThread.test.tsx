@@ -20,6 +20,7 @@ const B = '5211357500'
 
 const reply = (text: string, over: Partial<ChatResponse> = {}): ChatResponse => ({
   conversationId: 'c-1',
+  scope: 'dong',
   dongs: [{ id: A, name: '주문진읍' }],
   intent: 'quiet',
   sentences: [{ text, source: 'rule' }],
@@ -33,7 +34,7 @@ function setup(dongId = A) {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   )
-  const hook = renderHook(({ id }) => useChatThread(id), {
+  const hook = renderHook(({ id }) => useChatThread({ surface: 'dong', dongId: id, month: null }), {
     wrapper: Wrapper,
     initialProps: { id: dongId },
   })
@@ -77,7 +78,9 @@ describe('useChatThread', () => {
     await act(async () => result.current.ask('  이 동네 조용해?  '))
     expect(mocked).toHaveBeenCalledWith({
       conversationId: null,
+      surface: 'dong',
       panel: A,
+      month: null,
       question: '이 동네 조용해?',
       criteria: {
         chips: [],
@@ -192,5 +195,44 @@ describe('useChatThread', () => {
       turns: [{ question: 'A 질문', status: 'done' }],
     })
     expect(result.current.thread.turns).toEqual([])
+  })
+})
+
+describe('useChatThread 시군구', () => {
+  it('요청에 surface·sigungu·month, 첫 예시는 시군구 예시, 기록은 시군구 키', async () => {
+    mocked.mockResolvedValue(
+      reply('조용함을 원한다면 효자2동이 맞아요.', {
+        scope: 'region',
+        dongs: [{ id: '4511164500', name: '효자2동' }],
+      }),
+    )
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    )
+    const { result } = renderHook(
+      () => useChatThread({ surface: 'region', sigunguId: '45111', month: '2025-10' }),
+      { wrapper: Wrapper },
+    )
+    expect(result.current.thread.examples).toEqual([
+      '조용한 동네 어디야?',
+      '바다 가까운 동네 있어?',
+      '몇 월에 가면 한산해?',
+    ])
+    await act(async () => result.current.ask('조용한 동네 어디야?'))
+    expect(mocked).toHaveBeenCalledWith({
+      conversationId: null,
+      surface: 'region',
+      sigungu: '45111',
+      month: '2025-10',
+      question: '조용한 동네 어디야?',
+      criteria: { chips: [], interest: { metric: { quiet: 1 }, terrain: {}, recent: ['5115066500'] } },
+    })
+    await waitFor(() =>
+      expect(client.getQueryData(chatKeys.region('45111'))).toMatchObject({
+        conversationId: 'c-1',
+        turns: [{ status: 'done', scope: 'region', dongs: [{ id: '4511164500', name: '효자2동' }] }],
+      }),
+    )
   })
 })

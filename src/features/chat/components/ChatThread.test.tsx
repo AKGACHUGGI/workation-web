@@ -20,6 +20,7 @@ const NEXT = [
 ]
 const reply = (texts: string[], guide: string | null = null): ChatResponse => ({
   conversationId: 'c-1',
+  scope: 'dong',
   dongs: [{ id: JUMUNJIN.id, name: JUMUNJIN.name }],
   intent: 'quiet',
   sentences: texts.map((text) => ({ text, source: 'llm' })),
@@ -45,7 +46,12 @@ function DongSwitch() {
       <button type="button" onClick={() => setDong(JUMUNJIN)}>
         주문진읍으로
       </button>
-      <ChatThread key={dong.id} dong={dong} />
+      <ChatThread
+        key={dong.id}
+        target={{ surface: 'dong', dongId: dong.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />
     </>
   )
 }
@@ -62,10 +68,12 @@ afterEach(() => {
 })
 
 describe('ChatThread', () => {
-  it('처음: 브리핑 + 빈 대화 + 첫 예시 3개 + 알약 입력, 보내기는 비활성(연한 Rausch)', () => {
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
-    expect(screen.getByRole('heading', { name: '이 동네에서 일하는 하루' })).toBeInTheDocument()
-    expect(screen.getByText(JUMUNJIN.briefing.join(' '))).toBeInTheDocument()
+  it('처음: 빈 대화 + 첫 예시 3개 + 알약 입력, 보내기는 비활성(연한 Rausch)', () => {
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     expect(log()).toHaveAttribute('aria-live', 'polite')
     expect(log()).toBeEmptyDOMElement()
     expect(log()).toHaveClass('max-h-72', 'overflow-y-auto')
@@ -78,7 +86,11 @@ describe('ChatThread', () => {
   it('예시 질문 → 질문 말풍선(brand-soft)·대기(칩·입력 비활성) → 답, 예시가 응답 examples 로 바뀐다', async () => {
     let resolve!: (r: ChatResponse) => void
     mocked.mockReturnValue(new Promise((r) => (resolve = r)))
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.click(screen.getByRole('button', { name: FIRST[0] }))
     expect(mocked).toHaveBeenCalledWith(
       expect.objectContaining({ panel: JUMUNJIN.id, question: FIRST[0] }),
@@ -108,7 +120,11 @@ describe('ChatThread', () => {
         '앞의 세 곳만 볼게요.',
       ),
     )
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.type(input(), '경포동이랑 비교하면?{Enter}')
     const guide = await within(log()).findByText('앞의 세 곳만 볼게요.')
     expect(guide).toHaveClass('text-text-secondary')
@@ -122,7 +138,11 @@ describe('ChatThread', () => {
 
   it('입력 Enter 로 보내고 비워진다, 질문은 아래로 쌓인다', async () => {
     mocked.mockResolvedValueOnce(reply(['첫 답'])).mockResolvedValueOnce(reply(['둘째 답']))
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.type(input(), '아침에 조용해?{Enter}')
     expect(input()).toHaveValue('')
     await within(log()).findByText('첫 답')
@@ -133,7 +153,11 @@ describe('ChatThread', () => {
   })
 
   it('한글 조합 중 Enter 는 보내지 않는다', () => {
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     fireEvent.change(input(), { target: { value: '조용해' } })
     fireEvent.keyDown(input(), { key: 'Enter', isComposing: true })
     fireEvent.keyDown(input(), { key: 'Enter', keyCode: 229 })
@@ -142,7 +166,11 @@ describe('ChatThread', () => {
   })
 
   it('100자에서 더 입력되지 않고 글자 수를 보인다', async () => {
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.type(input(), '가'.repeat(98))
     expect(screen.getByText('98/100')).toBeInTheDocument()
     await userEvent.type(input(), '나나나')
@@ -152,7 +180,11 @@ describe('ChatThread', () => {
 
   it('guide 만 온 답(모르는 질문·다른 시군구)은 회색 안내', async () => {
     mocked.mockResolvedValueOnce(reply([], '지금은 같은 시군구 안의 동네끼리만 비교할 수 있어요.'))
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.type(input(), '효자2동이랑 비교해 줘{Enter}')
     expect(
       await within(log()).findByText('지금은 같은 시군구 안의 동네끼리만 비교할 수 있어요.'),
@@ -163,7 +195,11 @@ describe('ChatThread', () => {
     mocked
       .mockRejectedValueOnce(new Error('API 503 Service Unavailable: /x'))
       .mockResolvedValueOnce(reply(['조용함은 B등급(31점)이에요.']))
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.type(input(), '이 동네 조용해?{Enter}')
     expect(await within(log()).findByText('지금은 답을 가져오지 못했어요.')).toBeInTheDocument()
     await userEvent.click(within(log()).getByRole('button', { name: '다시 시도' }))
@@ -174,7 +210,11 @@ describe('ChatThread', () => {
 
   it('429 → 잠시 후 문구, 다시 시도 없음', async () => {
     mocked.mockRejectedValue(new Error('API 429 Too Many Requests: /x'))
-    renderWithRouter(<ChatThread dong={JUMUNJIN} />)
+    renderWithRouter(<ChatThread
+        target={{ surface: 'dong', dongId: JUMUNJIN.id, month: null }}
+        label="이 동네에 물어보기"
+        placeholder="이 동네에 대해 물어보세요"
+      />)
     await userEvent.type(input(), '이 동네 조용해?{Enter}')
     expect(await within(log()).findByText('잠시 후 다시 물어봐 주세요.')).toBeInTheDocument()
     expect(within(log()).queryByRole('button', { name: '다시 시도' })).not.toBeInTheDocument()
@@ -192,5 +232,35 @@ describe('ChatThread', () => {
     await userEvent.click(screen.getByRole('button', { name: '주문진읍으로' }))
     expect(within(log()).getByText('주문진 답')).toBeInTheDocument()
     expect(scrollSpy).not.toHaveBeenCalled()
+  })
+
+  it('시군구 답: 찾은 동마다 "자세히 →" 링크(dongHref), 동 답에는 링크 없음', async () => {
+    mocked.mockResolvedValue({
+      ...reply(['조용함을 원한다면 효자2동이 맞아요.']),
+      scope: 'region',
+      dongs: [
+        { id: '4511164500', name: '효자2동' },
+        { id: '4511163500', name: '여의동' },
+      ],
+    })
+    renderWithRouter(
+      <ChatThread
+        target={{ surface: 'region', sigunguId: '45111', month: '2025-10' }}
+        label="전주시에 물어보기"
+        placeholder="전주시에 대해 물어보세요"
+        dongHref={(id) => `/dongs/${id}?month=2025-10`}
+      />,
+    )
+    expect(chips()).toEqual(['조용한 동네 어디야?', '바다 가까운 동네 있어?', '몇 월에 가면 한산해?'])
+    expect(screen.getByRole('textbox', { name: '전주시에 물어보기' })).toHaveAttribute(
+      'placeholder',
+      '전주시에 대해 물어보세요',
+    )
+    await userEvent.click(screen.getByRole('button', { name: '조용한 동네 어디야?' }))
+    expect(await screen.findByRole('link', { name: '효자2동 자세히 →' })).toHaveAttribute(
+      'href',
+      '/dongs/4511164500?month=2025-10',
+    )
+    expect(screen.getByRole('link', { name: '여의동 자세히 →' })).toBeInTheDocument()
   })
 })

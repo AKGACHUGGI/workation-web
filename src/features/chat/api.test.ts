@@ -6,6 +6,7 @@ import { NotFoundError } from '@/lib/errors'
 describe('chatKeys', () => {
   it('동마다 로컬 기록 키', () => {
     expect(chatKeys.dong('5115025000')).toEqual(['chat', 'dong', '5115025000'])
+    expect(chatKeys.region('45111')).toEqual(['chat', 'region', '45111'])
   })
 })
 
@@ -13,7 +14,9 @@ describe('postChat (mock)', () => {
   it('채팅: 주문진읍 조용함, 없는 동은 NotFoundError', async () => {
     const body = {
       conversationId: null,
+      surface: 'dong' as const,
       panel: '5115025000',
+      month: null,
       question: '이 동네 조용해?',
       criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
     }

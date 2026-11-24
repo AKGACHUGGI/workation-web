@@ -19,4 +19,11 @@ export const CHAT_COPY = {
     '평일엔 몇 시가 붐비고 몇 시가 한산해?',
     '비슷한 동네는 어디야?',
   ],
+  /** 시군구 상세 첫 예시 = 백엔드 ask.REGION_FIRST */
+  regionExamples: ['조용한 동네 어디야?', '바다 가까운 동네 있어?', '몇 월에 가면 한산해?'],
+  dongTitle: '이 동네에 물어보기',
+  regionTitle: (name: string) => `${name}에 물어보기`,
+  regionPlaceholder: (name: string) => `${name}에 대해 물어보세요`,
+  dongLinks: '답에 나온 동네',
+  dongMore: (name: string) => `${name} 자세히 →`,
 } as const

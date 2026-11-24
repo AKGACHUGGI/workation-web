@@ -126,12 +126,13 @@ function compareSentences(a: PinDong, b: PinDong): string[] {
  * 같은 시군구 동 이름 → 비교 2문장, 다른 시군구 동 이름 → 같은 시군구 안내, 식당·카페 → 안내,
  * 낱말이 맞는 의도 → 규칙 문장, 그 밖 → 안내. 없는 동은 null (api 가 NotFoundError)
  */
-export function chatMock(body: ChatRequest): ChatResponse | null {
-  const dong = dongMock(body.panel)
+function dongChatMock(body: ChatRequest): ChatResponse | null {
+  const dong = dongMock(body.panel ?? '')
   if (!dong) return null
   const q = body.question.trim()
   const base = {
     conversationId: body.conversationId ?? `mock-${dong.id}`,
+    scope: 'dong' as const,
     dongs: [{ id: dong.id, name: dong.name }],
   }
   const guide = (intent: string, text: string, examples: string[]): ChatResponse => ({
@@ -181,4 +182,35 @@ export function chatMock(body: ChatRequest): ChatResponse | null {
       .slice(0, 3)
       .map((i) => CANONICAL[i]),
   }
+}
+
+const GRADE_ORDER = ['S', 'A', 'B', 'C']
+
+/** 시군구 채팅 mock: 조용함 등급 순 3곳. 백엔드는 의도별 GraphRAG 답 (시군구 채팅 스펙 §6) */
+function regionChatMock(body: ChatRequest): ChatResponse | null {
+  const sgg = body.sigungu ?? ''
+  const pins = allPins()
+  const dongs = DONG_BASE.filter((b) => b.sigunguId === sgg)
+    .map((b) => pins.get(b.id))
+    .filter((p): p is PinDong => Boolean(p?.grades.quiet))
+  if (dongs.length === 0) return null
+  const top = [...dongs]
+    .sort((a, b) => GRADE_ORDER.indexOf(a.grades.quiet!) - GRADE_ORDER.indexOf(b.grades.quiet!))
+    .slice(0, 3)
+  return {
+    conversationId: body.conversationId ?? `mock-${sgg}`,
+    scope: 'region',
+    dongs: top.map((p) => ({ id: p.id, name: p.name })),
+    intent: 'find_quiet',
+    sentences: [
+      { text: `조용한 순으로 ${top.map((p) => p.name).join(', ')} 동네가 있어요.`, source: 'rule' },
+    ],
+    guide: null,
+    examples: [`${top[0].name}은 저녁에 어때?`, '바다 가까운 동네 있어?', '몇 월에 가면 한산해?'],
+  }
+}
+
+/** POST /api/explore/chat mock. surface 로 동 · 시군구 mock 을 고른다 */
+export function chatMock(body: ChatRequest): ChatResponse | null {
+  return body.surface === 'region' ? regionChatMock(body) : dongChatMock(body)
 }

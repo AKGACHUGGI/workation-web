@@ -4,7 +4,7 @@ import type { DayGroup, DetailKind, DongDetail, SimilarDong } from '@/features/e
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
 import { useDongQuery } from '@/features/explore/useDongQuery'
 import { NotFoundError } from '@/lib/errors'
-import ChatThread from '@/features/chat/components/ChatThread'
+import Briefing from '@/features/explore/components/panel/Briefing'
 import DetailSlot from '@/features/explore/components/panel/DetailSlot'
 import DongPhoto from '@/features/explore/components/panel/DongPhoto'
 import DongFactGraph from '@/features/explore/components/panel/DongFactGraph'
@@ -78,7 +78,7 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
       <TypeBars types={dong.types} />
       <DongFactGraph dong={dong} day={day} detail={detail} onDetail={setDetail} />
       <DetailSlot dong={dong} day={day} onDay={setDay} detail={detail} />
-      <ChatThread dong={dong} />
+      <Briefing sentences={dong.briefing} />
       <SimilarList
         similar={dong.similar}
         coastal={dong.coastKm !== null && dong.coastKm <= 1}
