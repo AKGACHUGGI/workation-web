@@ -28,4 +28,12 @@ test.describe('W-04 동네 프로필', () => {
     await page.getByRole('link', { name: /봉래면/ }).click()
     await expect(page).toHaveURL(/\/compare\?dongs=5182025300(,|%2C)4677036000&month=2025-10/)
   })
+
+  test('채팅: 예시 질문 → 답, 지도 링크 #ask 로 오면 섹션이 보인다', async ({ page }) => {
+    await page.goto(`/dongs/${GEOJIN}?month=2025-10#ask`)
+    const ask = page.locator('#ask')
+    await expect(ask.getByRole('heading', { name: '이 동네에 물어보기' })).toBeInViewport()
+    await ask.getByRole('button', { name: '이 동네 조용해?' }).click()
+    await expect(ask.getByRole('log', { name: '물어본 대화' })).toContainText('조용함은')
+  })
 })

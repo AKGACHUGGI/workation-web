@@ -28,4 +28,12 @@ test.describe('W-03 지역 상세', () => {
       .click()
     await expect(page).toHaveURL('/dongs/5182034000?month=2025-10&preset=lively')
   })
+
+  test('채팅: 조용한 동네 → 자세히 → 동 상세(달 유지)', async ({ page }) => {
+    await page.goto('/regions/51820?month=2025-10')
+    const ask = page.locator('section[aria-labelledby="region-ask-title"]')
+    await ask.getByRole('button', { name: '조용한 동네 어디야?' }).click()
+    await ask.getByRole('link', { name: /자세히 →$/ }).first().click()
+    await expect(page).toHaveURL(/\/dongs\/\d{10}\?month=2025-10/)
+  })
 })
