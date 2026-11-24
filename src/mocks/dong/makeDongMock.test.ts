@@ -30,4 +30,16 @@ describe('makeDongMock', () => {
     expect(DONG_MOCK_IDS).toHaveLength(9)
     for (const twin of GEOJIN_2025_10.quieterTwins) expect(DONG_MOCK_IDS).toContain(twin.id)
   })
+  it('flat 은 9~18시 최대·최소 차이 < 15 일 때만 true, 산내면 평일은 평평한 예시', () => {
+    for (const id of DONG_MOCK_IDS) {
+      const d = makeDongMock(id, '2025-06')
+      for (const day of ['weekday', 'weekend'] as const) {
+        const day9to18 = d.hourly[day].slice(9, 19)
+        expect(d.peaks[day].flat).toBe(Math.max(...day9to18) - Math.min(...day9to18) < 15)
+      }
+    }
+    expect(makeDongMock('5214036000', '2025-10').peaks.weekday.flat).toBe(true)
+    expect(makeDongMock('5214036000', '2025-10').peaks.weekend.flat).toBe(false)
+    expect(GEOJIN_2025_10.peaks.weekday.flat).toBe(false)
+  })
 })
