@@ -36,4 +36,31 @@ test.describe('W-04 동네 프로필', () => {
     await ask.getByRole('button', { name: '이 동네 조용해?' }).click()
     await expect(ask.getByRole('log', { name: '물어본 대화' })).toContainText('조용함은')
   })
+
+  // 지도 패널에서 옮겨 온 흐름 (시군구 채팅 스펙 §9)
+  test('채팅: 같은 시군구 비교 2문장 → 예시 교체, 다른 시군구 → 안내, 이어 묻기', async ({
+    page,
+  }) => {
+    await page.goto(`/dongs/${GEOJIN}?month=2025-10#ask`)
+    const ask = page.locator('#ask')
+    const chips = ask.getByRole('group', { name: '예시 질문' })
+    const input = ask.getByRole('textbox', { name: '이 동네에 물어보기' })
+    const log = ask.getByRole('log', { name: '물어본 대화' })
+    await expect(chips.getByRole('button')).toHaveCount(3)
+
+    await chips.getByRole('button', { name: '이 동네 조용해?' }).click()
+    await expect(log).toContainText('조용함은 B등급')
+
+    await input.fill('토성면이랑 비교하면?')
+    await input.press('Enter')
+    await expect(log).toContainText('조용함은 거진읍 B등급, 토성면 C등급이에요.')
+    await expect(log).toContainText('저녁 활기는 거진읍 C등급, 토성면 A등급이에요.')
+    await expect(chips.getByRole('button', { name: '둘이 비슷해?' })).toBeVisible()
+
+    await input.fill('효자2동이랑 비교해 줘')
+    await input.press('Enter')
+    await expect(log).toContainText('지금은 같은 시군구 안의 동네끼리만 비교할 수 있어요.')
+    await expect(log.locator('[data-turn="done"]')).toHaveCount(3)
+    await expect(log.getByRole('link')).toHaveCount(0)
+  })
 })

@@ -99,5 +99,12 @@ test.describe('W-09 지도 탐색 v6', () => {
     const link = page.getByRole('link', { name: '이 동네에 물어보기 →' })
     await expect(link).toHaveAttribute('href', '/dongs/5115025000#ask')
     await expect(page.getByRole('textbox', { name: '이 동네에 물어보기' })).toHaveCount(0)
+
+    // month 가 있으면 이어 붙이고 해시는 쿼리 뒤
+    await page.goto('/explore?sgg=51150&dong=5115025000&month=2025-10')
+    await expect(page.getByRole('link', { name: '이 동네에 물어보기 →' })).toHaveAttribute(
+      'href',
+      '/dongs/5115025000?month=2025-10#ask',
+    )
   })
 })
