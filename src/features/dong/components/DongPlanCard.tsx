@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import PlanActions from '@/components/ui/PlanActions'
-import { formatHour, localLifeLabel } from '@/features/dong/summary'
+import { formatHour, formatLow, localLifeLabel } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
 import { useFavorites } from '@/features/me/useFavorites'
 import { useShareUrl } from '@/features/region/useShareUrl'
@@ -126,7 +126,7 @@ export default function DongPlanCard({
         <div className="flex justify-between">
           <dt className="text-text-secondary">가장 한산</dt>
           <dd className="text-text-primary font-medium">
-            {formatHour(detail.peaks.weekday.lowHour)} · {detail.peaks.weekday.lowValue}
+            {formatLow(detail.peaks.weekday, { withValue: true })}
           </dd>
         </div>
         <div className="flex justify-between">

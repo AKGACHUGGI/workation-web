@@ -1,4 +1,5 @@
-import type { ActivityKey } from '@/features/dong/types'
+import { DONG_COPY } from '@/features/dong/copy'
+import type { ActivityKey, DayPeak } from '@/features/dong/types'
 import type { Grade } from '@/features/metric/types'
 import { DONG_KIND_LABEL } from '@/features/region/copy'
 import type { DongKind } from '@/features/region/types'
@@ -57,4 +58,10 @@ export function pollQuestion(name: string, vibeGrade: Grade): string {
 /** Figma W-04 표기: 두 자리 시각 ('03시', '18시') */
 export function formatHour(h: number): string {
   return `${String(h).padStart(2, '0')}시`
+}
+
+/** '가장 한산' 값. 낮 내내 고르게 붐비는(flat) 날은 시각 대신 문구 */
+export function formatLow(p: DayPeak, { withValue = false } = {}): string {
+  if (p.flat) return DONG_COPY.lowFlat
+  return withValue ? `${formatHour(p.lowHour)} · ${p.lowValue}` : formatHour(p.lowHour)
 }

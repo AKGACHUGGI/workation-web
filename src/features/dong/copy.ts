@@ -1,5 +1,7 @@
 export const DONG_COPY = {
   curveTitle: '24시간 붐빔 곡선',
+  /** peaks.flat 일 때 '가장 한산' 값 */
+  lowFlat: '낮 내내 비슷',
   curveCaption: '시간대별 보행인구 · 최대 시간대 = 100',
   /** 스펙 §3-3 툴팁: `{h}시 · 주중 {v} · 주말 {v}` */
   curveTooltip: (h: number, weekday: number, weekend: number) =>
