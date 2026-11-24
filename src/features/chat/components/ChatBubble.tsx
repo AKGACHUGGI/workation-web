@@ -6,7 +6,7 @@ import type { ChatErrorKind, ChatTurn } from '@/features/chat/types'
 type Props = {
   turn: ChatTurn
   onRetry: (id: string) => void
-  /** 시군구 답의 찾은 동 링크 주소. 없으면 링크를 그리지 않는다 */
+  /** 답에 나온 동 링크 주소 (시군구 상세만, 시군구 답·동 답 모두). 없으면 링크를 그리지 않는다 */
   dongHref?: (dongId: string) => string
   ref?: Ref<HTMLDivElement>
 }
@@ -50,7 +50,7 @@ export default function ChatBubble({ turn, onRetry, dongHref, ref }: Props) {
               {turn.sentences.map((s) => s.text).join(' ')}
             </p>
           )}
-          {dongHref && turn.scope === 'region' && turn.dongs.length > 0 && (
+          {dongHref && turn.dongs.length > 0 && (
             <ul aria-label={CHAT_COPY.dongLinks} className="flex flex-wrap gap-x-3 gap-y-1">
               {turn.dongs.map((d) => (
                 <li key={d.id}>

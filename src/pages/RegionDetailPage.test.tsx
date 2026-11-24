@@ -65,4 +65,16 @@ describe('RegionDetailPage 채팅', () => {
     const list = screen.getByRole('heading', { name: /^행정동 \d+곳$/ })
     expect(ask.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
+
+  it('답의 "자세히 →" 는 month·preset 을 유지한다', async () => {
+    renderWithRouter(<RegionDetailPage />, {
+      route: '/regions/51820?month=2025-10&preset=lively',
+      path: '/regions/:sggId',
+    })
+    await userEvent.click(await screen.findByRole('button', { name: '조용한 동네 어디야?' }))
+    expect(await screen.findByRole('link', { name: '죽왕면 자세히 →' })).toHaveAttribute(
+      'href',
+      '/dongs/5182032000?month=2025-10&preset=lively',
+    )
+  }, 10_000)
 })

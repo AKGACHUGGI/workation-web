@@ -112,4 +112,27 @@ describe('chatMock 시군구', () => {
       }),
     ).toBeNull()
   })
+  it('질문에 이 시군구 동 이름이 있으면 그 동의 동 답(비교), 대화 id 는 시군구 것', () => {
+    const res = chatMock({
+      conversationId: null,
+      surface: 'region',
+      sigungu: '51820',
+      month: '2025-10',
+      question: '거진읍이랑 토성면 비교해 줘',
+      criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
+    })
+    expect(res).toMatchObject({
+      conversationId: 'mock-51820',
+      scope: 'dong',
+      intent: 'compare_summary',
+      dongs: [
+        { id: '5182025300', name: '거진읍' },
+        { id: '5182033000', name: '토성면' },
+      ],
+      sentences: [
+        { text: '조용함은 거진읍 B등급, 토성면 C등급이에요.', source: 'rule' },
+        { text: '저녁 활기는 거진읍 C등급, 토성면 A등급이에요.', source: 'rule' },
+      ],
+    })
+  })
 })

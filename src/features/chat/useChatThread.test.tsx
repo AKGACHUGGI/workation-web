@@ -178,9 +178,7 @@ describe('useChatThread', () => {
     rerender({ id: A })
     expect(result.current.thread.turns.map((t) => t.question)).toEqual(['A 질문'])
     expect(result.current.thread.conversationId).toBe('c-1')
-    expect(client.getQueryCache().find({ queryKey: chatKeys.dong(A) })?.gcTime).toBe(
-      Infinity,
-    )
+    expect(client.getQueryCache().find({ queryKey: chatKeys.dong(A) })?.gcTime).toBe(Infinity)
   })
 
   it('답이 오기 전에 동을 바꾸면 질문한 동의 기록에 붙는다', async () => {
@@ -226,12 +224,17 @@ describe('useChatThread 시군구', () => {
       sigungu: '45111',
       month: '2025-10',
       question: '조용한 동네 어디야?',
-      criteria: { chips: [], interest: { metric: { quiet: 1 }, terrain: {}, recent: ['5115066500'] } },
+      criteria: {
+        chips: [],
+        interest: { metric: { quiet: 1 }, terrain: {}, recent: ['5115066500'] },
+      },
     })
     await waitFor(() =>
       expect(client.getQueryData(chatKeys.region('45111'))).toMatchObject({
         conversationId: 'c-1',
-        turns: [{ status: 'done', scope: 'region', dongs: [{ id: '4511164500', name: '효자2동' }] }],
+        turns: [
+          { status: 'done', scope: 'region', dongs: [{ id: '4511164500', name: '효자2동' }] },
+        ],
       }),
     )
   })

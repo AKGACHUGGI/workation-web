@@ -186,9 +186,19 @@ function dongChatMock(body: ChatRequest): ChatResponse | null {
 
 const GRADE_ORDER = ['S', 'A', 'B', 'C']
 
-/** 시군구 채팅 mock: 조용함 등급 순 3곳. 백엔드는 의도별 GraphRAG 답 (시군구 채팅 스펙 §6) */
+/**
+ * 시군구 채팅 mock: 질문에 이 시군구 동 이름이 있으면 그 동의 동 답(scope dong, 비교 포함),
+ * 없으면 조용함 등급 순 3곳. 백엔드는 의도별 GraphRAG 답 (시군구 채팅 스펙 §6)
+ */
 function regionChatMock(body: ChatRequest): ChatResponse | null {
   const sgg = body.sigungu ?? ''
+  const named = DONG_BASE.filter((b) => b.sigunguId === sgg)
+    .sort((a, b) => b.name.length - a.name.length)
+    .find((b) => body.question.includes(b.name))
+  if (named) {
+    const res = dongChatMock({ ...body, panel: named.id })
+    return res && { ...res, conversationId: body.conversationId ?? `mock-${sgg}` }
+  }
   const pins = allPins()
   const dongs = DONG_BASE.filter((b) => b.sigunguId === sgg)
     .map((b) => pins.get(b.id))
