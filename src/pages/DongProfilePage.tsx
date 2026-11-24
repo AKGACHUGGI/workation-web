@@ -145,7 +145,7 @@ export default function DongProfilePage() {
               peerGrade={peerGrade}
             />
           </div>
-          <DongAskSection dongId={dongId} month={month} />
+          <DongAskSection key={dongId} dongId={dongId} month={month} />
           <HourlyCurveSection
             hourly={detail.hourly}
             peaks={detail.peaks}
