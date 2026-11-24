@@ -198,7 +198,8 @@ const BASE: Record<string, Base> = {
       eveningSurplus: 0.65,
     },
     shape: {
-      weekday: { peak: 10, low: 2, lowValue: 55 },
+      // 평일은 낮 내내 고르게 붐비는(flat) 예시
+      weekday: { peak: 10, low: 2, lowValue: 85 },
       weekend: { peak: 14, low: 3, lowValue: 50 },
     },
     activity: { eveningDowntown: 8, weekendTourist: 30, weekdayWork: 22, dawnResidential: 40 },
@@ -227,6 +228,12 @@ function curve(peak: number, low: number, lowValue: number): number[] {
   out[peak] = 100
   out[low] = Math.min(out[low], lowValue)
   return out
+}
+
+/** 백엔드와 같은 기준: 9~18시 최대·최소 차이 < 15 */
+function isFlat(c: number[]): boolean {
+  const day = c.slice(9, 19)
+  return Math.max(...day) - Math.min(...day) < 15
 }
 
 const round2 = (v: number) => Math.round(v * 100) / 100
@@ -280,11 +287,13 @@ export function makeDongMock(id: string, month: MonthParam): DongDetailResponse 
         peakHour: b.shape.weekday.peak,
         lowHour: b.shape.weekday.low,
         lowValue: weekday[b.shape.weekday.low],
+        flat: isFlat(weekday),
       },
       weekend: {
         peakHour: b.shape.weekend.peak,
         lowHour: b.shape.weekend.low,
         lowValue: weekend[b.shape.weekend.low],
+        flat: isFlat(weekend),
       },
     },
     activityMix: normalizeActivityMix(b.activity),

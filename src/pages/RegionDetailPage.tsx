@@ -17,6 +17,7 @@ import PhotoGallery from '@/features/region/components/PhotoGallery'
 import PlanCard from '@/features/region/components/PlanCard'
 import PollSection from '@/features/region/components/PollSection'
 import ReasonSection from '@/features/region/components/ReasonSection'
+import RegionAskSection from '@/features/region/components/RegionAskSection'
 import RegionHero from '@/features/region/components/RegionHero'
 import RegionSkeleton from '@/features/region/components/RegionSkeleton'
 import ScoreCard from '@/features/region/components/ScoreCard'
@@ -254,24 +255,34 @@ export default function RegionDetailPage() {
           />
           <LinkList links={d.links} area={`${d.province} ${d.name}`} />
         </div>
-        <PlanCard
-          score={score}
-          headline={`${total}곳 중 ${rank.rank}위 · ${rank.grade}`}
-          month={month}
-          onMonthChange={setMonth}
-          preset={preset}
-          onPresetChange={setPreset}
-          customLinkHref={carryQuery('/tier', current)}
-          onFavorite={() => toggle('regions', sggId)}
-          favorite={saved}
-          onShare={share}
-          summary={[
-            { label: '가기 좋은 달', value: formatMonths(d.bestMonths) },
-            { label: '피할 달', value: formatMonths(d.avoidMonths) },
-            { label: '주말 ÷ 주중 낮 체류', value: `${d.stats.weekendRatio.toFixed(2)}배` },
-            { label: '지원사업', value: supportLink?.title ?? '등록 전' },
-          ]}
-        />
+        {/* 계획 카드는 제자리에 두고, 채팅은 그 아래에서 스크롤하면 화면 위쪽에 붙는다 (열이 본문 높이만큼 늘어야 붙어 있는다) */}
+        <div className="w-sidebar mt-6 flex shrink-0 flex-col gap-4 self-stretch">
+          <PlanCard
+            score={score}
+            headline={`${total}곳 중 ${rank.rank}위 · ${rank.grade}`}
+            month={month}
+            onMonthChange={setMonth}
+            preset={preset}
+            onPresetChange={setPreset}
+            customLinkHref={carryQuery('/tier', current)}
+            onFavorite={() => toggle('regions', sggId)}
+            favorite={saved}
+            onShare={share}
+            summary={[
+              { label: '가기 좋은 달', value: formatMonths(d.bestMonths) },
+              { label: '피할 달', value: formatMonths(d.avoidMonths) },
+              { label: '주말 ÷ 주중 낮 체류', value: `${d.stats.weekendRatio.toFixed(2)}배` },
+              { label: '지원사업', value: supportLink?.title ?? '등록 전' },
+            ]}
+          />
+          <RegionAskSection
+            key={sggId}
+            sigunguId={sggId}
+            name={d.name}
+            month={month}
+            dongHref={hrefFor}
+          />
+        </div>
       </div>
     </PageContainer>
   )

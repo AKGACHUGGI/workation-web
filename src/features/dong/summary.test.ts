@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildDongSummary,
   formatHour,
+  formatLow,
   localLifeGrade,
   localLifeLabel,
   pollQuestion,
@@ -92,5 +93,20 @@ describe('formatHour', () => {
     expect(formatHour(11)).toBe('11시')
     expect(formatHour(0)).toBe('00시')
     expect(formatHour(3)).toBe('03시')
+  })
+})
+
+describe('formatLow', () => {
+  const p = { peakHour: 11, lowHour: 18, lowValue: 90 }
+  it('평평하지 않으면 시각', () => {
+    expect(formatLow({ ...p, flat: false })).toBe('18시')
+    expect(formatLow({ ...p, flat: false }, { withValue: true })).toBe('18시 · 90')
+  })
+  it('평평하면 시각 대신 짧은 문구 (값도 생략)', () => {
+    expect(formatLow({ ...p, flat: true })).toBe('낮 내내 비슷')
+    expect(formatLow({ ...p, flat: true }, { withValue: true })).toBe('낮 내내 비슷')
+  })
+  it('flat 없는 응답은 평평하지 않은 것으로 본다', () => {
+    expect(formatLow(p, { withValue: true })).toBe('18시 · 90')
   })
 })

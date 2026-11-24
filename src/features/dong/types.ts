@@ -22,6 +22,9 @@ export type QuieterTwin = {
 }
 
 /** GET /api/dongs/{dongId}?month= — 백엔드와의 계약 (스펙 §5-2) */
+/** lowHour 는 9~18시 최소. flat = 9~18시 최대·최소 차이 < 15 (백엔드 배포 전 응답엔 없을 수 있다 → false 로 본다) */
+export type DayPeak = { peakHour: number; lowHour: number; lowValue: number; flat?: boolean }
+
 export type DongDetailResponse = {
   id: string
   name: string // 거진읍
@@ -42,7 +45,7 @@ export type DongDetailResponse = {
   }
   hourly: Record<DayGroup, number[]> // 길이 24, 0~100, 두 배열 중 최대 = 100
   stayHourly: Record<DayGroup, number[]> // 길이 24, 시간대별 평균 체류인구(명). W-05 비교 곡선
-  peaks: Record<DayGroup, { peakHour: number; lowHour: number; lowValue: number }>
+  peaks: Record<DayGroup, DayPeak>
   activityMix: Record<ActivityKey, number> // 정수, 합 100
   seasonType: SeasonType
   quieterTwins: QuieterTwin[] // 최대 3, 유사도 내림차순

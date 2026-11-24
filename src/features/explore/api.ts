@@ -1,4 +1,4 @@
-import type { ChatRequest, ChatResponse, DongDetail, PinsResponse } from '@/features/explore/types'
+import type { DongDetail, PinsResponse } from '@/features/explore/types'
 import { api } from '@/lib/api'
 import { NotFoundError } from '@/lib/errors'
 import { isMock, mockDelay } from '@/lib/mock'
@@ -25,19 +25,4 @@ export async function fetchDong(dongId: string): Promise<DongDetail> {
     return mockDelay(res)
   }
   return api<DongDetail>(path)
-}
-
-/**
- * ② 동 패널 채팅 (탐색 v7 채팅 백엔드 스펙 §8). 400·429·503 은 Error (메시지 `API {status} …`),
- * 404 DONG_NOT_FOUND 는 NotFoundError
- */
-export async function postChat(body: ChatRequest): Promise<ChatResponse> {
-  const path = '/api/explore/chat'
-  if (isMock) {
-    const { chatMock } = await import('@/mocks/explore/chat')
-    const res = chatMock(body)
-    if (!res) throw new NotFoundError(path)
-    return mockDelay(res)
-  }
-  return api<ChatResponse>(path, { method: 'POST', body: JSON.stringify(body) })
 }

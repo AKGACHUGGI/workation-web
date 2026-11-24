@@ -1,5 +1,5 @@
 import { DONG_COPY } from '@/features/dong/copy'
-import { formatHour } from '@/features/dong/summary'
+import { formatHour, formatLow } from '@/features/dong/summary'
 import type { DongDetailResponse } from '@/features/dong/types'
 import { METRIC_LABEL } from '@/features/metric/constants'
 import { monthLabel } from '@/features/metric/month'
@@ -33,7 +33,7 @@ export default function DongScoreCard({ detail, month, quiet, vibeGrade, peerGra
       detail={`${monthLabel(month)} 기준 · ${METRIC_LABEL.vibe} ${vibeGrade ?? '—'} · ${METRIC_LABEL.peer} ${peerGrade ?? '—'} · 생활권 지수 ${detail.stats.localLife}`}
       summary={[
         { label: '주중 피크', value: formatHour(detail.peaks.weekday.peakHour) },
-        { label: '가장 한산', value: formatHour(detail.peaks.weekday.lowHour) },
+        { label: '가장 한산', value: formatLow(detail.peaks.weekday) },
         { label: '낮 유입 지수', value: detail.stats.dayInflow.toFixed(2) },
         { label: '생활권 지수', value: String(detail.stats.localLife) },
       ]}
