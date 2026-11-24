@@ -1,11 +1,6 @@
 import { TYPE_MIN, TYPE_NAMES } from '@/features/explore/types'
-import type {
-  ChatRequest,
-  ChatResponse,
-  DongDetail,
-  PinDong,
-  TypeName,
-} from '@/features/explore/types'
+import type { ChatRequest, ChatResponse } from '@/features/chat/types'
+import type { DongDetail, PinDong, TypeName } from '@/features/explore/types'
 import { DONG_BASE } from '@/mocks/explore/base.generated'
 import { dongMock, topicOf } from '@/mocks/explore/dong'
 import { allPins } from '@/mocks/explore/pins'

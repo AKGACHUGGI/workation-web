@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
-import { EXPLORE_COPY } from '@/features/explore/copy'
+import { CHAT_COPY } from '@/features/chat/copy'
 import type { DongDetail } from '@/features/explore/types'
-import { useChatThread } from '@/features/explore/useChatThread'
+import { useChatThread } from '@/features/chat/useChatThread'
 import Briefing from '@/features/explore/components/panel/Briefing'
-import ChatBubble from '@/features/explore/components/panel/ChatBubble'
-import ChatInput from '@/features/explore/components/panel/ChatInput'
+import ChatBubble from '@/features/chat/components/ChatBubble'
+import ChatInput from '@/features/chat/components/ChatInput'
 
 type Props = { dong: DongDetail }
 
@@ -34,7 +34,7 @@ export default function ChatThread({ dong }: Props) {
       <div
         role="log"
         aria-live="polite"
-        aria-label={EXPLORE_COPY.chatLog}
+        aria-label={CHAT_COPY.chatLog}
         tabIndex={0}
         className="flex max-h-72 flex-col gap-2 overflow-y-auto overscroll-contain empty:hidden"
       >
@@ -49,7 +49,7 @@ export default function ChatThread({ dong }: Props) {
       </div>
       <div
         role="group"
-        aria-label={EXPLORE_COPY.chatExamplesLabel}
+        aria-label={CHAT_COPY.chatExamplesLabel}
         className="flex flex-wrap gap-1.5"
       >
         {thread.examples.map((q) => (

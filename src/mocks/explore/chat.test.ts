@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ChatRequest } from '@/features/explore/types'
+import type { ChatRequest } from '@/features/chat/types'
 import { chatMock } from '@/mocks/explore/chat'
 
 const JUMUNJIN = '5115025000'

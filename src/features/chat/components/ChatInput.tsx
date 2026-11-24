@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ArrowUp } from 'lucide-react'
-import { CHAT_MAX, EXPLORE_COPY } from '@/features/explore/copy'
+import { CHAT_COPY, CHAT_MAX } from '@/features/chat/copy'
 
 type Props = { disabled: boolean; onSend: (question: string) => void }
 
@@ -24,8 +24,8 @@ export default function ChatInput({ disabled, onSend }: Props) {
         className={`border-border-default bg-bg-surface focus-within:border-text-primary flex min-w-0 flex-1 items-center gap-2 rounded-full border px-4 ${disabled ? 'opacity-40' : ''}`}
       >
         <input
-          aria-label={EXPLORE_COPY.chatLabel}
-          placeholder={EXPLORE_COPY.chatPlaceholder}
+          aria-label={CHAT_COPY.chatLabel}
+          placeholder={CHAT_COPY.chatPlaceholder}
           maxLength={CHAT_MAX}
           value={value}
           disabled={disabled}
@@ -39,13 +39,13 @@ export default function ChatInput({ disabled, onSend }: Props) {
         />
         {value.length > 0 && (
           <span className="text-explore-2xs text-text-tertiary shrink-0 tabular-nums">
-            {EXPLORE_COPY.chatCount(value.length)}
+            {CHAT_COPY.chatCount(value.length)}
           </span>
         )}
       </div>
       <button
         type="button"
-        aria-label={EXPLORE_COPY.chatSend}
+        aria-label={CHAT_COPY.chatSend}
         disabled={!canSend}
         onClick={send}
         className="bg-brand-primary hover:bg-brand-hover disabled:bg-rausch-100 text-text-on-brand flex size-10 shrink-0 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed"

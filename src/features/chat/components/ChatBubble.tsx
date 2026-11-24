@@ -1,13 +1,13 @@
 import type { Ref } from 'react'
-import { EXPLORE_COPY } from '@/features/explore/copy'
-import type { ChatErrorKind, ChatTurn } from '@/features/explore/types'
+import { CHAT_COPY } from '@/features/chat/copy'
+import type { ChatErrorKind, ChatTurn } from '@/features/chat/types'
 
 type Props = { turn: ChatTurn; onRetry: (id: string) => void; ref?: Ref<HTMLDivElement> }
 
 const ERROR_TEXT: Record<ChatErrorKind, string> = {
-  retry: EXPLORE_COPY.chatError,
-  limit: EXPLORE_COPY.chatLimit,
-  invalid: EXPLORE_COPY.chatInvalid,
+  retry: CHAT_COPY.chatError,
+  limit: CHAT_COPY.chatLimit,
+  invalid: CHAT_COPY.chatInvalid,
 }
 
 /**
@@ -23,7 +23,7 @@ export default function ChatBubble({ turn, onRetry, ref }: Props) {
       </p>
       {turn.status === 'pending' && (
         <div className="bg-bg-surface flex items-center gap-1 self-start rounded-xl rounded-bl-sm px-3 py-2.5">
-          <span className="sr-only">{EXPLORE_COPY.chatWaiting}</span>
+          <span className="sr-only">{CHAT_COPY.chatWaiting}</span>
           {[0, 1, 2].map((i) => (
             <span
               key={i}
@@ -54,7 +54,7 @@ export default function ChatBubble({ turn, onRetry, ref }: Props) {
               onClick={() => onRetry(turn.id)}
               className="border-border-strong bg-bg-surface text-caption-xs text-text-primary hover:border-text-primary rounded-full border px-2.5 py-1 font-medium"
             >
-              {EXPLORE_COPY.chatRetry}
+              {CHAT_COPY.chatRetry}
             </button>
           )}
         </p>

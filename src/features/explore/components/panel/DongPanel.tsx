@@ -4,7 +4,7 @@ import type { DayGroup, DetailKind, DongDetail, SimilarDong } from '@/features/e
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
 import { useDongQuery } from '@/features/explore/useDongQuery'
 import { NotFoundError } from '@/lib/errors'
-import ChatThread from '@/features/explore/components/panel/ChatThread'
+import ChatThread from '@/features/chat/components/ChatThread'
 import DetailSlot from '@/features/explore/components/panel/DetailSlot'
 import DongPhoto from '@/features/explore/components/panel/DongPhoto'
 import DongFactGraph from '@/features/explore/components/panel/DongFactGraph'

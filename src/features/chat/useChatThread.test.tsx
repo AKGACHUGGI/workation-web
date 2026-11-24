@@ -3,15 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-vi.mock('@/features/explore/api', () => ({ postChat: vi.fn() }))
+vi.mock('@/features/chat/api', () => ({ postChat: vi.fn() }))
 vi.mock('@/features/interest', () => ({
   chatInterest: () => ({ metric: { quiet: 1 }, terrain: {}, recent: ['5115066500'] }),
 }))
 
-import { postChat } from '@/features/explore/api'
-import { exploreKeys } from '@/features/explore/queryKeys'
-import type { ChatResponse } from '@/features/explore/types'
-import { chatErrorKind, useChatThread } from '@/features/explore/useChatThread'
+import { postChat } from '@/features/chat/api'
+import { chatKeys } from '@/features/chat/queryKeys'
+import type { ChatResponse } from '@/features/chat/types'
+import { chatErrorKind, useChatThread } from '@/features/chat/useChatThread'
 import { NotFoundError } from '@/lib/errors'
 
 const mocked = vi.mocked(postChat)
@@ -175,7 +175,7 @@ describe('useChatThread', () => {
     rerender({ id: A })
     expect(result.current.thread.turns.map((t) => t.question)).toEqual(['A 질문'])
     expect(result.current.thread.conversationId).toBe('c-1')
-    expect(client.getQueryCache().find({ queryKey: exploreKeys.chatThread(A) })?.gcTime).toBe(
+    expect(client.getQueryCache().find({ queryKey: chatKeys.dong(A) })?.gcTime).toBe(
       Infinity,
     )
   })
@@ -187,7 +187,7 @@ describe('useChatThread', () => {
     await act(async () => result.current.ask('A 질문'))
     rerender({ id: B })
     await act(async () => resolve(reply('A 답')))
-    expect(client.getQueryData(exploreKeys.chatThread(A))).toMatchObject({
+    expect(client.getQueryData(chatKeys.dong(A))).toMatchObject({
       conversationId: 'c-1',
       turns: [{ question: 'A 질문', status: 'done' }],
     })

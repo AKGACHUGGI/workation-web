@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { postChat } from '@/features/explore/api'
-import { EXPLORE_COPY } from '@/features/explore/copy'
-import { exploreKeys } from '@/features/explore/queryKeys'
-import type { ChatErrorKind, ChatThread, ChatTurn } from '@/features/explore/types'
+import { postChat } from '@/features/chat/api'
+import { CHAT_COPY } from '@/features/chat/copy'
+import { chatKeys } from '@/features/chat/queryKeys'
+import type { ChatErrorKind, ChatThread, ChatTurn } from '@/features/chat/types'
 import { chatInterest } from '@/features/interest'
 
 /** api() 가 던지는 `API {status} …` 메시지에서 화면 분기를 고른다. 그 밖(네트워크·503·404)은 다시 시도 */
@@ -16,7 +16,7 @@ export function chatErrorKind(error: unknown): ChatErrorKind {
 const emptyThread = (): ChatThread => ({
   conversationId: null,
   turns: [],
-  examples: [...EXPLORE_COPY.chatExamples],
+  examples: [...CHAT_COPY.chatExamples],
 })
 
 const withTurn = (t: ChatThread, turn: ChatTurn): ChatThread => ({
@@ -29,7 +29,7 @@ const isPending = (t: ChatThread) => t.turns.some((x) => x.status === 'pending')
 let seq = 0
 
 /**
- * ② 동 패널 채팅 기록 (웹 스펙 §4-2). 기록은 QueryClient 의 exploreKeys.chatThread(id) 에
+ * ② 동 패널 채팅 기록 (웹 스펙 §4-2). 기록은 QueryClient 의 chatKeys.dong(id) 에
  * 두어(gcTime Infinity, 서버 요청 없음) 동을 바꿨다 돌아와도 남고, 새로고침하면 사라진다.
  * 서버가 준 conversationId 를 그 동 기록에 두고 다음 질문에 실어 이어 묻는다.
  * 서버가 30분 지나 대화를 잊고 새 id 를 주면 화면 기록은 두고 id 만 바꾼다.
@@ -37,7 +37,7 @@ let seq = 0
  */
 export function useChatThread(dongId: string) {
   const client = useQueryClient()
-  const key = exploreKeys.chatThread(dongId)
+  const key = chatKeys.dong(dongId)
   const { data: thread } = useQuery({
     queryKey: key,
     queryFn: emptyThread,

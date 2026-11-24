@@ -5,11 +5,11 @@ import userEvent from '@testing-library/user-event'
 import renderWithRouter from '@/test/renderWithRouter'
 import { GEUMAM, JUMUNJIN } from '@/test/fixtures/explore'
 
-vi.mock('@/features/explore/api', () => ({ postChat: vi.fn() }))
+vi.mock('@/features/chat/api', () => ({ postChat: vi.fn() }))
 
-import { postChat } from '@/features/explore/api'
-import ChatThread from '@/features/explore/components/panel/ChatThread'
-import type { ChatResponse } from '@/features/explore/types'
+import { postChat } from '@/features/chat/api'
+import ChatThread from '@/features/chat/components/ChatThread'
+import type { ChatResponse } from '@/features/chat/types'
 
 const mocked = vi.mocked(postChat)
 const FIRST = ['이 동네 조용해?', '평일엔 몇 시가 붐비고 몇 시가 한산해?', '비슷한 동네는 어디야?']
