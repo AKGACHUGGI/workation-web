@@ -3,6 +3,7 @@ import { Map as GoogleMap } from '@vis.gl/react-google-maps'
 import { useNavigate } from 'react-router-dom'
 import PolygonLayer from '@/components/map/PolygonLayer'
 import { bboxToBounds, toLatLngPaths } from '@/components/map/geo'
+import { mapsMapId } from '@/components/map/mapsKey'
 import type { GeoFeatureCollection, PolygonStyle } from '@/components/map/geo'
 import { useGeoQuery } from '@/features/dong/useGeoQuery'
 import { HEAT_VAR } from '@/features/heatmap/colorScale'
@@ -35,6 +36,12 @@ const DIM: PolygonStyle = {
   stroke: 'var(--color-gray-500)',
   strokeWidth: 1,
 }
+
+/**
+ * 처음 화면에서 폴리곤 바깥에 남길 여백(px). mapId(벡터 지도)라 fitBounds 가 소수 줌으로 맞춰
+ * 정수 줌 내림으로 한 단계 축소돼 보이지 않는다
+ */
+const FIT_PADDING = 12
 
 /** 폴리곤 전체를 감싸는 [west, south, east, north] */
 function bboxOf(fc: GeoFeatureCollection): [number, number, number, number] {
@@ -123,7 +130,8 @@ export default function RegionHeatmap({
       )}
       <GoogleMap
         key={pickMode ? 'pick' : `${scope}:${sgg ?? ''}`}
-        defaultBounds={bboxToBounds(bboxOf(features))}
+        mapId={mapsMapId()}
+        defaultBounds={{ ...bboxToBounds(bboxOf(features)), padding: FIT_PADDING }}
         gestureHandling="cooperative"
         disableDefaultUI
         zoomControl
