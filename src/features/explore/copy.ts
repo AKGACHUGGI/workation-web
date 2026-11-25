@@ -98,9 +98,6 @@ export function legendTags(pins: { tags: string[] }[]): string[] {
   return TAG_ORDER.filter((t) => used.has(t))
 }
 
-/** 채팅 질문 최대 글자 수 (백엔드 400 QUESTION_INVALID 기준) */
-export const CHAT_MAX = 100
-
 export const EXPLORE_COPY = {
   pageTitle: '지도 탐색',
   collapsePanel: '패널 접기',
@@ -147,6 +144,7 @@ export const EXPLORE_COPY = {
   noValue: '값 없음',
   briefingTitle: '이 동네에서 일하는 하루',
   briefingEmpty: '브리핑을 준비하고 있어요.',
+  askOnDetail: '이 동네에 물어보기 →',
   similarCoastTitle: '비슷한 바닷가 동',
   similarPlainTitle: '비슷한 동',
   similarHint: '지표 거리 기준 · 점수 차 = 상대 − 이 동',
@@ -154,22 +152,4 @@ export const EXPLORE_COPY = {
   dongError: '그래프를 불러오지 못했어요.',
   dongNotFound: '동네 정보를 찾을 수 없어요.',
   closePanel: '패널 닫기',
-  // ── 동 패널 채팅 (v7) ──
-  chatLabel: '이 동네에 물어보기',
-  chatPlaceholder: '이 동네에 대해 물어보세요',
-  chatSend: '보내기',
-  chatCount: (n: number) => `${n}/${CHAT_MAX}`,
-  chatLog: '물어본 대화',
-  chatExamplesLabel: '예시 질문',
-  chatWaiting: '답을 기다리는 중',
-  chatRetry: '다시 시도',
-  chatError: '지금은 답을 가져오지 못했어요.',
-  chatLimit: '잠시 후 다시 물어봐 주세요.',
-  chatInvalid: '질문은 1~100자로 적어 주세요.',
-  /** 첫 예시 질문 3개 = 백엔드 대표 질문 */
-  chatExamples: [
-    '이 동네 조용해?',
-    '평일엔 몇 시가 붐비고 몇 시가 한산해?',
-    '비슷한 동네는 어디야?',
-  ],
 } as const

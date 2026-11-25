@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test'
 async function loginViaMock(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: '카카오로 시작하기' }).click()
   await expect(page.getByRole('dialog', { name: '거의 다 됐어요' })).toBeVisible()
+  await page.getByRole('option', { name: '30대' }).click()
   await page.getByRole('checkbox').nth(0).check()
   await page.getByRole('checkbox').nth(1).check()
   await page.getByRole('button', { name: '시작하기' }).click()

@@ -32,7 +32,7 @@ const cellLabel = 'text-caption-segment text-text-primary'
 const cellSelect =
   'text-body-sm text-text-secondary w-full cursor-pointer appearance-none bg-transparent outline-none'
 
-/** 사이드바 sticky 계획 카드 (Figma PlanCard 54:208) */
+/** 사이드바 계획 카드 (Figma PlanCard 54:208). 스크롤을 따라오지 않는다 — 아래 채팅이 붙는다 */
 export default function PlanCard({
   score,
   headline,
@@ -48,7 +48,7 @@ export default function PlanCard({
 }: Props) {
   const [stay, setStay] = useState<(typeof STAY_OPTIONS)[number]>('2주')
   return (
-    <aside className="border-border-default bg-bg-surface shadow-float w-sidebar sticky top-24 mt-6 flex shrink-0 flex-col gap-4 self-start rounded-xl border p-6">
+    <aside className="border-border-default bg-bg-surface shadow-float flex flex-col gap-4 rounded-xl border p-6">
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-1">
           <span className="text-heading-2xl text-text-primary">{Math.round(score)}</span>

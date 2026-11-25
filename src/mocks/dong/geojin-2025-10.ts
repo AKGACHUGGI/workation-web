@@ -48,8 +48,8 @@ export const GEOJIN_2025_10 = {
     ],
   },
   peaks: {
-    weekday: { peakHour: 11, lowHour: 3, lowValue: 48 },
-    weekend: { peakHour: 13, lowHour: 3, lowValue: 47 },
+    weekday: { peakHour: 11, lowHour: 3, lowValue: 48, flat: false },
+    weekend: { peakHour: 13, lowHour: 3, lowValue: 47, flat: false },
   },
   activityMix: { eveningDowntown: 25, weekendTourist: 32, weekdayWork: 24, dawnResidential: 19 },
   seasonType: 'second_half_rise',

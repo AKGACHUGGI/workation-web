@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import PageContainer from '@/components/layout/PageContainer'
 import { ACTIVITY_LABEL, dominantActivity } from '@/features/dong/activity'
 import ActivityMixBar from '@/features/dong/components/ActivityMixBar'
+import DongAskSection from '@/features/dong/components/DongAskSection'
 import DongHero from '@/features/dong/components/DongHero'
 import DongMap from '@/features/dong/components/DongMap'
 import DongMetricGrid from '@/features/dong/components/DongMetricGrid'
@@ -199,14 +200,18 @@ export default function DongProfilePage() {
             <ChevronRight size={20} aria-hidden className="text-text-primary" />
           </Link>
         </div>
-        <DongPlanCard
-          detail={detail}
-          month={month}
-          onMonthChange={setMonth}
-          quiet={quiet}
-          presetLabel={presetLabel}
-          sgg={sgg}
-        />
+        {/* 계획 카드는 제자리에 두고, 채팅은 그 아래에서 스크롤하면 화면 위쪽에 붙는다 (열이 본문 높이만큼 늘어야 붙어 있는다) */}
+        <div className="w-sidebar mt-6 flex shrink-0 flex-col gap-4 self-stretch">
+          <DongPlanCard
+            detail={detail}
+            month={month}
+            onMonthChange={setMonth}
+            quiet={quiet}
+            presetLabel={presetLabel}
+            sgg={sgg}
+          />
+          <DongAskSection key={dongId} dongId={dongId} month={month} />
+        </div>
       </div>
     </PageContainer>
   )

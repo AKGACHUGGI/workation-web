@@ -54,3 +54,31 @@ describe('RegionDetailPage 관심 기록', () => {
     expect(recordInterest).toHaveBeenCalledTimes(1)
   }, 10_000)
 })
+
+describe('RegionDetailPage 채팅', () => {
+  it('채팅은 본문이 아니라 사이드바 계획 카드 아래', async () => {
+    renderWithRouter(<RegionDetailPage />, {
+      route: '/regions/51820?month=2025-10',
+      path: '/regions/:sggId',
+    })
+    const ask = await screen.findByRole('heading', { name: '고성군에 물어보기' })
+    const list = screen.getByRole('heading', { name: /^행정동 \d+곳$/ })
+    const plan = screen.getByRole('complementary')
+    // 본문(동 목록)과 계획 카드 모두 채팅보다 앞, 채팅은 계획 카드 안이 아니다
+    expect(list.compareDocumentPosition(ask) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(plan.compareDocumentPosition(ask) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(plan.contains(ask)).toBe(false)
+  })
+
+  it('답의 "자세히 →" 는 month·preset 을 유지한다', async () => {
+    renderWithRouter(<RegionDetailPage />, {
+      route: '/regions/51820?month=2025-10&preset=lively',
+      path: '/regions/:sggId',
+    })
+    await userEvent.click(await screen.findByRole('button', { name: '조용한 동네 어디야?' }))
+    expect(await screen.findByRole('link', { name: '죽왕면 자세히 →' })).toHaveAttribute(
+      'href',
+      '/dongs/5182032000?month=2025-10&preset=lively',
+    )
+  }, 10_000)
+})

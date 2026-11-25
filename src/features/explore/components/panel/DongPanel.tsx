@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { EXPLORE_COPY } from '@/features/explore/copy'
 import type { DayGroup, DetailKind, DongDetail, SimilarDong } from '@/features/explore/types'
 import { useDelayedLoading } from '@/features/explore/useDelayedLoading'
 import { useDongQuery } from '@/features/explore/useDongQuery'
+import { useCarryLink } from '@/hooks/useCarryLink'
 import { NotFoundError } from '@/lib/errors'
-import ChatThread from '@/features/explore/components/panel/ChatThread'
+import Briefing from '@/features/explore/components/panel/Briefing'
 import DetailSlot from '@/features/explore/components/panel/DetailSlot'
 import DongPhoto from '@/features/explore/components/panel/DongPhoto'
 import DongFactGraph from '@/features/explore/components/panel/DongFactGraph'
@@ -71,6 +73,7 @@ type BodyProps = {
 function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
   const [day, setDay] = useState<DayGroup>('weekday')
   const [detail, setDetail] = useState<DetailKind>('hour')
+  const askHref = `${useCarryLink(`/dongs/${dong.id}`)}#ask`
   return (
     <article aria-label={dong.name} className="flex flex-1 flex-col gap-3 pt-4">
       <PanelHeader dong={dong} onBack={onBack} />
@@ -78,7 +81,14 @@ function DongBody({ dong, onBack, onOpenSimilar }: BodyProps) {
       <TypeBars types={dong.types} />
       <DongFactGraph dong={dong} day={day} detail={detail} onDetail={setDetail} />
       <DetailSlot dong={dong} day={day} onDay={setDay} detail={detail} />
-      <ChatThread dong={dong} />
+      <Briefing sentences={dong.briefing}>
+        <Link
+          to={askHref}
+          className="text-caption-xs text-text-primary self-start font-medium underline underline-offset-2"
+        >
+          {EXPLORE_COPY.askOnDetail}
+        </Link>
+      </Briefing>
       <SimilarList
         similar={dong.similar}
         coastal={dong.coastKm !== null && dong.coastKm <= 1}

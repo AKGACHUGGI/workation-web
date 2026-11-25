@@ -5,7 +5,7 @@ import Segmented from '@/components/ui/Segmented'
 import HourlyCurveChart from '@/features/dong/components/HourlyCurveChart'
 import { DONG_COPY } from '@/features/dong/copy'
 import { monthWindow } from '@/features/dong/monthWindow'
-import { formatHour } from '@/features/dong/summary'
+import { formatHour, formatLow } from '@/features/dong/summary'
 import type { DayGroup, DongDetailResponse } from '@/features/dong/types'
 import { monthLabel } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
@@ -41,14 +41,13 @@ export default function HourlyCurveSection({
   animate,
 }: Props) {
   const [day, setDay] = useState<DayGroup>('weekday')
-  const low = peaks[day]
   const cells = [
     {
       icon: Sun,
       label: '주중 피크',
       value: `${formatHour(peaks.weekday.peakHour)} · 100`,
     },
-    { icon: Moon, label: '가장 한산', value: `${formatHour(low.lowHour)} · ${low.lowValue}` },
+    { icon: Moon, label: '가장 한산', value: formatLow(peaks[day], { withValue: true }) },
     {
       icon: Columns2,
       label: '주말 피크',

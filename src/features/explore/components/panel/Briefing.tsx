@@ -6,7 +6,7 @@ type Props = { sentences: string[]; children?: ReactNode }
 
 /**
  * ② 이 동네에서 일하는 하루 (Figma 436:10587). 백엔드 3문장을 그대로 한 문단으로. 근거 칩·F 번호 없음 (스펙 §11).
- * children = 채팅 대화·예시 질문·입력 (ChatThread). 칸은 최소 높이에서 내용만큼 늘어난다
+ * children = 동 상세 채팅 링크 (DongPanel). 칸은 최소 높이에서 내용만큼 늘어난다
  */
 export default function Briefing({ sentences, children }: Props) {
   return (

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ChatRequest } from '@/features/explore/types'
+import type { ChatRequest } from '@/features/chat/types'
 import { chatMock } from '@/mocks/explore/chat'
 
 const JUMUNJIN = '5115025000'
@@ -7,7 +7,9 @@ const GEUMAM = '5211357500'
 
 const body = (question: string, panel = JUMUNJIN): ChatRequest => ({
   conversationId: null,
+  surface: 'dong',
   panel,
+  month: null,
   question,
   criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
 })
@@ -16,6 +18,7 @@ describe('chatMock', () => {
   it('동 1개: 의도별 규칙 문장, conversationId = mock-<동>', () => {
     expect(chatMock(body('이 동네 조용해?'))).toEqual({
       conversationId: `mock-${JUMUNJIN}`,
+      scope: 'dong',
       dongs: [{ id: JUMUNJIN, name: '주문진읍' }],
       intent: 'quiet',
       sentences: [{ text: '조용함은 B등급(31점)이에요.', source: 'rule' }],
@@ -80,5 +83,56 @@ describe('chatMock', () => {
       '해안선에서 1km 넘게 떨어진 동네예요.',
     )
     expect(chatMock(body('이 동네 조용해?', '0000000000'))).toBeNull()
+  })
+})
+
+describe('chatMock 시군구', () => {
+  it('조용함 등급 순 동 3곳, scope region, 없는 시군구는 null', () => {
+    const res = chatMock({
+      conversationId: null,
+      surface: 'region',
+      sigungu: '51820',
+      month: '2025-10',
+      question: '조용한 동네 어디야?',
+      criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
+    })
+    expect(res?.scope).toBe('region')
+    expect(res?.conversationId).toBe('mock-51820')
+    expect(res?.dongs.length).toBeGreaterThan(0)
+    expect(res?.dongs.length).toBeLessThanOrEqual(3)
+    expect(res?.sentences[0].text).toMatch(/^조용한 순으로 /)
+    expect(
+      chatMock({
+        conversationId: null,
+        surface: 'region',
+        sigungu: '99999',
+        month: null,
+        question: '조용한 동네 어디야?',
+        criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
+      }),
+    ).toBeNull()
+  })
+  it('질문에 이 시군구 동 이름이 있으면 그 동의 동 답(비교), 대화 id 는 시군구 것', () => {
+    const res = chatMock({
+      conversationId: null,
+      surface: 'region',
+      sigungu: '51820',
+      month: '2025-10',
+      question: '거진읍이랑 토성면 비교해 줘',
+      criteria: { chips: [], interest: { metric: {}, terrain: {}, recent: [] } },
+    })
+    expect(res).toMatchObject({
+      conversationId: 'mock-51820',
+      scope: 'dong',
+      intent: 'compare_summary',
+      dongs: [
+        { id: '5182025300', name: '거진읍' },
+        { id: '5182033000', name: '토성면' },
+      ],
+      sentences: [
+        { text: '조용함은 거진읍 B등급, 토성면 C등급이에요.', source: 'rule' },
+        { text: '저녁 활기는 거진읍 C등급, 토성면 A등급이에요.', source: 'rule' },
+      ],
+    })
   })
 })
