@@ -1,3 +1,5 @@
+import type { AgeGroup } from '@/features/auth/ageGroup'
+
 export const AUTH_PROVIDERS = ['kakao', 'google'] as const
 export type AuthProvider = (typeof AUTH_PROVIDERS)[number]
 
@@ -9,6 +11,7 @@ export type Me = {
   emailMasked: string // 'du***@kakao.com'
   needsOnboarding: boolean // 약관 미동의 또는 닉네임 미설정
   createdAt: string
+  ageGroup: AgeGroup | null // 온보딩에서 받는 연령대. 기존 가입자는 null
 }
 
 export const PROVIDER_LABEL: Record<AuthProvider, string> = { kakao: '카카오', google: 'Google' }

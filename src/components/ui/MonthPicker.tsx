@@ -46,15 +46,27 @@ function itemStyle(distance: number) {
   }
 }
 
-/** 연간 · 1월~12월 세로 휠. 스크롤이 칸에 딱 맞춰 멈추고 가운데 칸이 선택값 */
-function MonthWheel({
+/**
+ * 연간 · 1월~12월 세로 휠. 스크롤이 칸에 딱 맞춰 멈추고 가운데 칸이 선택값.
+ * 다른 목록(예: 온보딩 연령대)에도 쓴다. selected=false 면 아직 고르지 않은 상태라 선택 표시를 하지 않는다
+ */
+export function MonthWheel({
   labels,
   index,
   onIndex,
+  ariaLabel = '월',
+  idPrefix = 'month-option',
+  selected = true,
 }: {
   labels: readonly string[]
   index: number
   onIndex: (i: number) => void
+  /** listbox 접근성 이름. 기본 '월' */
+  ariaLabel?: string
+  /** 항목 id 접두어. 기본 'month-option' */
+  idPrefix?: string
+  /** false 면 어떤 항목도 aria-selected 가 아니고 가운데 강조도 하지 않는다. 기본 true */
+  selected?: boolean
 }) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -81,16 +93,18 @@ function MonthWheel({
   return (
     <div className="relative" style={{ height: ITEM_H * (SIDE * 2 + 1) }}>
       {/* 가운데 선택 띠 */}
-      <div
-        aria-hidden
-        className="bg-bg-subtle pointer-events-none absolute inset-x-0 rounded-lg"
-        style={{ top: ITEM_H * SIDE, height: ITEM_H }}
-      />
+      {selected && (
+        <div
+          aria-hidden
+          className="bg-bg-subtle pointer-events-none absolute inset-x-0 rounded-lg"
+          style={{ top: ITEM_H * SIDE, height: ITEM_H }}
+        />
+      )}
       <div
         ref={ref}
         role="listbox"
-        aria-label="월"
-        aria-activedescendant={`month-option-${index}`}
+        aria-label={ariaLabel}
+        aria-activedescendant={selected ? `${idPrefix}-${index}` : undefined}
         tabIndex={0}
         onKeyDown={onKeyDown}
         onScroll={(e) => {
@@ -103,12 +117,12 @@ function MonthWheel({
         {labels.map((label, i) => (
           <div
             key={label}
-            id={`month-option-${i}`}
+            id={`${idPrefix}-${i}`}
             role="option"
-            aria-selected={i === index}
+            aria-selected={selected && i === index}
             onClick={() => scrollTo(i)}
             className={`flex snap-center items-center justify-center transition-[transform,opacity] duration-150 ${
-              i === index
+              selected && i === index
                 ? 'text-heading-xl text-text-primary'
                 : 'text-heading-lg text-text-secondary'
             } cursor-pointer select-none`}

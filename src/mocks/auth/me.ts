@@ -9,4 +9,5 @@ export const DUI: Me = {
   emailMasked: 'du***@kakao.com',
   needsOnboarding: true,
   createdAt: '2025-03-14T00:00:00+09:00',
+  ageGroup: null,
 }

@@ -4,6 +4,7 @@ import { isMock, mockDelay } from '@/lib/mock'
 import { supabase } from '@/lib/supabase'
 import { DUI } from '@/mocks/auth/me'
 import { mockSession } from '@/mocks/auth/session'
+import type { AgeGroup } from '@/features/auth/ageGroup'
 import type { AuthProvider, Me } from '@/features/auth/types'
 
 /** 200 → Me, 401 → null. 그 외 에러는 던진다(useAuth 가 재시도 1회 후 null 취급) */
@@ -17,7 +18,7 @@ export async function fetchMe(): Promise<Me | null> {
   }
 }
 
-export type PatchMeBody = { nickname?: string; agreedAt?: string }
+export type PatchMeBody = { nickname?: string; agreedAt?: string; ageGroup?: AgeGroup }
 
 export async function patchMe(body: PatchMeBody): Promise<Me> {
   if (isMock) {
@@ -28,6 +29,7 @@ export async function patchMe(body: PatchMeBody): Promise<Me> {
       ...cur,
       nickname,
       initial: nickname.slice(0, 1),
+      ageGroup: body.ageGroup ?? cur.ageGroup,
       needsOnboarding: body.agreedAt ? false : cur.needsOnboarding,
     }
     mockSession.set(next)
