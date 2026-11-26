@@ -5,7 +5,7 @@ test.describe('공통 기반', () => {
     await page.goto('/')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('어떤 워케이션을 찾고 있나요?')
     const tabs = page.getByRole('navigation', { name: '주 메뉴' }).getByRole('link')
-    await expect(tabs).toHaveText(['지역 찾기', '랭킹', '동네 고르기', '지도 탐색'])
+    await expect(tabs).toHaveText(['지역 찾기', '랭킹', '동네 고르기', '지도 탐색', '리포트'])
 
     await page.getByRole('link', { name: '랭킹' }).click()
     await expect(page).toHaveURL(/\/tier$/)

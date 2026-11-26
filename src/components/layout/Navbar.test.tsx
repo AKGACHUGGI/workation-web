@@ -20,7 +20,7 @@ describe('Navbar (Figma Web/NavbarV2)', () => {
     expect(screen.getByRole('link', { name: '랭킹' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: '지역 찾기' })).not.toHaveAttribute('aria-current')
   })
-  it('제품 탭은 지역 찾기·랭킹·동네 고르기·지도 탐색 4개이고 워케이션 노트 탭은 없다', () => {
+  it('제품 탭은 지역 찾기·랭킹·동네 고르기·지도 탐색·리포트 5개이고 워케이션 노트 탭은 없다', () => {
     renderWithRouter(<Navbar />, { route: '/tier' })
     const nav = screen.getByRole('navigation', { name: '주 메뉴' })
     const tabs = within(nav).getAllByRole('link')
@@ -29,9 +29,16 @@ describe('Navbar (Figma Web/NavbarV2)', () => {
       '랭킹',
       '동네 고르기',
       '지도 탐색',
+      '리포트',
     ])
     expect(screen.queryByRole('link', { name: /워케이션 노트/ })).not.toBeInTheDocument()
     expect(screen.queryByText('NEW')).not.toBeInTheDocument()
+  })
+  it('리포트 탭은 어느 시군구 리포트에서든 aria-current=page', () => {
+    renderWithRouter(<Navbar />, { route: '/reports/52110?preset=lively' })
+    const tab = screen.getByRole('link', { name: '리포트' })
+    expect(tab).toHaveAttribute('href', '/reports?preset=lively')
+    expect(tab).toHaveAttribute('aria-current', 'page')
   })
   it('언어 버튼과 로그인(계정 필) 버튼이 있고 팁 남기기 버튼은 없다', () => {
     renderWithRouter(<Navbar />)
