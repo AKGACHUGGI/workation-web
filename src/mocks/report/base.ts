@@ -69,7 +69,7 @@ export const SIGUNGU_BASE: Record<string, SigunguBase> = {
     scores: { quiet: 62, crowd: 85, peer: 90, overnight: 0, vibe: 95 },
     seasonType: 'spring_autumn',
   },
-  '52140': {
+  '52180': {
     name: '정읍시',
     province: '전북특별자치도',
     peak: 25,
@@ -140,7 +140,7 @@ export const ANNUAL_RANKING: Record<ReportPreset, ReportRankingItem[]> = {
     { id: '51150', name: '강릉시', score: 36 },
     { id: '52800', name: '부안군', score: 34 },
     { id: '51170', name: '동해시', score: 30 },
-    { id: '52140', name: '정읍시', score: 27 },
+    { id: '52180', name: '정읍시', score: 27 },
     { id: '46770', name: '고흥군', score: 22 },
   ],
   lively: [
@@ -154,7 +154,7 @@ export const ANNUAL_RANKING: Record<ReportPreset, ReportRankingItem[]> = {
     { id: '51170', name: '동해시', score: 45 },
     { id: '51830', name: '양양군', score: 43 },
     { id: '52800', name: '부안군', score: 41 },
-    { id: '52140', name: '정읍시', score: 35 },
+    { id: '52180', name: '정읍시', score: 35 },
     { id: '46770', name: '고흥군', score: 17 },
   ],
 }

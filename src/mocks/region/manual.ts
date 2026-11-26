@@ -73,14 +73,14 @@ export const SIGUNGU_MANUAL: Record<string, SigunguManual> = {
     links: [{ kind: 'support', title: '전주 한 달 살기', url: 'https://www.jeonju.go.kr' }],
     photos: photos('52110'),
   },
-  '52140': {
-    id: '52140',
+  '52180': {
+    id: '52180',
     name: '정읍시',
     province: '전북특별자치도',
     tags: ['산간', '내장산'],
     seasonType: 'spring_autumn',
     links: [{ kind: 'tour', title: '정읍 관광', url: 'https://www.jeongeup.go.kr' }],
-    photos: photos('52140'),
+    photos: photos('52180'),
   },
   '52800': {
     id: '52800',

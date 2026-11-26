@@ -6,7 +6,7 @@ export const SIGUNGU_OPTIONS: { value: string; label: string }[] = [
   { value: '51150', label: '강릉시' },
   { value: '51170', label: '동해시' },
   { value: '52110', label: '전주시' },
-  { value: '52140', label: '정읍시' },
+  { value: '52180', label: '정읍시' },
   { value: '52800', label: '부안군' },
   { value: '46150', label: '순천시' },
   { value: '46770', label: '고흥군' },

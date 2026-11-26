@@ -71,10 +71,10 @@ export const SIGUNGU: SigunguMeta[] = [
     tags: ['도시', '한옥마을'],
   },
   {
-    id: '52140',
+    id: '52180',
     name: '정읍시',
     province: '전북특별자치도',
-    photoUrl: photo('52140'),
+    photoUrl: photo('52180'),
     terrain: ['mountain'],
     placeTags: ['library', 'park', 'market'],
     tags: ['산간', '내장산'],
