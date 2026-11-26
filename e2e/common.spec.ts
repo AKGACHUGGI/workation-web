@@ -24,8 +24,9 @@ test.describe('공통 기반', () => {
     await expect(page).toHaveURL(/\/compare\?month=2025-10$/)
   })
 
-  test('잘못된 month 는 기본 달로 고쳐진다', async ({ page }) => {
+  test('잘못된 month 는 기본 달(오늘의 달)로 고쳐진다', async ({ page }) => {
     await page.goto('/tier?month=2099-01')
-    await expect(page).toHaveURL(/month=2025-12/)
+    const mm = String(new Date().getMonth() + 1).padStart(2, '0')
+    await expect(page).toHaveURL(new RegExp(`month=2025-${mm}`))
   })
 })

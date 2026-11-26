@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { DEFAULT_MONTH, parseMonth } from '@/features/metric/month'
+import { defaultMonth, parseMonth } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
 import { DEFAULT_PRESET, parsePreset } from '@/features/metric/params'
 import type { PresetKey } from '@/features/metric/types'
@@ -58,9 +58,9 @@ export function useQueryState<T>(
   return [value, set]
 }
 
-/** 공통 키 month */
+/** 공통 키 month. 주소에 없으면 오늘 날짜의 달 */
 export function useMonthParam(): [MonthParam, SetQueryState<MonthParam>] {
-  return useQueryState<MonthParam>('month', parseMonth, DEFAULT_MONTH)
+  return useQueryState<MonthParam>('month', parseMonth, defaultMonth())
 }
 
 /** 공통 키 preset */
