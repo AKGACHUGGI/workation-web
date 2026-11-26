@@ -103,16 +103,16 @@ export const DONG_MANUAL: Record<string, DongManual> = {
     bbox: [128.98, 37.44, 129.08, 37.5],
     photoUrl: '/mock-photos/51170.jpg',
   },
-  '5214036000': {
+  '5218043000': {
     name: '산내면',
-    sigungu: { id: '52140', name: '정읍시' },
+    sigungu: { id: '52180', name: '정읍시' },
     province: '전북특별자치도',
     kind: 'living',
     tags: ['산', '호수'],
     landmarks: ['옥정호', '구절초 테마공원'],
     accessNote: '정읍시 남동부 · 정읍역에서 차로 40분',
     bbox: [127.02, 35.5, 127.15, 35.6],
-    photoUrl: '/mock-photos/52140.jpg',
+    photoUrl: '/mock-photos/52180.jpg',
   },
 }
 

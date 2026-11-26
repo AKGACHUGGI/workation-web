@@ -16,7 +16,7 @@ export const SIGUNGU_SCORES_2025_10: Record<string, MetricScores> = {
   '51210': { quiet: 30, crowd: 43, peer: 21, overnight: 80, vibe: 82 }, // 속초시
   '51150': { quiet: 12, crowd: 10, peer: 80, overnight: 86, vibe: 25 }, // 강릉시
   '52800': { quiet: 20, crowd: 27, peer: 13, overnight: 70, vibe: 54 }, // 부안군
-  '52140': { quiet: 18, crowd: 25, peer: 35, overnight: 20, vibe: 48 }, // 정읍시
+  '52180': { quiet: 18, crowd: 25, peer: 35, overnight: 20, vibe: 48 }, // 정읍시
   '51170': { quiet: 10, crowd: 18, peer: 6, overnight: 78, vibe: 70 }, // 동해시
   '46770': { quiet: 14, crowd: 10, peer: 4, overnight: 60, vibe: 4 }, // 고흥군
 }

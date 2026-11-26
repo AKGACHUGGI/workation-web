@@ -10,6 +10,6 @@ export const OCT_COUNTS: Record<string, { favoriteCount: number; viewCount: numb
   '46150': { favoriteCount: 418, viewCount: 3900 }, // 순천
   '51170': { favoriteCount: 377, viewCount: 2800 }, // 동해
   '52800': { favoriteCount: 305, viewCount: 2400 }, // 부안
-  '52140': { favoriteCount: 221, viewCount: 1900 }, // 정읍
+  '52180': { favoriteCount: 221, viewCount: 1900 }, // 정읍
   '46770': { favoriteCount: 164, viewCount: 1300 }, // 고흥
 }

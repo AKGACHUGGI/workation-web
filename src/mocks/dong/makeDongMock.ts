@@ -51,13 +51,13 @@ const BASE: Record<string, Base> = {
         photoUrl: '/mock-photos/46770.jpg',
       },
       {
-        id: '5214036000',
+        id: '5218043000',
         name: '산내면',
-        sigunguId: '52140',
+        sigunguId: '52180',
         sigunguName: '정읍시',
         similarity: 0.64,
         visitorRatio: 0.44,
-        photoUrl: '/mock-photos/52140.jpg',
+        photoUrl: '/mock-photos/52180.jpg',
       },
     ],
   },
@@ -189,7 +189,7 @@ const BASE: Record<string, Base> = {
     seasonType: 'spring_autumn',
     twins: [],
   },
-  '5214036000': {
+  '5218043000': {
     stats: {
       dayInflow: 0.52,
       localLife: 74,

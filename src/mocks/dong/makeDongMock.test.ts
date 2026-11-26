@@ -38,8 +38,8 @@ describe('makeDongMock', () => {
         expect(d.peaks[day].flat).toBe(Math.max(...day9to18) - Math.min(...day9to18) < 15)
       }
     }
-    expect(makeDongMock('5214036000', '2025-10').peaks.weekday.flat).toBe(true)
-    expect(makeDongMock('5214036000', '2025-10').peaks.weekend.flat).toBe(false)
+    expect(makeDongMock('5218043000', '2025-10').peaks.weekday.flat).toBe(true)
+    expect(makeDongMock('5218043000', '2025-10').peaks.weekend.flat).toBe(false)
     expect(GEOJIN_2025_10.peaks.weekday.flat).toBe(false)
   })
 })
