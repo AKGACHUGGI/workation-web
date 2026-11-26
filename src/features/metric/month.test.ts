@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_MONTH, MONTHS, monthLabel, monthNumber, parseMonth } from '@/features/metric/month'
+import {
+  LATEST_MONTH,
+  MONTHS,
+  defaultMonth,
+  monthLabel,
+  monthNumber,
+  parseMonth,
+} from '@/features/metric/month'
 
 describe('MONTHS', () => {
   it('연간 + 12개월 = 13개, 첫 항목은 annual', () => {
@@ -7,8 +14,19 @@ describe('MONTHS', () => {
     expect(MONTHS[0]).toBe('annual')
     expect(MONTHS[12]).toBe('2025-12')
   })
-  it('기본 달은 데이터의 마지막 달', () => {
-    expect(DEFAULT_MONTH).toBe('2025-12')
+  it('마지막 달은 12월', () => {
+    expect(LATEST_MONTH).toBe('2025-12')
+  })
+})
+
+describe('defaultMonth', () => {
+  it('오늘 날짜의 달을 데이터 연도의 같은 달로 옮긴다', () => {
+    expect(defaultMonth(new Date(2026, 10, 26))).toBe('2025-11')
+    expect(defaultMonth(new Date(2026, 0, 1))).toBe('2025-01')
+    expect(defaultMonth(new Date(2027, 11, 31))).toBe('2025-12')
+  })
+  it('날짜를 주지 않으면 오늘 (테스트에서는 2025-12-15 로 고정)', () => {
+    expect(defaultMonth()).toBe('2025-12')
   })
 })
 

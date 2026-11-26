@@ -5,7 +5,7 @@ import { recordInterest, useBoost } from '@/features/interest'
 import { useFavorites } from '@/features/me/useFavorites'
 import { METRIC_LABEL, METRIC_SHORT_LABEL } from '@/features/metric/constants'
 import { METRIC_KEYS } from '@/features/metric/types'
-import { DATA_YEAR, DEFAULT_MONTH, monthLabel, monthNumber } from '@/features/metric/month'
+import { DATA_YEAR, LATEST_MONTH, monthLabel, monthNumber } from '@/features/metric/month'
 import type { MonthParam } from '@/features/metric/month'
 import { metricGrade } from '@/features/metric/score'
 import DongList from '@/features/region/components/DongList'
@@ -55,7 +55,7 @@ export default function RegionDetailPage() {
   const tier = useTierQuery(month, 'sigungu')
   const region = useRegionQuery(sggId, month)
   const notes = useRegionNotesQuery(sggId)
-  const pollMonth = month === 'annual' ? DEFAULT_MONTH : month
+  const pollMonth = month === 'annual' ? LATEST_MONTH : month
   const poll = useRegionPollQuery(sggId, pollMonth, preset)
 
   // 지역마다 한 번, 그 순간 화면이 가진 점수·지형을 스냅숏으로 관심 기록한다 (설계 8절)

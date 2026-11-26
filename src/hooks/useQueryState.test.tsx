@@ -3,10 +3,10 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import renderWithRouter from '@/test/renderWithRouter'
 import { useQueryState } from '@/hooks/useQueryState'
-import { parseMonth, DEFAULT_MONTH } from '@/features/metric/month'
+import { parseMonth, LATEST_MONTH } from '@/features/metric/month'
 
 function MonthProbe() {
-  const [month, setMonth] = useQueryState('month', parseMonth, DEFAULT_MONTH)
+  const [month, setMonth] = useQueryState('month', parseMonth, LATEST_MONTH)
   return (
     <div>
       <output data-testid="month">{month}</output>
