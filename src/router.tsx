@@ -1,5 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom'
 import RootLayout from '@/components/RootLayout'
+import { SIGUNGU_IDS } from '@/features/report/sigungu'
 import ComparePage from '@/pages/ComparePage'
 import DongProfilePage from '@/pages/DongProfilePage'
 import ExplorePage from '@/pages/ExplorePage'
@@ -9,6 +10,12 @@ import NotFoundPage from '@/pages/NotFoundPage'
 import RegionDetailPage from '@/pages/RegionDetailPage'
 import ReportPage from '@/pages/ReportPage'
 import TierPage from '@/pages/TierPage'
+
+/** /reports → 첫 시군구 리포트. 쿼리(preset 등)는 그대로 넘긴다 */
+function ReportIndexRedirect() {
+  const { search } = useLocation()
+  return <Navigate to={`/reports/${SIGUNGU_IDS[0]}${search}`} replace />
+}
 
 // 화면 ID(W-01~W-09)는 공통 기반 스펙 §2 기준. 경로를 바꾸면 스펙 §2 표도 함께 고친다.
 export const router = createBrowserRouter([
@@ -22,6 +29,7 @@ export const router = createBrowserRouter([
       { path: 'regions/:sggId', element: <RegionDetailPage />, errorElement: <NotFoundPage /> }, // W-03
       { path: 'dongs/:dongId', element: <DongProfilePage />, errorElement: <NotFoundPage /> }, // W-04
       { path: 'compare', element: <ComparePage /> }, // W-05
+      { path: 'reports', element: <ReportIndexRedirect /> }, // 상단 메뉴의 리포트 탭
       { path: 'reports/:sggId', element: <ReportPage />, errorElement: <NotFoundPage /> }, // W-06
       { path: 'me', element: <MyPage /> }, // W-08
       { path: 'explore', element: <ExplorePage /> }, // W-09
